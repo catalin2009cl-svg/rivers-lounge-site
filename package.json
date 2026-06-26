@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "migrate-db": "tsx scripts/migrate-to-db.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --no-engine"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
