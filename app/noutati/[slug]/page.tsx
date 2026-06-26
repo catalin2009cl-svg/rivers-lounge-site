@@ -2,6 +2,8 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { NewsDetailContent } from '@/components/news/news-content';
 import { getNewsPosts } from '@/lib/server-data';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const posts = await getNewsPosts();

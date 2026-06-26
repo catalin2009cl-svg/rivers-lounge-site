@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { SiteLayout } from '@/components/layout/site-layout';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Beneficii Membri | River's Lounge",
   description: "Programul de loialitate Rivers Lounge — în curând.",

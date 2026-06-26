@@ -30,6 +30,8 @@ import { getSession } from '@/lib/auth';
 import { PopupQuickToggle } from '@/components/admin/popup-quick-toggle';
 import { DailyMenuQuickToggle } from '@/components/admin/daily-menu-quick-toggle';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Dashboard Admin | River's Lounge" };
 
 export default async function AdminDashboardPage() {

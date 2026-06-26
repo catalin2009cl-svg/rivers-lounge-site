@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { DailyMenuAdminClient } from '@/components/admin/daily-menu-admin-client';
 import type { DailyMenuConfig } from '@/lib/server-data';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Meniu Zilei | Admin River's Lounge" };
 
 const DEFAULT_DAILY_MENU: DailyMenuConfig = {

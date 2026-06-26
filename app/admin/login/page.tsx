@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Lock, Waves } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<'admin' | 'operator'>('admin');

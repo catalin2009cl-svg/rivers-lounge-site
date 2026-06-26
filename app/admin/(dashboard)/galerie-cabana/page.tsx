@@ -2,6 +2,8 @@ import { getCabanaGallery } from '@/lib/server-data';
 import { CabanaGalleryClient } from '@/components/admin/cabana-gallery-client';
 import { Images } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default async function GalerieCabanaPage() {
   const photos = await getCabanaGallery();
 

@@ -2,6 +2,8 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 import { RegisterForm } from '@/components/account/account-forms';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Înregistrare | River's Lounge",
 };

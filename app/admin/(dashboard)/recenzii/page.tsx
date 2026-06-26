@@ -4,6 +4,8 @@ import { hasPermission } from '@/lib/permissions';
 import { redirect } from 'next/navigation';
 import { ReviewsAdminClient } from '@/components/admin/reviews-admin-client';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: 'Recenzii — Admin Rivers Lounge' };
 
 export default async function RecenziiPage() {

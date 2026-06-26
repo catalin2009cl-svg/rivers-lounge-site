@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Acces Restricționat | Admin River's Lounge" };
 
 export default async function AccessDeniedPage() {

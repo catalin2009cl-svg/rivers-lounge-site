@@ -1,6 +1,8 @@
 import { getSettings, listUploadedImages } from '@/lib/server-data';
 import { SettingsAdminClient } from '@/components/admin/settings-admin-client';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: 'Setări Site | Admin' };
 
 export default async function SetariPage() {
