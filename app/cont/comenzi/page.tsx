@@ -17,6 +17,12 @@ export default async function MyComenziPage() {
 
   const orders = await getOrdersByEmail(user.email);
 
+  // Găsim cel mai recent freeCode dintr-o comandă livrată
+  const pendingFreeCode = orders
+    .filter((o) => o.status === 'livrata' && o.freeCode)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+    ?.freeCode ?? null;
+
   return (
     <SiteLayout>
       <section className="py-10">
@@ -35,7 +41,7 @@ export default async function MyComenziPage() {
               {user.name} · {user.email}
             </p>
           </div>
-          <MyOrdersClient initialOrders={orders} />
+          <MyOrdersClient initialOrders={orders} pendingFreeCode={pendingFreeCode} />
         </div>
       </section>
     </SiteLayout>
