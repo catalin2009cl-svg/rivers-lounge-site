@@ -2,13 +2,15 @@ import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
 
-function getPrismaClient() {
-  if (!process.env.DATABASE_URL) {
-    return null as unknown as PrismaClient
+export function getPrisma(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = new PrismaClient()
   }
-  return new PrismaClient()
+  return globalForPrisma.prisma
 }
 
-export const prisma = globalForPrisma.prisma ?? getPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma ?? undefined
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_, prop) {
+    return getPrisma()[prop as keyof PrismaClient]
+  },
+})
