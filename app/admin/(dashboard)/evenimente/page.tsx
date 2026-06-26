@@ -2,6 +2,8 @@ import { getSpecialEvents } from '@/lib/server-data';
 import { EventsAdminClient } from '@/components/admin/events-admin-client';
 import { getSession } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Admin Evenimente | River's Lounge" };
 
 export default async function AdminEventsPage() {

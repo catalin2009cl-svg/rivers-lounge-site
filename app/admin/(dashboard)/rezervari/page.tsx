@@ -3,6 +3,8 @@ import { ReservationsAdminClient } from '@/components/admin/reservations-admin-c
 import { getSession } from '@/lib/auth';
 import { CalendarCheck } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "Rezervări | Admin River's Lounge" };
 
 export default async function AdminRezervaPage() {

@@ -5,6 +5,8 @@ import { getSession } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = { title: "GDPR & Date | Admin River's Lounge" };
 
 export default async function GdprAdminPage() {
