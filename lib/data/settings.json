@@ -1,0 +1,136 @@
+{
+  "heroImage": "/uploads/1782066874105-ebaplofpfe.jpg",
+  "heroTitle": "Restaurant, Evenimente & Relaxare în Călărași",
+  "heroSubtitle": "",
+  "heroImages": {
+    "acasa": "/uploads/hero/acasa-1782321369838.jpg",
+    "restaurant": "/uploads/hero/restaurant-1782464390725.jpg",
+    "meniu": "",
+    "rezervari": "/uploads/hero/rezervari-1782337483187.jpg",
+    "cabana": "/uploads/1782315894919-my2i4tgoed.jpg",
+    "noutati": "/uploads/hero/noutati-1782321325685.jpg",
+    "contact": "/uploads/hero/contact-1782321223787.jpg",
+    "cabanaFeature": "/uploads/hero/cabanaFeature-1782329934149.jpg",
+    "riversLand": "",
+    "riversMarina": "/uploads/hero/riversMarina-1782334624514.jpg",
+    "riversMarinaFeature": "/uploads/hero/riversMarinaFeature-1782334522006.jpg"
+  },
+  "hours": "Luni – Duminică: 07:30 – 00:00",
+  "phone": "0725635020",
+  "email": "renetrading@yahoo.com",
+  "address": "Str. Dobrogei nr. 1, Călărași, România, 910032",
+  "addressCabana": "",
+  "delivery": {
+    "restaurantLat": 44.1880131,
+    "restaurantLng": 27.3343935,
+    "maxRadiusKm": 25,
+    "gpsTiers": [
+      {
+        "fromKm": 0,
+        "toKm": 5,
+        "fee": 0,
+        "minOrder": 50
+      },
+      {
+        "fromKm": 5,
+        "toKm": 10,
+        "fee": 10,
+        "minOrder": 50
+      },
+      {
+        "fromKm": 10,
+        "toKm": 25,
+        "fee": 15,
+        "minOrder": 100
+      }
+    ]
+  },
+  "branding": {
+    "logoLight": "/uploads/branding/light-1782422816732.png",
+    "logoDark": "/uploads/branding/dark-1782423237883.png",
+    "favicon": "/uploads/branding/favicon-1782426527606.png",
+    "ogImage": "/uploads/branding/og-1782422872589.jpg",
+    "logoWidth": 137,
+    "logoHeight": 44
+  },
+  "dailyMenu": {
+    "enabled": true,
+    "type": "meniu-zilei",
+    "title": "Meniu complet prânz",
+    "subtitle": "",
+    "description": "Ciorbă de văcuță și friptură de porc, salată și desert",
+    "price": 23,
+    "oldPrice": 33,
+    "image": "",
+    "validUntil": "02:00",
+    "showAsBanner": true,
+    "showAsPopup": true,
+    "ctaLabel": "Comandă acum",
+    "ctaUrl": "/comanda/checkout",
+    "schedule": {
+      "enabled": true,
+      "monday": {
+        "type": "meniu-zilei",
+        "title": "",
+        "description": "",
+        "price": 0
+      },
+      "tuesday": {
+        "type": "meniu-zilei",
+        "title": "",
+        "description": "",
+        "price": 0
+      },
+      "wednesday": {
+        "type": "meniu-zilei",
+        "title": "",
+        "description": "",
+        "price": 0
+      },
+      "thursday": {
+        "type": "meniu-zilei",
+        "title": "",
+        "description": "",
+        "price": 0
+      },
+      "friday": {
+        "type": "meniu-zilei",
+        "title": "Meniu complet prânz",
+        "description": "Meniu complet prânz",
+        "price": 439.5
+      },
+      "saturday": {
+        "type": "mic-dejun",
+        "title": "",
+        "description": "",
+        "price": 0
+      },
+      "sunday": {
+        "type": "mic-dejun",
+        "title": "",
+        "description": "",
+        "price": 0
+      }
+    }
+  },
+  "popup": {
+    "enabled": true,
+    "title": "Reducere 20%",
+    "subtitle": "Vrei să te distrezi?",
+    "description": "acesta este un text generat pentru a arata ca exista o promotie de 20% la Riverss land",
+    "type": "announcement",
+    "badgeText": "Reducere la Rives Land",
+    "ctaLabel": "Vezi oferta",
+    "ctaUrl": "https://www.facebook.com/",
+    "ctaSecondaryLabel": "Detalii",
+    "ctaSecondaryUrl": "/contact",
+    "image": "/uploads/1782402104871-t7jb1rraz0k.jpg",
+    "backgroundColor": "#1e0a0a",
+    "accentColor": "#ffffff",
+    "showOnce": true,
+    "showDelay": 0,
+    "showAfterPages": 0,
+    "expiresAt": "2026-06-27T15:42:00.000Z",
+    "createdAt": "2026-06-26T01:41:27.779Z"
+  }
+}

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>River's Lounge — Restaurant, Evenimente &amp; Relaxare în Călărași</title>
+<style>
+:root{--bg:#0e1420;--bg2:#111827;--card:#141822;--border:#2a3050;--sec:#1b2235;--gold:#C9A84C;--gold-h:#b8903d;--gold-fg:#0e1420;--fg:#e8e4d4;--muted:#8b8878;--r:12px;--font-display:Georgia,'Times New Roman',serif;--font-body:'Segoe UI',Arial,sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--fg);min-height:100vh}
+.serif{font-family:var(--font-display)}
+.hidden{display:none!important}
+.container{max-width:1280px;margin:0 auto;padding:0 1rem}
+@media(min-width:640px){.container{padding:0 1.5rem}}
+@media(min-width:1024px){.container{padding:0 2rem}}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.5rem;border-radius:8px;font-weight:500;font-size:.9rem;cursor:pointer;transition:all .2s;border:none;text-decoration:none;font-family:inherit}
+.btn-primary{background:var(--gold);color:var(--gold-fg)}
+.btn-primary:hover{background:var(--gold-h)}
+.btn-outline{background:transparent;color:var(--fg);border:1px solid rgba(201,168,76,.3)}
+.btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.btn-lg{padding:.875rem 2rem;font-size:1rem}
+.btn-sm{padding:.4rem 1rem;font-size:.8rem}
+
+/* Header */
+header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(14,20,32,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center}
+.hdr{display:flex;align-items:center;justify-content:space-between;width:100%}
+.logo{display:flex;align-items:center;gap:.75rem;cursor:pointer;text-decoration:none}
+.logo img{height:40px;width:40px;border-radius:50%;object-fit:cover}
+.logo-txt{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--gold)}
+nav{display:flex;align-items:center;gap:.1rem}
+.nl{padding:.45rem .7rem;border-radius:6px;font-size:.82rem;color:var(--muted);cursor:pointer;transition:color .2s;border:none;background:none;font-family:inherit}
+.nl:hover,.nl.active{color:var(--fg)}
+.nav-r{display:flex;align-items:center;gap:.5rem}
+.ham{display:none;background:none;border:none;cursor:pointer;padding:.5rem;color:var(--fg)}
+@media(max-width:900px){
+  nav{display:none}
+  nav.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:1rem;gap:.25rem;z-index:99}
+  .ham{display:block}
+  .nav-r .btn{font-size:.78rem;padding:.45rem 1rem}
+}
+
+/* Hero */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:64px}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&h=1080&fit=crop') center/cover no-repeat}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(14,20,32,.82) 0%,rgba(14,20,32,.55) 45%,rgba(14,20,32,1) 100%)}
+.hero-c{position:relative;z-index:1;text-align:center;padding:4rem 1rem;max-width:900px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem 1rem;border-radius:9999px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);margin-bottom:2rem;font-size:.82rem;color:var(--gold)}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,6vw,4.5rem);font-weight:700;line-height:1.12;margin-bottom:1.25rem}
+.hero h1 .g{color:var(--gold)}
+.hero p{font-size:1.05rem;color:var(--muted);margin-bottom:2.25rem;max-width:580px;margin-left:auto;margin-right:auto;line-height:1.7}
+.hero-ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;margin-bottom:3.5rem}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;max-width:780px;margin:0 auto}
+@media(min-width:1024px){.feat-grid{grid-template-columns:repeat(4,1fr)}}
+.feat-card{padding:1.4rem;border-radius:var(--r);background:rgba(20,24,34,.65);backdrop-filter:blur(8px);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all .3s}
+.feat-card:hover{border-color:rgba(201,168,76,.5);background:rgba(20,24,34,.92)}
+.feat-icon{width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;margin:0 auto .875rem;font-size:1.4rem;transition:all .3s}
+.feat-card:hover .feat-icon{background:var(--gold)}
+.feat-card h3{font-family:var(--font-display);font-size:.95rem;font-weight:600;margin-bottom:.4rem}
+.feat-card p{font-size:.75rem;color:var(--muted);line-height:1.55}
+.scroll-ind{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%)}
+.scroll-d{width:24px;height:40px;border-radius:9999px;border:2px solid rgba(201,168,76,.3);display:flex;align-items:flex-start;justify-content:center;padding:4px}
+.scroll-d::after{content:'';width:6px;height:12px;border-radius:9999px;background:var(--gold);animation:scrollA 1.6s infinite}
+
+/* Page sections */
+.psec{padding-top:64px;min-height:calc(100vh - 64px)}
+.sec-hdr{text-align:center;padding:3.5rem 1rem 1.75rem}
+.sec-hdr h1,.sec-hdr h2{font-family:var(--font-display);font-size:clamp(1.65rem,4vw,2.5rem);font-weight:700}
+.sec-hdr p{color:var(--muted);margin-top:.6rem;font-size:1rem}
+.gold-line{width:55px;height:3px;background:var(--gold);margin:1rem auto 0;border-radius:2px}
+.sbody{padding:0 0 4rem}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:rgba(201,168,76,.4)}
+
+/* Menu tabs */
+.m-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;padding:.45rem;background:var(--sec);border-radius:10px;width:fit-content}
+.tab-btn{padding:.45rem 1.1rem;border-radius:7px;font-size:.82rem;font-weight:500;cursor:pointer;border:none;transition:all .2s;background:transparent;color:var(--muted);font-family:inherit}
+.tab-btn.active{background:var(--card);color:var(--fg);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pills{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.5rem;min-height:2rem}
+.pill{padding:.28rem .8rem;border-radius:9999px;font-size:.76rem;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;font-family:inherit}
+.pill.active{background:var(--gold);color:var(--gold-fg);border-color:var(--gold)}
+.pill:hover:not(.active){border-color:rgba(201,168,76,.45);color:var(--fg)}
+.m-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:1.4rem}
+@media(min-width:580px){.m-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.m-grid{grid-template-columns:repeat(3,1fr)}}
+.m-card{display:flex;flex-direction:column}
+.m-img{position:relative;aspect-ratio:4/3;overflow:hidden}
+.m-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.m-card:hover .m-img img{transform:scale(1.06)}
+.pop-badge{position:absolute;top:.7rem;left:.7rem;background:var(--gold);color:var(--gold-fg);padding:.18rem .55rem;border-radius:9999px;font-size:.68rem;font-weight:700}
+.m-body{padding:.9rem;flex:1;display:flex;flex-direction:column}
+.m-meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.45rem;gap:.5rem}
+.m-name{font-family:var(--font-display);font-weight:600;font-size:.95rem;line-height:1.3}
+.m-price{color:var(--gold);font-weight:700;font-size:.9rem;white-space:nowrap;text-align:right;flex-shrink:0}
+.m-unit{display:block;font-size:.67rem;color:var(--muted);font-weight:400}
+.m-desc{font-size:.77rem;color:var(--muted);line-height:1.55;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Restaurant info */
+.ig2{display:grid;gap:1.75rem;padding:1.5rem 0}
+@media(min-width:768px){.ig2{grid-template-columns:1fr 1fr}}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
+.ic h3{font-family:var(--font-display);font-size:1.2rem;margin-bottom:1rem}
+.ir{display:flex;gap:.7rem;margin-bottom:.8rem;align-items:flex-start}
+.ii{font-size:1rem;margin-top:.1rem;min-width:1.4rem}
+.ilbl{font-size:.72rem;color:var(--muted)}
+.ival{font-size:.88rem}
+.rest-hero{width:100%;height:280px;object-fit:cover;border-radius:var(--r);margin-bottom:1.75rem}
+@media(min-width:768px){.rest-hero{height:380px}}
+.fac-grid{display:grid;gap:1.25rem;margin-top:2rem}
+@media(min-width:640px){.fac-grid{grid-template-columns:repeat(2,1fr)}}
+.fac-card{border-radius:var(--r);overflow:hidden;position:relative;min-height:260px;cursor:pointer}
+.fac-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s;position:absolute;inset:0}
+.fac-card:hover img{transform:scale(1.08)}
+.fac-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,20,32,.95) 0%,rgba(14,20,32,.25) 60%)}
+.fac-txt{position:absolute;bottom:0;left:0;right:0;padding:1.4rem}
+.fac-txt h3{font-family:var(--font-display);font-size:1rem;font-weight:600}
+.fac-txt p{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+.hl-row{margin-top:.65rem;display:flex;flex-wrap:wrap;gap:.35rem}
+.hl{font-size:.67rem;padding:.18rem .48rem;border-radius:4px;background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+
+/* Testimonials */
+.test-sec{background:var(--sec);padding:3.5rem 0;margin-top:3rem}
+.t-grid{display:grid;gap:1.25rem;margin-top:1.75rem}
+@media(min-width:640px){.t-grid{grid-template-columns:repeat(2,1fr)}}
+.t-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem}
+.stars{color:var(--gold);font-size:.95rem;margin-bottom:.65rem}
+.t-txt{font-size:.86rem;color:var(--muted);line-height:1.7;margin-bottom:.875rem;font-style:italic}
+.t-name{font-weight:600;font-size:.88rem}
+
+/* Rezervari */
+.rez-lay{display:grid;gap:2rem;padding:1.5rem 0 4rem}
+@media(min-width:1024px){.rez-lay{grid-template-columns:2fr 1fr}}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem}
+.fc h2{font-family:var(--font-display);font-size:1.4rem;margin-bottom:1.4rem}
+.fg{margin-bottom:1.15rem}
+.fg label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:.35rem}
+.fg input,.fg select,.fg textarea{width:100%;padding:.58rem .8rem;border-radius:8px;background:var(--sec);border:1px solid var(--border);color:var(--fg);font-size:.87rem;font-family:inherit;outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg select option{background:var(--bg2)}
+.fg textarea{min-height:90px;resize:vertical}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.wi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1rem}
+.wi h3{font-family:var(--font-display);font-size:1rem;margin-bottom:.875rem}
+.wa-btn{display:flex;align-items:center;gap:.75rem;padding:1rem;background:#25D366;border-radius:8px;color:#fff;text-decoration:none;font-weight:500;transition:opacity .2s;margin-bottom:.875rem;font-size:.9rem}
+.wa-btn:hover{opacity:.88}
+.dz-row{display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:.45rem}
+
+/* Cabana */
+.cab-hero{width:100%;height:320px;object-fit:cover;border-radius:var(--r);margin-bottom:1.75rem}
+@media(min-width:768px){.cab-hero{height:400px}}
+.pkg-grid{display:grid;gap:1.25rem}
+@media(min-width:640px){.pkg-grid{grid-template-columns:repeat(2,1fr)}}
+.pkg{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem}
+.pkg h3{font-family:var(--font-display);font-size:1.1rem;margin-bottom:.35rem}
+.pkg-price{color:var(--gold);font-weight:700;font-size:1.05rem}
+.pkg-dur{font-size:.76rem;color:var(--muted);margin-bottom:.875rem}
+.pkg p{font-size:.83rem;color:var(--muted);margin-bottom:.875rem;line-height:1.6}
+.pkg ul{list-style:none;margin-bottom:1rem}
+.pkg ul li{font-size:.8rem;color:var(--muted);display:flex;gap:.45rem;margin-bottom:.35rem}
+.pkg ul li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0}
+.feat-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin:1.75rem 0}
+.fi{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem}
+.fi .lbl{font-size:.7rem;color:var(--muted)}
+.fi .val{font-size:.86rem;font-weight:500;margin-top:.12rem}
+
+/* Noutati */
+.n-grid{display:grid;gap:1.4rem;padding:1.5rem 0 4rem}
+@media(min-width:640px){.n-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.n-grid{grid-template-columns:repeat(3,1fr)}}
+.n-card{display:flex;flex-direction:column}
+.n-img{aspect-ratio:3/2;overflow:hidden}
+.n-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.n-card:hover .n-img img{transform:scale(1.05)}
+.n-body{padding:1.15rem;flex:1}
+.n-cat{font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:.45rem}
+.n-body h3{font-family:var(--font-display);font-size:1rem;margin-bottom:.45rem}
+.n-body p{font-size:.8rem;color:var(--muted);line-height:1.6}
+.n-date{font-size:.72rem;color:var(--muted);margin-top:.65rem}
+
+/* Contact */
+.ct-grid{display:grid;gap:2rem;padding:1.5rem 0 4rem}
+@media(min-width:1024px){.ct-grid{grid-template-columns:1fr 1fr}}
+.ct-info h2{font-family:var(--font-display);font-size:1.65rem;margin-bottom:1.4rem}
+.ct-item{display:flex;gap:.875rem;margin-bottom:1.4rem}
+.ct-icon{width:42px;height:42px;border-radius:50%;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ct-item h4{font-size:.78rem;color:var(--muted);margin-bottom:.2rem}
+.ct-item p,.ct-item a{font-size:.9rem;color:var(--fg);text-decoration:none}
+.ct-item a:hover{color:var(--gold)}
+.map-ph{width:100%;height:280px;border-radius:var(--r);background:var(--sec);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:.87rem;gap:.5rem}
+
+/* Footer */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:3rem 0 1.5rem;margin-top:0}
+.f-grid{display:grid;gap:2rem;margin-bottom:2rem}
+@media(min-width:768px){.f-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
+.f-brand p{font-size:.82rem;color:var(--muted);margin-top:.7rem;line-height:1.65;max-width:270px}
+.fc4 h4{font-family:var(--font-display);font-size:.9rem;font-weight:600;margin-bottom:.875rem}
+.fc4 ul{list-style:none}
+.fc4 ul li{margin-bottom:.55rem}
+.fc4 ul li a,.fc4 ul li span{font-size:.82rem;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s}
+.fc4 ul li a:hover,.fc4 ul li span:hover{color:var(--gold)}
+.f-bot{border-top:1px solid var(--border);padding-top:1.4rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:.75rem}
+.f-bot p{font-size:.76rem;color:var(--muted)}
+
+/* Animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes scrollA{0%{transform:translateY(0);opacity:1}100%{transform:translateY(16px);opacity:0}}
+
+/* No results */
+.nores{text-align:center;padding:4rem 1rem;color:var(--muted);grid-column:1/-1}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container hdr">
+    <a class="logo" onclick="nav('home')">
+      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/36_1_20141025181046-0NyolBbtkmR3zQWNbOyOfHFatl3Aq6.jpg" alt="River's Lounge">
+      <span class="logo-txt">River's Lounge</span>
+    </a>
+    <button class="ham" onclick="toggleNav()" aria-label="Meniu">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <nav id="mn">
+      <button class="nl active" data-p="home" onclick="nav('home')">Acasă</button>
+      <button class="nl" data-p="restaurant" onclick="nav('restaurant')">Restaurant</button>
+      <button class="nl" data-p="meniu" onclick="nav('meniu')">Meniu</button>
+      <button class="nl" data-p="rezervari" onclick="nav('rezervari')">Rezervări</button>
+      <button class="nl" data-p="cabana" onclick="nav('cabana')">Cabana Rivers</button>
+      <button class="nl" data-p="noutati" onclick="nav('noutati')">Noutăți</button>
+      <button class="nl" data-p="contact" onclick="nav('contact')">Contact</button>
+    </nav>
+    <div class="nav-r">
+      <button class="btn btn-primary" onclick="nav('rezervari')">Rezervă acum</button>
+    </div>
+  </div>
+</header>
+
+<!-- HOME -->
+<section id="s-home" class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ov"></div>
+  <div class="hero-c">
+    <div class="badge"><span class="badge-dot"></span>Bine ați venit la River's Lounge</div>
+    <h1>Restaurant, Evenimente<br><span class="g">&amp; Relaxare</span> în Călărași</h1>
+    <p>Bucurați-vă de o experiență culinară deosebită, evenimente memorabile și relaxare în natură — totul sub un singur acoperiș.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary btn-lg" onclick="nav('meniu')">🛍️ Vezi Meniul</button>
+      <button class="btn btn-outline btn-lg" onclick="nav('rezervari')">📅 Rezervă Masă</button>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card" onclick="nav('restaurant')">
+        <div class="feat-icon">🍽️</div>
+        <h3>Restaurant</h3>
+        <p>Bucătărie tradițională și internațională într-un ambient elegant</p>
+      </div>
+      <div class="feat-card" onclick="nav('meniu')">
+        <div class="feat-icon">🛍️</div>
+        <h3>Comandă Acum</h3>
+        <p>Comandă mâncare delicioasă direct la ușa ta</p>
+      </div>
+      <div class="feat-card" onclick="nav('rezervari')">
+        <div class="feat-icon">📅</div>
+        <h3>Evenimente Private</h3>
+        <p>Organizăm evenimentul tău perfect, de la A la Z</p>
+      </div>
+      <div class="feat-card" onclick="nav('cabana')">
+        <div class="feat-icon">🌲</div>
+        <h3>Cabana Rivers</h3>
+        <p>Evenimente speciale și petreceri private în natură</p>
+      </div>
+      <div class="feat-card" onclick="nav('rivers-land')">
+        <div class="feat-icon">✨</div>
+        <h3>River's Land</h3>
+        <p>Loc de joacă și distracție pentru cei mici</p>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-ind"><div class="scroll-d"></div></div>
+</section>
+
+<!-- RESTAURANT -->
+<section id="s-restaurant" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Restaurant River's Lounge</h1>
+    <p>Bucătărie rafinată, atmosferă caldă și servicii de excepție în inima Călărașiului</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container sbody">
+    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&h=600&fit=crop" alt="Restaurant interior" class="rest-hero">
+    <div class="ig2">
+      <div class="ic">
+        <h3>Informații de Contact</h3>
+        <div class="ir"><span class="ii">📍</span><div><div class="ilbl">Adresă</div><div class="ival">Strada Principală nr. 123, Călărași, România</div></div></div>
+        <div class="ir"><span class="ii">📞</span><div><div class="ilbl">Telefon</div><div class="ival"><a href="tel:0734642449" style="color:var(--gold)">0734 642 449</a></div></div></div>
+        <div class="ir"><span class="ii">✉️</span><div><div class="ilbl">Email</div><div class="ival">contact@riverslounge.ro</div></div></div>
+        <div class="ir"><span class="ii">🕐</span><div><div class="ilbl">Program</div><div class="ival">Luni – Duminică: 07:30 – 00:00</div></div></div>
+      </div>
+      <div class="ic">
+        <h3>Ce Oferim</h3>
+        <div class="hl-row" style="margin-top:0">
+          <span class="hl">Terasă cu vedere la râu</span><span class="hl">Bar premium</span>
+          <span class="hl">Meniu zilei</span><span class="hl">Rezervări online</span>
+          <span class="hl">Nunți &amp; Botezuri</span><span class="hl">Corporate Events</span>
+          <span class="hl">Livrare la domiciliu</span><span class="hl">120 locuri</span>
+        </div>
+        <p style="font-size:.86rem;color:var(--muted);margin-top:1rem;line-height:1.75">Restaurant premium cu bucătărie tradițională românească și preparate internaționale, într-un ambient elegant de lounge. Terasă cu vedere la râu, bar cu cocktailuri și vinuri selecționate, spații pentru evenimente private până la 150 persoane.</p>
+        <div style="margin-top:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="nav('meniu')">🍽️ Vezi Meniu</button>
+          <button class="btn btn-outline" onclick="nav('rezervari')">📅 Rezervă</button>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="serif" style="font-size:1.4rem;margin:2.5rem 0 1.25rem">Facilitățile Noastre</h2>
+    <div class="fac-grid">
+      <div class="fac-card"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop" alt="Restaurant"><div class="fac-ov"></div><div class="fac-txt"><h3>Restaurant</h3><p>Bucătărie rafinată și atmosferă caldă</p><div class="hl-row"><span class="hl">120 locuri</span><span class="hl">Terasă</span></div></div></div>
+      <div class="fac-card"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=600&fit=crop" alt="Comandă Acum"><div class="fac-ov"></div><div class="fac-txt"><h3>Comandă Acum</h3><p>Comandă mâncare delicioasă direct la ușa ta</p><div class="hl-row"><span class="hl">Livrare rapidă</span><span class="hl">Plată la livrare</span></div></div></div>
+      <div class="fac-card"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&h=600&fit=crop" alt="Evenimente"><div class="fac-ov"></div><div class="fac-txt"><h3>Evenimente Private</h3><p>Nunți, botezuri, corporate și petreceri</p><div class="hl-row"><span class="hl">150 persoane</span><span class="hl">DJ &amp; Sonorizare</span></div></div></div>
+      <div class="fac-card"><img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&h=600&fit=crop" alt="Cabana Rivers"><div class="fac-ov"></div><div class="fac-txt"><h3>Cabana Rivers</h3><p>Evenimente și petreceri speciale în natură</p><div class="hl-row"><span class="hl">12 cazare</span><span class="hl">Grătar exterior</span></div></div></div>
+      <div class="fac-card"><img src="https://images.unsplash.com/photo-1575783970733-1aaedde1db74?w=800&h=600&fit=crop" alt="River's Land"><div class="fac-ov"></div><div class="fac-txt"><h3>River's Land</h3><p>Loc de joacă și distracție pentru cei mici</p><div class="hl-row"><span class="hl">Joacă în siguranță</span><span class="hl">Program zilnic</span></div></div></div>
+    </div>
+
+    <div class="test-sec" style="margin:3rem -1rem 0;padding:3rem 1rem">
+      <div class="sec-hdr" style="padding-top:0"><h2>Ce Spun Clienții Noștri</h2><div class="gold-line"></div></div>
+      <div class="container t-grid">
+        <div class="t-card"><div class="stars">★★★★★</div><p class="t-txt">"Am sărbătorit aniversarea aici și totul a fost perfect! Mâncarea delicioasă, atmosfera romantică și personalul foarte atent."</p><div class="t-name">Maria Ionescu</div></div>
+        <div class="t-card"><div class="stars">★★★★★</div><p class="t-txt">"Cel mai bun restaurant din Călărași! Meniul este variat și prețurile sunt corecte pentru calitatea oferită."</p><div class="t-name">Alexandru Popescu</div></div>
+        <div class="t-card"><div class="stars">★★★★★</div><p class="t-txt">"Cabana Rivers este locul perfect pentru un weekend de relaxare. Peisajul este superb și facilitățile sunt excelente."</p><div class="t-name">Elena Dumitrescu</div></div>
+        <div class="t-card"><div class="stars">★★★★☆</div><p class="t-txt">"Am comandat online pentru prima dată și am fost impresionat. Livrare rapidă și mâncarea a ajuns caldă."</p><div class="t-name">Andrei Marinescu</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENIU -->
+<section id="s-meniu" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Meniu River's Lounge</h1>
+    <p>Descoperă preparatele noastre — tradiție românească și rețete internaționale</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container sbody">
+    <div class="m-tabs">
+      <button class="tab-btn active" data-cat="all" onclick="filterCat('all')">Toate</button>
+      <button class="tab-btn" data-cat="food" onclick="filterCat('food')">Mâncare</button>
+      <button class="tab-btn" data-cat="drinks" onclick="filterCat('drinks')">Băuturi</button>
+      <button class="tab-btn" data-cat="desserts" onclick="filterCat('desserts')">Deserturi</button>
+    </div>
+    <div class="pills" id="pills"></div>
+    <div class="m-grid" id="mgrid"></div>
+  </div>
+</section>
+
+<!-- REZERVARI -->
+<section id="s-rezervari" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Rezervări</h1>
+    <p>Rezervă o masă sau un eveniment — vă confirmăm în cel mai scurt timp</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container rez-lay">
+    <div class="fc">
+      <h2>Formular de Rezervare</h2>
+      <form id="rf" onsubmit="submitRez(event)">
+        <div class="fr">
+          <div class="fg"><label>Nume și Prenume *</label><input type="text" id="rn" placeholder="Ex: Ion Popescu" required></div>
+          <div class="fg"><label>Număr de Telefon *</label><input type="tel" id="rp" placeholder="07xx xxx xxx" required></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Data *</label><input type="date" id="rd" required></div>
+          <div class="fg"><label>Ora</label>
+            <select id="rt">
+              <option>11:00</option><option>11:30</option><option>12:00</option><option>12:30</option>
+              <option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option>
+              <option>15:00</option><option>15:30</option><option>16:00</option><option>16:30</option>
+              <option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option>
+              <option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option>
+              <option>21:00</option><option>21:30</option><option>22:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Număr de Persoane *</label>
+            <select id="rg" required>
+              <option value="">Selectează</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option>
+              <option>9</option><option>10</option><option value="10+">Peste 10</option>
+            </select>
+          </div>
+          <div class="fg"><label>Tip Eveniment</label>
+            <select id="rty">
+              <option value="masă">Masă la restaurant</option>
+              <option value="nuntă">Nuntă</option>
+              <option value="botez">Botez</option>
+              <option value="aniversare">Aniversare</option>
+              <option value="corporate">Corporate / Team Building</option>
+              <option value="petrecere privată">Petrecere Privată</option>
+              <option value="cabana Rivers">Cabana Rivers</option>
+              <option value="alt eveniment">Alt eveniment</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Mesaj / Cerințe speciale</label><textarea id="rm" placeholder="Orice detalii suplimentare..."></textarea></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:.875rem">📱 Trimite pe WhatsApp</button>
+      </form>
+    </div>
+    <div>
+      <div class="wi">
+        <h3>Contact Direct</h3>
+        <a href="https://wa.me/40725635020" target="_blank" class="wa-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Chat pe WhatsApp
+        </a>
+        <p style="font-size:.83rem;color:var(--muted);margin-bottom:.5rem">Tel: <a href="tel:0734642449" style="color:var(--gold)">0734 642 449</a></p>
+        <p style="font-size:.83rem;color:var(--muted)">Email: contact@riverslounge.ro</p>
+      </div>
+      <div class="wi">
+        <h3>Program</h3>
+        <div class="dz-row"><span>Luni – Duminică</span><span style="color:var(--gold);font-weight:600">07:30 – 00:00</span></div>
+      </div>
+      <div class="wi">
+        <h3>Zone de Livrare</h3>
+        <div class="dz-row"><span>Călărași</span><span style="color:var(--gold)">min. 50 RON</span></div>
+        <div class="dz-row"><span>Tonea</span><span style="color:var(--gold)">min. 150 RON</span></div>
+        <div class="dz-row"><span>Modelu</span><span style="color:var(--gold)">min. 200 RON</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CABANA -->
+<section id="s-cabana" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Cabana Rivers</h1>
+    <p>Evenimente speciale și petreceri private în natură</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container sbody">
+    <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1600&h=600&fit=crop" alt="Cabana Rivers" class="cab-hero">
+    <div class="ig2">
+      <div>
+        <h2 class="serif" style="font-size:1.6rem;margin-bottom:1rem">Despre Cabana Rivers</h2>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:1.5rem">Cabana destinată evenimentelor speciale și petrecerilor private — weekend-uri de relaxare, team building corporate, petreceri tematice și sărbători în natură. Capacitate de cazare pentru până la 12 persoane, cu spații de eveniment pentru până la 30 de invitați.</p>
+        <div class="feat-list">
+          <div class="fi"><div class="lbl">Capacitate cazare</div><div class="val">până la 12 persoane</div></div>
+          <div class="fi"><div class="lbl">Dormitoare</div><div class="val">3 dormitoare</div></div>
+          <div class="fi"><div class="lbl">Băi</div><div class="val">2 băi complet utilate</div></div>
+          <div class="fi"><div class="lbl">Bucătărie</div><div class="val">complet echipată</div></div>
+          <div class="fi"><div class="lbl">Grătar exterior</div><div class="val">zonă dedicată</div></div>
+          <div class="fi"><div class="lbl">Parcare</div><div class="val">parcare privată</div></div>
+          <div class="fi"><div class="lbl">WiFi</div><div class="val">internet de mare viteză</div></div>
+          <div class="fi"><div class="lbl">Climatizare</div><div class="val">aer condiționat</div></div>
+        </div>
+      </div>
+      <div class="ic" style="align-self:start">
+        <h3>Solicită Ofertă</h3>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.65">Contactează-ne pentru detalii despre disponibilitate, prețuri și pachete personalizate.</p>
+        <a href="https://wa.me/40725635020" target="_blank" class="wa-btn" style="margin-bottom:.875rem">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+        <a href="tel:0734642449" class="btn btn-outline" style="width:100%;justify-content:center">📞 0734 642 449</a>
+      </div>
+    </div>
+
+    <h2 class="serif" style="font-size:1.4rem;margin:2.5rem 0 1.25rem">Pachete Disponibile</h2>
+    <div class="pkg-grid">
+      <div class="pkg">
+        <h3>Weekend Relaxare</h3>
+        <div class="pkg-price">De la 800 RON</div>
+        <div class="pkg-dur">2 nopți</div>
+        <p>Evadare de 2 nopți în natură, ideală pentru familii sau grupuri mici.</p>
+        <ul><li>Cazare 12 persoane</li><li>Grătar inclus</li><li>Lemne de foc</li><li>WiFi &amp; parcare</li></ul>
+        <button class="btn btn-outline" onclick="nav('rezervari')" style="width:100%;justify-content:center">Rezervă acum</button>
+      </div>
+      <div class="pkg">
+        <h3>Petrecere Privată</h3>
+        <div class="pkg-price">De la 1.500 RON</div>
+        <div class="pkg-dur">1 zi / noapte</div>
+        <p>Pachet complet pentru petreceri tematice, aniversări sau seri speciale la cabană.</p>
+        <ul><li>Decor tematic</li><li>Meniu catering</li><li>Sonorizare</li><li>Organizator dedicat</li></ul>
+        <button class="btn btn-outline" onclick="nav('rezervari')" style="width:100%;justify-content:center">Rezervă acum</button>
+      </div>
+      <div class="pkg">
+        <h3>Team Building Corporate</h3>
+        <div class="pkg-price">De la 2.000 RON</div>
+        <div class="pkg-dur">1–2 zile</div>
+        <p>Program complet pentru echipe — activități outdoor, masă și cazare.</p>
+        <ul><li>Activități outdoor</li><li>Mese complete</li><li>Sală de conferințe</li><li>Facilitator</li></ul>
+        <button class="btn btn-outline" onclick="nav('rezervari')" style="width:100%;justify-content:center">Rezervă acum</button>
+      </div>
+      <div class="pkg">
+        <h3>Eveniment Special</h3>
+        <div class="pkg-price">De la 1.200 RON</div>
+        <div class="pkg-dur">Personalizat</div>
+        <p>Pachet personalizat pentru evenimente unice — botezuri, logodne, reuniuni de familie.</p>
+        <ul><li>Planificare dedicată</li><li>Meniu la alegere</li><li>Decor personalizat</li><li>Fotograf recomandat</li></ul>
+        <button class="btn btn-outline" onclick="nav('rezervari')" style="width:100%;justify-content:center">Rezervă acum</button>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;padding:2rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+      <h3 class="serif" style="font-size:1.2rem;margin-bottom:.65rem">Ai o idee specială?</h3>
+      <p style="color:var(--muted);margin-bottom:1.4rem">Contactează-ne pentru un pachet personalizat conform cerințelor tale exacte.</p>
+      <button class="btn btn-primary btn-lg" onclick="nav('rezervari')">📅 Solicită Ofertă</button>
+    </div>
+  </div>
+</section>
+
+<!-- NOUTATI -->
+<section id="s-noutati" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Noutăți &amp; Evenimente</h1>
+    <p>Rămâi la curent cu cele mai recente știri, promoții și evenimente</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container n-grid">
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=600&h=400&fit=crop" alt="Jazz" loading="lazy"></div><div class="n-body"><div class="n-cat">Eveniment</div><h3>Seară de Jazz Live</h3><p>Bucurați-vă de muzică jazz live în fiecare vineri seara, începând cu ora 20:00.</p><div class="n-date">15 Februarie 2024</div></div></div>
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop" alt="Meniu" loading="lazy"></div><div class="n-body"><div class="n-cat">Meniu Zilei</div><h3>Specialități Românești</h3><p>Astăzi vă propunem ciorbă de văcuță și sarmale în foi de viță, cu mămăliguță.</p><div class="n-date">10 Februarie 2024</div></div></div>
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop" alt="Promoție" loading="lazy"></div><div class="n-body"><div class="n-cat">Promoție</div><h3>20% Reducere la Evenimente Private</h3><p>Rezervă evenimentul tău înainte de 1 martie și beneficiezi de 20% reducere la meniu.</p><div class="n-date">8 Februarie 2024</div></div></div>
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop" alt="Terasă" loading="lazy"></div><div class="n-body"><div class="n-cat">Eveniment</div><h3>Deschidere Terasă de Vară</h3><p>Vă așteptăm pe terasa noastră renovată, cu vedere la râu și ambient relaxant.</p><div class="n-date">5 Februarie 2024</div></div></div>
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&h=400&fit=crop" alt="Happy Hour" loading="lazy"></div><div class="n-body"><div class="n-cat">Promoție</div><h3>Happy Hour — Cocktails</h3><p>În fiecare joi, între 18:00-20:00, toate cocktailurile la jumătate de preț.</p><div class="n-date">1 Februarie 2024</div></div></div>
+    <div class="card n-card"><div class="n-img"><img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&h=400&fit=crop" alt="Curs Gătit" loading="lazy"></div><div class="n-body"><div class="n-cat">Eveniment</div><h3>Curs de Gătit pentru Copii</h3><p>Ateliere interactive pentru copii în fiecare sâmbătă dimineața.</p><div class="n-date">28 Ianuarie 2024</div></div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="s-contact" class="psec hidden">
+  <div class="sec-hdr">
+    <h1>Contact</h1>
+    <p>Suntem aici să vă ajutăm — contactați-ne oricând</p>
+    <div class="gold-line"></div>
+  </div>
+  <div class="container ct-grid">
+    <div class="ct-info">
+      <h2>Luați Legătura cu Noi</h2>
+      <div class="ct-item"><div class="ct-icon">📍</div><div><h4>Adresă</h4><p>Strada Principală nr. 123<br>Călărași, România</p></div></div>
+      <div class="ct-item"><div class="ct-icon">📞</div><div><h4>Telefon</h4><a href="tel:0734642449">0734 642 449</a></div></div>
+      <div class="ct-item"><div class="ct-icon">✉️</div><div><h4>Email</h4><a href="mailto:contact@riverslounge.ro">contact@riverslounge.ro</a></div></div>
+      <div class="ct-item"><div class="ct-icon">🕐</div><div><h4>Program</h4><p>Luni – Duminică: 07:30 – 00:00</p></div></div>
+      <div class="ct-item"><div class="ct-icon">💬</div><div><h4>WhatsApp</h4><a href="https://wa.me/40725635020" target="_blank" style="color:var(--gold)">+40 725 635 020</a></div></div>
+      <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <a href="https://wa.me/40725635020" target="_blank" class="btn btn-primary">💬 WhatsApp</a>
+        <a href="tel:0734642449" class="btn btn-outline">📞 Sună acum</a>
+      </div>
+    </div>
+    <div>
+      <div class="map-ph">
+        <span style="font-size:2.5rem">📍</span>
+        <span>Strada Principală nr. 123, Călărași</span>
+        <a href="https://www.google.com/maps/search/Călărași+România" target="_blank" class="btn btn-outline btn-sm" style="margin-top:.5rem">Deschide în Google Maps</a>
+      </div>
+      <div class="fc" style="margin-top:1.5rem">
+        <h2 style="font-size:1.2rem;margin-bottom:1.2rem">Trimite un Mesaj</h2>
+        <form onsubmit="submitCt(event)">
+          <div class="fg"><label>Nume</label><input type="text" id="cn" placeholder="Numele tău" required></div>
+          <div class="fg"><label>Email sau Telefon</label><input type="text" id="cc" placeholder="contact@email.ro sau 07xx..." required></div>
+          <div class="fg"><label>Mesaj</label><textarea id="cm" placeholder="Cum te putem ajuta?" required></textarea></div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">📱 Trimite pe WhatsApp</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="f-grid">
+      <div class="f-brand">
+        <div class="logo" style="cursor:default;pointer-events:none">
+          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/36_1_20141025181046-0NyolBbtkmR3zQWNbOyOfHFatl3Aq6.jpg" alt="Logo" style="height:36px;width:36px">
+          <span class="logo-txt">River's Lounge</span>
+        </div>
+        <p>Restaurant, evenimente și relaxare în inima Călărașiului. O experiență culinară de neuitat, într-un ambient elegant.</p>
+      </div>
+      <div class="fc4">
+        <h4>Navigare</h4>
+        <ul>
+          <li><span onclick="nav('home')">Acasă</span></li>
+          <li><span onclick="nav('restaurant')">Restaurant</span></li>
+          <li><span onclick="nav('meniu')">Meniu</span></li>
+          <li><span onclick="nav('rezervari')">Rezervări</span></li>
+          <li><span onclick="nav('cabana')">Cabana Rivers</span></li>
+          <li><span onclick="nav('noutati')">Noutăți</span></li>
+          <li><span onclick="nav('contact')">Contact</span></li>
+        </ul>
+      </div>
+      <div class="fc4">
+        <h4>Servicii</h4>
+        <ul>
+          <li><span>Restaurant &amp; Terasă</span></li>
+          <li><span>Livrare la Domiciliu</span></li>
+          <li><span>Evenimente Private</span></li>
+          <li><span>Nunți &amp; Botezuri</span></li>
+          <li><span>Team Building</span></li>
+          <li><span>Cabana Rivers</span></li>
+        </ul>
+      </div>
+      <div class="fc4">
+        <h4>Contact</h4>
+        <ul>
+          <li><span>📍 Str. Principală nr. 123</span></li>
+          <li><a href="tel:0734642449">📞 0734 642 449</a></li>
+          <li><a href="mailto:contact@riverslounge.ro">✉️ contact@riverslounge.ro</a></li>
+          <li><span>🕐 Luni – Duminică: 07:30 – 00:00</span></li>
+          <li><a href="https://wa.me/40725635020" target="_blank">💬 WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bot">
+      <p>© 2024 River's Lounge. Toate drepturile rezervate.</p>
+      <p>Realizat cu ♥ în Călărași</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===== MENU DATA — 85 items =====
+const MENU=[
+{id:"1",name:"Tirokafteri - Brânză Iute Grecească",desc:"Ardei roșu-150g, ardei verde-50g, brânză dulce-130g, fulgi peperoncino, focaccia 170g",price:32,unit:"porție",cat:"food",sub:"bruschete",img:"/uploads/1782120007565-jorrcaibj1a.jpg",pop:false},
+{id:"2",name:"Platou Icre",desc:"Icre crap 120g, pâinea casei 100g, ceapă-20g, măsline-20g, castravete-20g, salată verde, lămâie",price:28,unit:"porție",cat:"food",sub:"bruschete",img:"https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&h=300&fit=crop",pop:false},
+{id:"3",name:"Mix Bruschete",desc:"Roșii 150g, busuioc, ceapă roșie, ulei măsline 50g, pâine 100g, ton 50g, mozzarela 50g",price:21,unit:"350g",cat:"food",sub:"bruschete",img:"https://images.unsplash.com/photo-1572441713132-c542759943b2?w=400&h=300&fit=crop",pop:false},
+{id:"4",name:"Salata Caesar",desc:"Salată iceberg-70g, piept de pui-150g, dressing caesar-50g, roșii cherry-70g, parmezan-30g, crutoane-50g, crispy pancetta-50g",price:39,unit:"470g",cat:"food",sub:"salate",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",pop:false},
+{id:"5",name:"Salata River's Lounge",desc:"Prosciutto crudo-70g, brânză de oaie-70g, salată mix-70g, vinegretă-50ml, nuci-50g, roșii cherry-70g",price:38,unit:"310g",cat:"food",sub:"salate",img:"https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop",pop:true},
+{id:"6",name:"Salata Fresh",desc:"Cașcaval afumat-30g, roșii-70g, castraveți-60g, ardei kapia-35g, măsline-20g, ulei de măsline, pătrunjel, lămâie",price:34,unit:"porție",cat:"food",sub:"salate",img:"https://images.unsplash.com/photo-1543826173-1beeb97525d8?w=400&h=300&fit=crop",pop:false},
+{id:"7",name:"Zuppa di Pesce",desc:"Creveți-100g, midii-100g, bulion-50g, morcov-50g, pește alb-30g, ierburi provinciale, lămâie",price:46,unit:"380g",cat:"food",sub:"supe",img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",pop:false},
+{id:"8",name:"Mexicana",desc:"Ceapă-30g, morcovi-30g, usturoi-20g, fasole roșie-60g, porumb-30g, sos de roșii-110g, oregano, boia, chilli",price:30,unit:"porție",cat:"food",sub:"supe",img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",pop:false},
+{id:"9",name:"Supă cremă broccoli-bacon",desc:"Broccoli 200g, bacon 50g, smântână de gătit 50ml, ceapă 30g, piper negru, ulei de măsline, unt, parmezan 30g",price:27,unit:"360g",cat:"food",sub:"supe",img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&h=300&fit=crop",pop:false},
+{id:"10",name:"Coaste americane",desc:"Coaste de porc-400g, inele de ceapă-50g, cartofi wedges-100g, sos BBQ-30g, salată coleslaw-50g",price:56,unit:"630g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop",pop:true},
+{id:"11",name:"Ceafă Grill",desc:"Ceafă de porc 270g, cartofi fresh smashed 150g, muștar 50g, sos BBQ 50g, salată de murături asortată 100g, sare grunjoasă 20g",price:56,unit:"640g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop",pop:false},
+{id:"12",name:"Adana Dish",desc:"Pâine balon-280g, carne de vită-240g, carne de oaie, sos de usturoi-50ml, roșie, lămâie, pătrunjel",price:52,unit:"625g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=300&fit=crop",pop:false},
+{id:"13",name:"Porqueta",desc:"Cartofi noi cu rozmarin-150g, carne de porc-250g, sparanghel-50g, smântână pentru gătit-20g, muștar boabe",price:51,unit:"470g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop",pop:false},
+{id:"14",name:"Tigaie picantă vită",desc:"Carne de vită-150g, carne de porc-150g, ardei verde-40g, ardei kapia 40g, sos picant-30ml, ceapă-30g, orez basmati 130g",price:50,unit:"570g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=300&fit=crop",pop:false},
+{id:"15",name:"Tigaie picantă pui",desc:"Carne pui 150g, ardei verde 40g, ardei kapia 40g, sos picant/sweet chilli 30ml, ceapă 30g, orez basmati 130g",price:46,unit:"570g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=300&fit=crop",pop:false},
+{id:"16",name:"Burger Rivers Lounge",desc:"Chiflă-80g, chiftea vită-170g, salată-10g, roșii-5g, ceapă-5g, bacon-10g, sos relish-10g, cartofi wedges-150g, ou, brânză cheddar 10g",price:45,unit:"450g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",pop:false},
+{id:"17",name:"Pui Milanese",desc:"Piept de pui-200g, pesmet panko-20g, spaghetti arrabiata-200g",price:45,unit:"420g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=300&fit=crop",pop:false},
+{id:"18",name:"Pui gorgonzola cu cartofi prăjiți",desc:"Piept de pui 200g, cartofi prăjiți 150g, sos gorgonzola 100ml",price:44,unit:"450g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=300&fit=crop",pop:false},
+{id:"19",name:"Mititei tradiționali",desc:"4 mici 296g, cartofi prăjiți 150g, sos muștar 50g",price:43,unit:"496g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=300&fit=crop",pop:false},
+{id:"20",name:"Aripioare picante",desc:"Aripioare de pui-300g, salată coleslaw-50g, sos aioli-50g, cartofi wedges-100g",price:38,unit:"400g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=400&h=300&fit=crop",pop:false},
+{id:"21",name:"Burger de Pui Panko",desc:"Piept de pui-170g, cartofi wedges-150g, chiflă-80g, pancetta-40g, brânză cheddar-10g, muștar, sos de maioneză-10g, pesmet panko-15g",price:38,unit:"390g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",pop:false},
+{id:"22",name:"Meniu Crispy",desc:"Piept de pui 200g, salată coleslaw 30g, cartofi prăjiți 150g, sos maioneză cu usturoi 50g",price:37,unit:"430g",cat:"food",sub:"fel-principal",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&h=300&fit=crop",pop:false},
+{id:"23",name:"Pizza River's Lounge",desc:"Blat 280g, mozzarella Fior Di Latte 150g, piept de pui 100g, cașcaval afumat 50g, ciuperci 100g, broccoli 50g, usturoi",price:39,unit:"730g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:true},
+{id:"24",name:"Pizza Casei",desc:"Blat 280g, mozzarella Fior Di Latte 150g, prosciutto cotto 50g, salam 50g, ciuperci champignon 70g, măsline 50g, ardei kapia 20g",price:38,unit:"770g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:false},
+{id:"25",name:"Pizza Capricioasa",desc:"Blat 280g, mozzarella Fior Di Latte 150g, prosciutto cotto 50g, mix măsline 50g, ciuperci 100g, suc din roșii Torrente 100ml",price:37,unit:"730g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:false},
+{id:"26",name:"Pizza Quattro Formaggi",desc:"Blat 280g, mozzarella Fior Di Latte 150g, gorgonzola 50g, brânză dură 50g, cașcaval afumat 50g",price:37,unit:"580g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:false},
+{id:"27",name:"Pizza Diavola",desc:"Blat 280g, mozzarella Fior Di Latte 150g, salam picant 100g, suc din roșii Torrente 100ml, ardei iute 30g",price:36,unit:"660g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:false},
+{id:"28",name:"Pizza Margherita",desc:"Blat 280g, mozzarella Fior Di Latte 200g, suc din roșii Torrente 100ml, busuioc",price:31,unit:"580g",cat:"food",sub:"pizza",img:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",pop:false},
+{id:"29",name:"Spaghetti fructe de mare în sos roșu",desc:"Spaghete-150g, mix fructe de mare-150g, suc de roșii-40g, busuioc, usturoi, creveți Black Tiger-30g",price:49,unit:"porție",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"30",name:"Tagliatelle creveți",desc:"Tagliatelle 150g, creveți decorticați 120g, usturoi, roșii cherry 40g, vin alb, sos de roșii-50g, busuioc, ulei măsline",price:48,unit:"360g",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"31",name:"Tagliatelle Primavera",desc:"Tagliatelle-150g, roșii deshidratate-70g, smântână de gătit-70g, parmezan-50g, spanac-50g, piept de pui-50g, usturoi, unt",price:40,unit:"porție",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"32",name:"Penne siciliene la cuptor",desc:"Penne 170g, piept de pui 100g, bacon 50g, usturoi, sos de roșii 50ml, smântână de gătit 50g, mozzarella 50g",price:40,unit:"470g",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"33",name:"Penne carbonara",desc:"Penne-150g, bacon-100g, smântână de gătit-50g, ou-25g, parmezan-25g",price:39,unit:"350g",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"34",name:"Penne quattro-formaggi",desc:"Penne 170g, brânză dură 40g, cașcaval afumat 40g, gorgonzola 40g, mozzarella 50g",price:37,unit:"340g",cat:"food",sub:"paste",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",pop:false},
+{id:"35",name:"Mix fructe de mare",desc:"Calamari tub 130g, tentacul calamar 50g, creveți decorticați 80g, creveți Black Tiger 100g, midii 60g, sos de roșii 50g, usturoi, pătrunjel, lămâie",price:76,unit:"640g",cat:"food",sub:"fructe-de-mare",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=400&h=300&fit=crop",pop:true},
+{id:"36",name:"Saramură de pește",desc:"Crap 250g, ardei kapia 25g, ardei verde 20g, usturoi, sos de roșii 30g, ardei iute 20g, leuștean 20g, mămăligă 100g",price:58,unit:"465g",cat:"food",sub:"fructe-de-mare",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=400&h=300&fit=crop",pop:false},
+{id:"37",name:"Crap la grătar cu legume",desc:"Crap 250g, ardei 50g, dovlecei 50g, ciuperci 50g, lămâie 30g",price:54,unit:"430g",cat:"food",sub:"fructe-de-mare",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=400&h=300&fit=crop",pop:false},
+{id:"38",name:"Creveți Pil-Pil",desc:"Creveți decorticați 200g, ulei de măsline 100ml, usturoi 50g, boia dulce, pătrunjel, pâinea casei 140g",price:50,unit:"490g",cat:"food",sub:"fructe-de-mare",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=400&h=300&fit=crop",pop:false},
+{id:"39",name:"Misto Fritto",desc:"Dovlecel 100g, calamar pane 100g, pești mici 100g, midii pane 100g, lămâie 60g, sos alioli 50g",price:47,unit:"510g",cat:"food",sub:"fructe-de-mare",img:"https://images.unsplash.com/photo-1565680018093-ebb6b9ab5460?w=400&h=300&fit=crop",pop:false},
+{id:"40",name:"Platou icre",desc:"Icre crap 120g, pâinea casei 100g, ceapă 20g, măsline 20g, castraveți 20g, salată verde, lămâie",price:28,unit:"280g",cat:"food",sub:"platouri",img:"https://images.unsplash.com/photo-1541014741259-de529411b96a?w=400&h=300&fit=crop",pop:false},
+{id:"41",name:"Focaccia cu parmezan",desc:"Focaccia cu parmezan",price:16,unit:"250g",cat:"food",sub:"focaccia-paine",img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop",pop:false},
+{id:"42",name:"Focaccia cu usturoi",desc:"Focaccia cu usturoi",price:15,unit:"250g",cat:"food",sub:"focaccia-paine",img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop",pop:false},
+{id:"43",name:"Focaccia simplă",desc:"Focaccia simplă",price:14,unit:"250g",cat:"food",sub:"focaccia-paine",img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop",pop:false},
+{id:"44",name:"Pâinea Casei pe Vatră",desc:"Pâinea casei pe vatră",price:9,unit:"60g",cat:"food",sub:"focaccia-paine",img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=300&fit=crop",pop:false},
+{id:"45",name:"Orez basmati cu ciuperci",desc:"Orez basmati 70g, ceapă 25g, ciuperci 40g, morcov 25g, ulei floarea soarelui",price:15,unit:"165g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=300&fit=crop",pop:false},
+{id:"46",name:"Cartofi Noi cu Usturoi și Rozmarin",desc:"Cartofi congelați, ulei, sare",price:14,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&h=300&fit=crop",pop:false},
+{id:"47",name:"Salată de murături",desc:"Gogoșar, castraveți — mix murături",price:13,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",pop:false},
+{id:"48",name:"Salată de roșii și castraveți",desc:"Roșii 75g, castraveți 75g",price:13,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",pop:false},
+{id:"49",name:"Cartofi deepers",desc:"Cartofi congelați, ulei, sare",price:12,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&h=300&fit=crop",pop:false},
+{id:"50",name:"Salată coleslaw",desc:"Salată de varză, morcov, maioneză",price:11,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",pop:false},
+{id:"51",name:"Cartofi prăjiți",desc:"Cartofi congelați, ulei, sare",price:10,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&h=300&fit=crop",pop:false},
+{id:"52",name:"Salată de varză",desc:"Salată de varză, morcov, ulei, oțet",price:9,unit:"150g",cat:"food",sub:"garnituri",img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",pop:false},
+{id:"53",name:"Sos Maioneză",desc:"Ulei vegetal, gălbenuș de ou, oțet, muștar",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"54",name:"Sos Burger",desc:"Apă, ulei de rapiță, zahăr, concentrat de roșii, amidon modificat, sare, muștar, praf de ou",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"55",name:"Sos de roșii dulce",desc:"Roșii, busuioc",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"56",name:"Sos de roșii picant",desc:"Roșii, busuioc, fulgi peperoncino",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"57",name:"Ketchup dulce",desc:"Ketchup dulce",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"58",name:"Ketchup picant",desc:"Ketchup picant",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"59",name:"Sos Aioli",desc:"Maioneză, usturoi, lămâie, pătrunjel",price:5,unit:"100g",cat:"food",sub:"sosuri",img:"https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400&h=300&fit=crop",pop:false},
+{id:"60",name:"Papanași cu dulceată",desc:"Făină 50g, ou 50g, brânză 50g, smântână 30g, dulceată de afine 100g",price:23,unit:"280g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",pop:true},
+{id:"61",name:"Papanași cu ciocolată",desc:"Făină 50g, ou 50g, brânză 50g, smântână 100g, cremă nutella 100g",price:22,unit:"350g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",pop:false},
+{id:"62",name:"Crema Casei",desc:"Cremă de zahăr ars, lapte-70ml, ouă-50g, zahăr-30g",price:22,unit:"porție",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",pop:false},
+{id:"63",name:"Portokalopita",desc:"Foi de plăcintă-30g, iaurt-40g, ou-30g, zahăr-20g, ulei, coajă de portocală, suc de portocale-30ml",price:22,unit:"porție",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=400&h=300&fit=crop",pop:false},
+{id:"64",name:"Clătite cu ciocolată",desc:"Lapte 90ml, ou 50g, ciocolată nutella 50g, făină de grâu 30g",price:22,unit:"220g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=400&h=300&fit=crop",pop:false},
+{id:"65",name:"Clătite cu dulceată de fructe",desc:"Lapte 90ml, ou 50g, dulceată de afine 50g, făină de grâu 30g",price:22,unit:"220g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=400&h=300&fit=crop",pop:false},
+{id:"66",name:"Lava cake cu înghețată",desc:"Lapte 50ml, făină 50g, ou 50g, înghețată 30g, ciocolată 30g, unt",price:21,unit:"210g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop",pop:false},
+{id:"67",name:"Panna Cotta",desc:"Frișcă lichidă 125ml, zahăr-20g, esență vanilie-5g, gelatină-2g, dulceată de afine-10g",price:20,unit:"162g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",pop:false},
+{id:"68",name:"Clătită cu cremă de fistic și înghețată",desc:"Clătite 200g, cremă fistic 40g, înghețată 100g, lămâie 10g, fistic măcinat 10g",price:31,unit:"360g",cat:"desserts",sub:"deserturi",img:"https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=400&h=300&fit=crop",pop:false},
+{id:"69",name:"Lipton Ice Tea Lemon",desc:"Doză 0.33",price:11.5,unit:"330ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"70",name:"Lipton Ice Tea Piersici",desc:"Doză 0.33",price:11.5,unit:"330ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"71",name:"Prigat Căpșuni Banane",desc:"Ciob 0.25",price:11.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"72",name:"Prigat Piersică",desc:"Ciob 0.25",price:11.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"73",name:"Prigat Portocale",desc:"Ciob 0.25",price:11.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"74",name:"Prigat Kiwi",desc:"Ciob 0.25",price:11.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"75",name:"Pepsi Cola",desc:"Pepsi Cola 0.25",price:10.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"76",name:"Pepsi Zero Zahăr",desc:"Pepsi Max 0.25",price:10.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"77",name:"Pepsi Twist",desc:"Pepsi Twist 0.25",price:10.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"78",name:"Mirinda Portocale",desc:"Ciob 0.25",price:10.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"79",name:"7UP Zero Zahăr",desc:"Seven Up 0.33",price:10.5,unit:"330ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",pop:false},
+{id:"80",name:"Apă Tonică",desc:"Ciob 0.25",price:10.5,unit:"250ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop",pop:false},
+{id:"81",name:"Apă plată Aqua",desc:"Ciob",price:9,unit:"330ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop",pop:false},
+{id:"82",name:"Apă Minerală Aqua",desc:"Ciob",price:9,unit:"330ml",cat:"drinks",sub:"bauturi",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop",pop:false},
+{id:"83",name:"Special Burger",desc:"Chiflă burger 80g, carne burger vită 340g, crispy pancetta 30g, salată 10g, brânză cheddar 30g, roșie 10g, castraveți murați 25g, cartofi wedges cu usturoi și parmezan 150g, sos burger 50g",price:71,unit:"825g",cat:"food",sub:"specialitati",img:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",pop:true},
+{id:"84",name:"Ceafă Grill — Specialitate",desc:"Ceafă de porc 270g, cartofi fresh smashed 150g, muștar 50g, sos barbeque 50ml, salată de murături asortată 100g, sare grunjoasă 20g",price:56,unit:"640g",cat:"food",sub:"specialitati",img:"https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop",pop:false},
+{id:"85",name:"Steak Sandwich",desc:"Ceafă de porc-270g, ceapă-50g, smântână de gătit-50ml, oțet balsamic-10ml, salată iceberg-50g, parmezan, cartofi deepers-150g, cheddar",price:49,unit:"porție",cat:"food",sub:"specialitati",img:"https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop",pop:false}
+];
+
+// ===== SUBCATEGORIES =====
+const SUBCATS={
+  all:[
+    {v:"specialitati",l:"Specialități"},{v:"bruschete",l:"Bruschete"},{v:"salate",l:"Salate"},
+    {v:"supe",l:"Supe"},{v:"fel-principal",l:"Fel Principal"},{v:"pizza",l:"Pizza"},
+    {v:"paste",l:"Paste"},{v:"fructe-de-mare",l:"Fructe de Mare"},{v:"platouri",l:"Platouri Reci"},
+    {v:"focaccia-paine",l:"Focaccia & Pâine"},{v:"garnituri",l:"Garnituri"},{v:"sosuri",l:"Sosuri"},
+    {v:"deserturi",l:"Deserturi"},{v:"bauturi",l:"Băuturi"}
+  ],
+  food:[
+    {v:"specialitati",l:"Specialități"},{v:"bruschete",l:"Bruschete"},{v:"salate",l:"Salate"},
+    {v:"supe",l:"Supe"},{v:"fel-principal",l:"Fel Principal"},{v:"pizza",l:"Pizza"},
+    {v:"paste",l:"Paste"},{v:"fructe-de-mare",l:"Fructe de Mare"},{v:"platouri",l:"Platouri Reci"},
+    {v:"focaccia-paine",l:"Focaccia & Pâine"},{v:"garnituri",l:"Garnituri"},{v:"sosuri",l:"Sosuri"}
+  ]
+};
+
+// ===== STATE =====
+let aCat="all", aSub="all";
+
+// ===== NAVIGATION =====
+const PAGES=["home","restaurant","meniu","rezervari","cabana","noutati","contact"];
+function nav(p){
+  // hide all
+  document.getElementById("s-home").classList.add("hidden");
+  PAGES.forEach(x=>{ const el=document.getElementById("s-"+x); if(el) el.classList.add("hidden"); });
+  // show target
+  const t=document.getElementById("s-"+p);
+  if(t) t.classList.remove("hidden");
+  // update nav links
+  document.querySelectorAll(".nl").forEach(b=>b.classList.toggle("active",b.dataset.p===p));
+  // close mobile nav
+  document.getElementById("mn").classList.remove("open");
+  window.scrollTo(0,0);
+  // init menu
+  if(p==="meniu"){ aCat="all"; aSub="all"; renderPills(); renderMenu(); resetTabs(); }
+}
+function toggleNav(){ document.getElementById("mn").classList.toggle("open"); }
+
+// ===== MENU =====
+function filterCat(c){
+  aCat=c; aSub="all";
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.cat===c));
+  renderPills(); renderMenu();
+}
+function filterSub(s){
+  aSub=s;
+  document.querySelectorAll(".pill").forEach(p=>p.classList.toggle("active",p.dataset.s===s));
+  renderMenu();
+}
+function resetTabs(){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.cat==="all"));
+}
+function renderPills(){
+  const subs=SUBCATS[aCat]||[];
+  const c=document.getElementById("pills");
+  if(!subs.length){ c.innerHTML=""; return; }
+  c.innerHTML='<button class="pill active" data-s="all" onclick="filterSub(\'all\')">Toate</button>'
+    +subs.map(s=>`<button class="pill" data-s="${s.v}" onclick="filterSub('${s.v}')">${s.l}</button>`).join("");
+}
+function renderMenu(){
+  const g=document.getElementById("mgrid");
+  const items=MENU.filter(m=>(aCat==="all"||m.cat===aCat)&&(aSub==="all"||m.sub===aSub));
+  if(!items.length){ g.innerHTML='<div class="nores"><p>Nu au fost găsite produse în această categorie.</p></div>'; return; }
+  const FB="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop";
+  g.innerHTML=items.map(m=>`<div class="card m-card">
+    <div class="m-img">
+      <img src="${esc(m.img)}" alt="${esc(m.name)}" loading="lazy" onerror="this.src='${FB}'">
+      ${m.pop?'<span class="pop-badge">Popular</span>':""}
+    </div>
+    <div class="m-body">
+      <div class="m-meta">
+        <div class="m-name">${esc(m.name)}</div>
+        <div class="m-price">${m.price} RON<span class="m-unit">/ ${esc(m.unit)}</span></div>
+      </div>
+      <p class="m-desc">${esc(m.desc)}</p>
+    </div>
+  </div>`).join("");
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ===== FORMS =====
+function submitRez(e){
+  e.preventDefault();
+  const n=document.getElementById("rn").value,p=document.getElementById("rp").value,
+    d=document.getElementById("rd").value,t=document.getElementById("rt").value,
+    g=document.getElementById("rg").value,ty=document.getElementById("rty").value,
+    m=document.getElementById("rm").value;
+  const txt=`Bună ziua! Doresc o rezervare:\n👤 Nume: ${n}\n📞 Telefon: ${p}\n📅 Data: ${d} ora ${t}\n👥 Persoane: ${g}\n🎉 Tip: ${ty}`+(m?`\n💬 ${m}`:"");
+  window.open("https://wa.me/40725635020?text="+encodeURIComponent(txt),"_blank");
+}
+function submitCt(e){
+  e.preventDefault();
+  const n=document.getElementById("cn").value,c=document.getElementById("cc").value,m=document.getElementById("cm").value;
+  window.open("https://wa.me/40725635020?text="+encodeURIComponent(`Bună ziua!\n👤 ${n}\n📧 ${c}\n\n${m}`),"_blank");
+}
+
+// ===== INIT =====
+(function(){
+  const d=document.getElementById("rd");
+  if(d) d.min=new Date().toISOString().split("T")[0];
+  renderPills();
+  renderMenu();
+})();
+</script>
+</body>
+</html>

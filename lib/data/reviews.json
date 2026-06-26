@@ -1,0 +1,44 @@
+{
+  "reviews": [
+    {
+      "id": "1",
+      "name": "Maria Ionescu",
+      "rating": 5,
+      "text": "Am sărbătorit aniversarea aici și totul a fost perfect! Mâncarea delicioasă, atmosfera romantică și personalul foarte atent.",
+      "date": "ianuarie 2024",
+      "source": "google",
+      "approved": true,
+      "featured": true
+    },
+    {
+      "id": "2",
+      "name": "Alexandru Popescu",
+      "rating": 5,
+      "text": "Cel mai bun restaurant din Călărași! Meniul este variat și prețurile sunt corecte pentru calitatea oferită.",
+      "date": "ianuarie 2024",
+      "source": "google",
+      "approved": true,
+      "featured": true
+    },
+    {
+      "id": "3",
+      "name": "Elena Dumitrescu",
+      "rating": 5,
+      "text": "Cabana Rivers este locul perfect pentru un weekend de relaxare. Peisajul este superb și facilitățile sunt excelente.",
+      "date": "ianuarie 2024",
+      "source": "google",
+      "approved": true,
+      "featured": true
+    },
+    {
+      "id": "4",
+      "name": "Andrei Marinescu",
+      "rating": 4,
+      "text": "Am comandat online pentru prima dată și am fost impresionat. Livrare rapidă și mâncarea a ajuns caldă.",
+      "date": "decembrie 2023",
+      "source": "google",
+      "approved": true,
+      "featured": true
+    }
+  ]
+}

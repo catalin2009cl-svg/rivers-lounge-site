@@ -1,0 +1,26 @@
+{
+  "events": [
+    {
+      "title": "Ziua lui Andrei",
+      "date": "2026-07-24",
+      "time": "21:00",
+      "description": "Ziua lui Andrei va fi sarbatorita in 2026 la River's",
+      "image": "/uploads/1782061452761-d6z3ar94bgc.jpg",
+      "ctaLabel": "Rezervă locul",
+      "ctaUrl": "/rezervari",
+      "location": "Cabana Rivers",
+      "id": "mqo1doyio1gx78k2tx"
+    },
+    {
+      "title": "Deschidere River' Marina",
+      "date": "2026-09-25",
+      "time": "20:00",
+      "description": "Urmează să deschidem cel mai tare loc de party uri din Călărași",
+      "image": "/uploads/1782404129964-wswkrao34ia.jpg",
+      "ctaLabel": "Rezervă locul",
+      "ctaUrl": "/rezervari",
+      "location": "Cabana Rivers",
+      "id": "mqsh0vt19aovyj6yhqr"
+    }
+  ]
+}

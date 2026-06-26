@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": "USR-1782415221152-IHS",
+      "createdAt": "2026-06-25T19:20:21.152Z",
+      "lastLoginAt": "2026-06-26T00:34:31.364Z",
+      "name": "Catalin Cojocaru",
+      "email": "catalin@calarasipress.ro",
+      "phone": "07777777777",
+      "passwordHash": "0b42868adbab58638aeff6d27f8b81ce:92eb06a46920972851cf3feabb9051ada3aa69148f416e85ff0560085cfc42b37d22995788d35c47779a5c6cf1a97692600767a16f1b65eedd247d1a194bf113",
+      "isActive": true,
+      "role": "client",
+      "totalOrders": 11,
+      "totalSpent": 3573,
+      "adminNote": "",
+      "lastOrderAt": "2026-06-26T02:39:48.994Z",
+      "lastActivityAt": "2026-06-26T02:03:40.244Z",
+      "isVerified": true,
+      "avatar": "/uploads/avatars/USR-1782415221152-IHS-1782433616824.jpg",
+      "birthday": "06-26",
+      "verifiedAt": "2026-06-26T18:05:47.153Z",
+      "verifiedBy": "Administrator"
+    }
+  ]
+}
