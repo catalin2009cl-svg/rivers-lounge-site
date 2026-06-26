@@ -8,6 +8,8 @@ import { CookieBanner } from '@/components/cookies/cookie-banner'
 import { getSettings } from '@/lib/server-data'
 import './globals.css'
 
+export const dynamic = 'force-dynamic'
+
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
   variable: '--font-playfair',
