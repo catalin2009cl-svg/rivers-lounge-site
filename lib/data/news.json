@@ -1,0 +1,70 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "Seară de Jazz Live",
+      "slug": "seara-de-jazz-live",
+      "date": "2024-02-15",
+      "image": "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=600&h=400&fit=crop",
+      "excerpt": "Bucurați-vă de muzică jazz live în fiecare vineri seara, începând cu ora 20:00.",
+      "content": "Bucurați-vă de muzică jazz live în fiecare vineri seara, începând cu ora 20:00.\n\nRestaurantul nostru se transformă în fiecare vineri seara într-un spațiu vibrant de muzică și bună dispoziție. Artiștii noștri invitați vor interpreta cele mai cunoscute melodii jazz, creând o atmosferă de neuitat.\n\nRezervarrile sunt recomandate pentru a vă asigura locul dumneavoastră preferat.",
+      "category": "events",
+      "status": "published"
+    },
+    {
+      "id": "2",
+      "title": "Meniul Zilei - Specialități Românești",
+      "slug": "meniul-zilei-specialitati-romanesti",
+      "date": "2024-02-10",
+      "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop",
+      "excerpt": "Astăzi vă propunem ciorbă de văcuță și sarmale în foi de viță, cu mămăliguță.",
+      "content": "Astăzi vă propunem ciorbă de văcuță și sarmale în foi de viță, cu mămăliguță.\n\nBucătarul nostru șef a pregătit specialități tradiționale românești cu ingrediente proaspete, selectate cu grijă de la producători locali. O masă caldă și savuroasă vă așteaptă în fiecare zi.",
+      "category": "daily-menu",
+      "status": "published"
+    },
+    {
+      "id": "3",
+      "title": "20% Reducere la Evenimente Private",
+      "slug": "reducere-evenimente-private",
+      "date": "2024-02-08",
+      "image": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop",
+      "excerpt": "Rezervă evenimentul tău înainte de 1 martie și beneficiezi de 20% reducere la meniu.",
+      "content": "Rezervă evenimentul tău înainte de 1 martie și beneficiezi de 20% reducere la meniu.\n\nOferta este valabilă pentru nunți, botezuri, aniversări și orice alt eveniment privat organizat la River's Lounge sau Cabana Rivers. Nu rata această oportunitate de a organiza evenimentul perfect la un preț special.",
+      "category": "promotions",
+      "status": "published"
+    },
+    {
+      "id": "4",
+      "title": "Deschidere Terasă de Vară",
+      "slug": "deschidere-terasa-vara",
+      "date": "2024-02-05",
+      "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
+      "excerpt": "Vă așteptăm pe terasa noastră renovată, cu vedere la râu și ambient relaxant.",
+      "content": "Vă așteptăm pe terasa noastră renovată, cu vedere la râu și ambient relaxant.\n\nTerasa noastră a fost complet renovată și modernizată pentru sezonul estival. Cu o capacitate de 60 de locuri și o priveliște splendidă asupra râului, este locul ideal pentru mese în aer liber.",
+      "category": "events",
+      "status": "published"
+    },
+    {
+      "id": "5",
+      "title": "Happy Hour - Cocktails",
+      "slug": "happy-hour-cocktails",
+      "date": "2024-02-01",
+      "image": "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&h=400&fit=crop",
+      "excerpt": "În fiecare joi, între 18:00-20:00, toate cocktailurile la jumătate de preț.",
+      "content": "În fiecare joi, între 18:00-20:00, toate cocktailurile la jumătate de preț.\n\nBarmanii noștri vă vor pregăti cele mai delicioase cocktailuri clasice și speciale ale casei. Profitați de oferta Happy Hour și petreceți o seară memorabilă alături de prieteni.",
+      "category": "promotions",
+      "status": "published"
+    },
+    {
+      "id": "6",
+      "title": "Curs de Gătit pentru Copii",
+      "slug": "curs-gatit-copii",
+      "date": "2024-01-28",
+      "image": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&h=400&fit=crop",
+      "excerpt": "Ateliere interactive pentru copii în fiecare sâmbătă dimineața.",
+      "content": "Ateliere interactive pentru copii în fiecare sâmbătă dimineața.\n\nBucătarul nostru organizează ateliere de gătit special pentru cei mici, unde aceștia pot învăța să prepare rețete simple și delicioase. Vârsta recomandată: 6-14 ani. Locuri limitate — rezervați din timp!",
+      "category": "events",
+      "status": "published"
+    }
+  ]
+}

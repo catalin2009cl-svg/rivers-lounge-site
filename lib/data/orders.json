@@ -1,0 +1,563 @@
+{
+  "orders": [
+    {
+      "id": "ORD-1782439420244-AFW",
+      "createdAt": "2026-06-26T02:03:40.244Z",
+      "updatedAt": "2026-06-26T02:39:48.994Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Prelungirea Mihai Viteazu nr. 4",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "5",
+          "name": "Salata River's Lounge",
+          "price": 38,
+          "quantity": 8,
+          "unit": "310g",
+          "category": "salate"
+        }
+      ],
+      "subtotal": 304,
+      "deliveryFee": 0,
+      "total": 304,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782439307797-WN2",
+      "createdAt": "2026-06-26T02:01:47.797Z",
+      "updatedAt": "2026-06-26T02:02:55.976Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Intrarea Grivița nr. 4",
+      "city": "Călărași",
+      "addressDetails": "Bl. a1",
+      "items": [
+        {
+          "id": "5",
+          "name": "Salata River's Lounge",
+          "price": 38,
+          "quantity": 8,
+          "unit": "310g",
+          "category": "salate"
+        }
+      ],
+      "subtotal": 304,
+      "deliveryFee": 0,
+      "total": 304,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "confirmata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782437334869-GX6",
+      "createdAt": "2026-06-26T01:28:54.869Z",
+      "updatedAt": "2026-06-26T01:29:16.860Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Intrarea Grivița nr. 3",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "5",
+          "name": "Salata River's Lounge",
+          "price": 38,
+          "quantity": 6,
+          "unit": "310g",
+          "category": "salate"
+        }
+      ],
+      "subtotal": 228,
+      "deliveryFee": 0,
+      "total": 228,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782436634681-7HG",
+      "createdAt": "2026-06-26T01:17:14.681Z",
+      "updatedAt": "2026-06-26T01:17:55.334Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Prelungirea Mihai Viteazu nr. 4",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 5,
+          "unit": "porție",
+          "category": "bruschete"
+        }
+      ],
+      "subtotal": 140,
+      "deliveryFee": 0,
+      "total": 140,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782436068916-ZCN",
+      "createdAt": "2026-06-26T01:07:48.916Z",
+      "updatedAt": "2026-06-26T01:09:35.098Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Strada Jiraului nr. 5",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "5",
+          "name": "Salata River's Lounge",
+          "price": 38,
+          "quantity": 10,
+          "unit": "310g",
+          "category": "salate"
+        }
+      ],
+      "subtotal": 380,
+      "deliveryFee": 0,
+      "total": 304,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro",
+      "discountApplied": "BDAY-2B0A",
+      "discountAmount": 76
+    },
+    {
+      "id": "ORD-1782434514218-SQQ",
+      "createdAt": "2026-06-26T00:41:54.218Z",
+      "updatedAt": "2026-06-26T00:42:36.523Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Intrarea Grivița nr. 3",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "3",
+          "name": "Mix Bruschete",
+          "price": 21,
+          "quantity": 1,
+          "unit": "350g",
+          "category": "bruschete"
+        },
+        {
+          "id": "7",
+          "name": "Zuppa di Pesce",
+          "price": 46,
+          "quantity": 8,
+          "unit": "380g",
+          "category": "supe"
+        }
+      ],
+      "subtotal": 389,
+      "deliveryFee": 0,
+      "total": 389,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782434368103-OT5",
+      "createdAt": "2026-06-26T00:39:28.103Z",
+      "updatedAt": "2026-06-26T00:40:16.866Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Aleea Constructorului nr. 4",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "14",
+          "name": "Tigaie picantă vită",
+          "price": 50,
+          "quantity": 3,
+          "unit": "570g",
+          "category": "fel-principal"
+        },
+        {
+          "id": "15",
+          "name": "Tigaie picantă pui",
+          "price": 46,
+          "quantity": 15,
+          "unit": "570g",
+          "category": "fel-principal"
+        }
+      ],
+      "subtotal": 840,
+      "deliveryFee": 0,
+      "total": 840,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782434290849-UL2",
+      "createdAt": "2026-06-26T00:38:10.849Z",
+      "updatedAt": "2026-06-26T00:40:17.600Z",
+      "name": "Catalin Cojocaru",
+      "phone": "07777777777",
+      "address": "Fundătura Cazărmii I nr. 3",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 2,
+          "unit": "porție",
+          "category": "bruschete"
+        },
+        {
+          "id": "3",
+          "name": "Mix Bruschete",
+          "price": 21,
+          "quantity": 8,
+          "unit": "350g",
+          "category": "bruschete"
+        }
+      ],
+      "subtotal": 224,
+      "deliveryFee": 0,
+      "total": 224,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "da da",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782433778190-C45",
+      "createdAt": "2026-06-26T00:29:38.190Z",
+      "updatedAt": "2026-06-26T00:32:17.010Z",
+      "name": "relu relu",
+      "phone": "0734642449",
+      "address": "Fundătura Bujorului nr. 44",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 4,
+          "unit": "porție",
+          "category": "bruschete"
+        }
+      ],
+      "subtotal": 112,
+      "deliveryFee": 0,
+      "total": 112,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": ""
+    },
+    {
+      "id": "ORD-1782423432337-Q9Q",
+      "createdAt": "2026-06-25T21:37:12.337Z",
+      "updatedAt": "2026-06-25T21:39:28.864Z",
+      "name": "Cont Test",
+      "phone": "07777777777",
+      "address": "Aleea Centralei nr. 4",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 1,
+          "unit": "porție",
+          "category": "bruschete"
+        },
+        {
+          "id": "11",
+          "name": "Ceafă Grill",
+          "price": 56,
+          "quantity": 1,
+          "unit": "640g",
+          "category": "fel-principal"
+        },
+        {
+          "id": "10",
+          "name": "Coaste americane",
+          "price": 56,
+          "quantity": 1,
+          "unit": "630g",
+          "category": "fel-principal"
+        },
+        {
+          "id": "12",
+          "name": "Adana Dish",
+          "price": 52,
+          "quantity": 1,
+          "unit": "625g",
+          "category": "fel-principal"
+        },
+        {
+          "id": "8",
+          "name": "Mexicana",
+          "price": 30,
+          "quantity": 4,
+          "unit": "porție",
+          "category": "supe"
+        },
+        {
+          "id": "3",
+          "name": "Mix Bruschete",
+          "price": 21,
+          "quantity": 1,
+          "unit": "350g",
+          "category": "bruschete"
+        }
+      ],
+      "subtotal": 333,
+      "deliveryFee": 0,
+      "total": 333,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userId": "USR-1782415221152-IHS",
+      "userEmail": "catalin@calarasipress.ro"
+    },
+    {
+      "id": "ORD-1782406592013-VQY",
+      "createdAt": "2026-06-25T16:56:32.013Z",
+      "updatedAt": "2026-06-25T17:21:54.500Z",
+      "name": "Utilizator șters",
+      "phone": "***",
+      "address": "***",
+      "city": "Călărași",
+      "addressDetails": "Calarasi",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 1,
+          "unit": "porție",
+          "category": "bruschete"
+        },
+        {
+          "id": "3",
+          "name": "Mix Bruschete",
+          "price": 21,
+          "quantity": 1,
+          "unit": "350g",
+          "category": "bruschete"
+        },
+        {
+          "id": "1",
+          "name": "Tirokafteri - Brânză Iute Grecească",
+          "price": 32,
+          "quantity": 1,
+          "unit": "porție",
+          "category": "bruschete"
+        },
+        {
+          "id": "4",
+          "name": "Salata Caesar",
+          "price": 39,
+          "quantity": 1,
+          "unit": "470g",
+          "category": "salate"
+        },
+        {
+          "id": "5",
+          "name": "Salata River's Lounge",
+          "price": 38,
+          "quantity": 1,
+          "unit": "310g",
+          "category": "salate"
+        },
+        {
+          "id": "6",
+          "name": "Salata fresh",
+          "price": 34,
+          "quantity": 1,
+          "unit": "porție",
+          "category": "salate"
+        },
+        {
+          "id": "9",
+          "name": "Supă cremă broccoli-bacon",
+          "price": 27,
+          "quantity": 1,
+          "unit": "360g",
+          "category": "supe"
+        },
+        {
+          "id": "8",
+          "name": "Mexicana",
+          "price": 30,
+          "quantity": 1,
+          "unit": "porție",
+          "category": "supe"
+        }
+      ],
+      "subtotal": 249,
+      "deliveryFee": 0,
+      "total": 249,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "userEmail": "deleted@riverslounge.ro"
+    },
+    {
+      "id": "ORD-1782343035083-LNZ",
+      "createdAt": "2026-06-24T23:17:15.083Z",
+      "updatedAt": "2026-06-25T15:15:15.319Z",
+      "name": "4444444444444",
+      "phone": "0724816615",
+      "address": "",
+      "city": "",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "6",
+          "name": "Salata fresh",
+          "price": 34,
+          "quantity": 5,
+          "unit": "porție"
+        }
+      ],
+      "subtotal": 170,
+      "deliveryFee": 0,
+      "total": 170,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "ridicare",
+      "status": "livrata",
+      "observation": "",
+      "notes": "",
+      "processedBy": [
+        {
+          "operatorId": "OPR-1782400192743-S5O",
+          "operatorName": "operator",
+          "action": "livrata",
+          "timestamp": "2026-06-25T15:15:15.319Z"
+        }
+      ]
+    },
+    {
+      "id": "ORD-1782342748917-7VM",
+      "createdAt": "2026-06-24T23:12:28.917Z",
+      "updatedAt": "2026-06-24T23:19:04.707Z",
+      "name": "catalin",
+      "phone": "0734642449",
+      "address": "Libertatii 10 calarasi",
+      "city": "Călărași",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 4,
+          "unit": "porție"
+        }
+      ],
+      "subtotal": 112,
+      "deliveryFee": 0,
+      "total": 112,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "",
+      "notes": ""
+    },
+    {
+      "id": "ORD-1782340469502-8NU",
+      "createdAt": "2026-06-24T22:34:29.502Z",
+      "updatedAt": "2026-06-24T23:06:13.522Z",
+      "name": "catalin",
+      "phone": "0734642449",
+      "address": "Bd 1 Mai 43",
+      "city": "GPS (1.8km)",
+      "addressDetails": "",
+      "items": [
+        {
+          "id": "2",
+          "name": "Platou Icre",
+          "price": 28,
+          "quantity": 1,
+          "unit": "porție"
+        },
+        {
+          "id": "1",
+          "name": "Tirokafteri - Brânză Iute Grecească",
+          "price": 32,
+          "quantity": 1,
+          "unit": "porție"
+        }
+      ],
+      "subtotal": 60,
+      "deliveryFee": 0,
+      "total": 60,
+      "paymentMethod": "cash",
+      "paymentStatus": "pending",
+      "orderType": "livrare",
+      "status": "livrata",
+      "observation": "4444",
+      "notes": ""
+    }
+  ]
+}

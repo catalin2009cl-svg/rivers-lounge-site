@@ -1,0 +1,57 @@
+{
+  "operators": [
+    {
+      "id": "OPR-1782396394075-QXU",
+      "createdAt": "2026-06-25T14:06:34.075Z",
+      "name": "tase",
+      "username": "tase1",
+      "passwordHash": "4829b94fbf936957cad3080926a5af9b20700f8c2462b994b9202a0a32660905",
+      "pin": "1234",
+      "role": "manager",
+      "isActive": true,
+      "totalOrdersProcessed": 0,
+      "totalReservationsProcessed": 0,
+      "lastLoginAt": "2026-06-25T15:57:34.911Z",
+      "lastActivityAt": "",
+      "loginHistory": [
+        {
+          "loginAt": "2026-06-25T15:57:34.911Z"
+        },
+        {
+          "loginAt": "2026-06-25T15:55:06.468Z"
+        },
+        {
+          "loginAt": "2026-06-25T15:08:48.356Z"
+        }
+      ],
+      "activityLog": []
+    },
+    {
+      "id": "OPR-1782400192743-S5O",
+      "createdAt": "2026-06-25T15:09:52.743Z",
+      "name": "operator",
+      "username": "operator",
+      "passwordHash": "06e55b633481f7bb072957eabcf110c972e86691c3cfedabe088024bffe42f23",
+      "role": "operator",
+      "isActive": true,
+      "totalOrdersProcessed": 1,
+      "totalReservationsProcessed": 0,
+      "lastLoginAt": "2026-06-25T15:13:42.757Z",
+      "lastActivityAt": "2026-06-25T15:15:15.330Z",
+      "loginHistory": [
+        {
+          "loginAt": "2026-06-25T15:13:42.757Z"
+        }
+      ],
+      "activityLog": [
+        {
+          "action": "livrata",
+          "targetId": "ORD-1782343035083-LNZ",
+          "targetType": "order",
+          "details": "Comandă ORD-1782343035083-LNZ → livrata",
+          "timestamp": "2026-06-25T15:15:15.330Z"
+        }
+      ]
+    }
+  ]
+}

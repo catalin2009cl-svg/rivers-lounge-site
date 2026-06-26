@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\" -Recurse -Exclude node_modules,.next,.git | Where-Object { $_.PSIsContainer -eq $false } | Select-Object -ExpandProperty FullName | Sort-Object)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Csv -NoTypeInformation)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\components\\\\ui\\\\\" | Where-Object { $_.Name -match \"dialog|switch|select\" } | Select-Object Name)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\app\\\\admin\\\\\\(dashboard\\)\\\\meniu\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\app\\\\admin\\\\\\(dashboard\\)\\\\noutati\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\app\\\\admin\\\\\\(dashboard\\)\\\\evenimente\")",
+      "PowerShell(Remove-Item \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\middleware.ts\" -Confirm:$false)",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\app\\\\admin\" -Recurse -File | ForEach-Object { $_.FullName.Replace\\(\"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\\\\\", \"\"\\) })",
+      "Bash(npx tsc *)",
+      "PowerShell(\"Cache cleared\")",
+      "PowerShell(cd \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\"; $json = Get-Content \"lib\\\\data\\\\menu.json\" -Raw | ConvertFrom-Json; Write-Output \"Total items: $\\($json.items.Count\\)\"; $featured = $json.items | Where-Object { $_.popular -eq $true }; Write-Output \"Featured items \\($\\($featured.Count\\)\\):\"; $featured | ForEach-Object { \"  - $\\($_.name\\)\" })",
+      "PowerShell(cd \"c:\\\\Users\\\\catal\\\\Desktop\\\\Rivers Lounge site\"; $json = Get-Content \"lib\\\\data\\\\menu.json\" -Raw | ConvertFrom-Json; $json.items | Group-Object category | Select-Object Name, Count)"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "requests": [
+    {
+      "id": "GDPR-1782426745144-S5AD",
+      "receivedAt": "2026-06-25T22:32:25.144Z",
+      "deadline": "2026-07-25T22:32:25.144Z",
+      "requesterEmail": "catalincojocaru@yahoo.com",
+      "requesterName": "catalin",
+      "type": "delete",
+      "status": "completed",
+      "notes": "da",
+      "relatedUserId": "USR-1782396516485-STL",
+      "processedAt": "2026-06-25T22:32:34.419Z"
+    },
+    {
+      "id": "GDPR-1782426982470-2GMG",
+      "receivedAt": "2026-06-25T22:36:22.470Z",
+      "deadline": "2026-06-25T22:36:22.470Z",
+      "requesterEmail": "catalincojocaru@yahoo.com",
+      "requesterName": "Procesare admin",
+      "type": "delete",
+      "status": "completed",
+      "processedAt": "2026-06-25T22:36:22.470Z",
+      "notes": "Cont și date personale șterse de administrator. Comenzile și rezervările au fost anonimizate (retenție fiscală 5 ani).",
+      "relatedUserId": "USR-1782396516485-STL"
+    }
+  ]
+}

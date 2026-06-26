@@ -1,0 +1,52 @@
+{
+  "reservations": [
+    {
+      "id": "1782416128370-oaliz",
+      "createdAt": "2026-06-25T19:35:28.370Z",
+      "updatedAt": "2026-06-26T09:01:06.219Z",
+      "status": "acceptata",
+      "observation": "",
+      "name": "Cont Test",
+      "phone": "0727725230",
+      "email": "catalin@calarasipress.ro",
+      "date": "2026-06-26",
+      "time": "04:44",
+      "guests": 4,
+      "location": "Restaurant",
+      "eventType": "",
+      "notes": "444444"
+    },
+    {
+      "id": "1782399548495-lepa5",
+      "createdAt": "2026-06-25T14:59:08.495Z",
+      "updatedAt": "2026-06-26T09:02:42.144Z",
+      "status": "acceptata",
+      "observation": "",
+      "name": "Catalin",
+      "phone": "0734642449",
+      "email": "presa@calarasipress.ro",
+      "date": "2026-07-04",
+      "time": "04:04",
+      "guests": 6,
+      "location": "Cabana Rivers",
+      "eventType": "Aniversare",
+      "notes": "fac o nunta mare"
+    },
+    {
+      "id": "1782397332225-piww2",
+      "createdAt": "2026-06-25T14:22:12.225Z",
+      "updatedAt": "2026-06-25T18:04:53.896Z",
+      "status": "acceptata",
+      "observation": "",
+      "name": "4444444",
+      "phone": "0733333333",
+      "email": "catalin@test.ro",
+      "date": "2026-06-27",
+      "time": "22:22",
+      "guests": 53444,
+      "location": "Restaurant",
+      "eventType": "",
+      "notes": "test"
+    }
+  ]
+}

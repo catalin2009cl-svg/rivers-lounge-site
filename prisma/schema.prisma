@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String    @id
+  email               String    @unique
+  name                String
+  phone               String?
+  passwordHash        String
+  clientCode          String?   @unique
+  avatar              String?
+  birthday            String?
+  isActive            Boolean   @default(true)
+  isVerified          Boolean   @default(false)
+  verifiedAt          DateTime?
+  verifiedBy          String?
+  totalOrders         Int       @default(0)
+  totalSpent          Float     @default(0)
+  lastActivityAt      DateTime?
+  lastLoginAt         DateTime?
+  lastOrderAt         DateTime?
+  adminNote           String?
+  retentionNotifiedAt DateTime?
+  role                String    @default("client")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  orders       Order[]
+  reservations Reservation[]
+}
+
+model Order {
+  id              String   @id
+  userId          String?
+  userEmail       String?
+  name            String   @default("")
+  phone           String   @default("")
+  orderType       String
+  status          String   @default("noua")
+  paymentMethod   String
+  paymentStatus   String   @default("pending")
+  items           Json
+  subtotal        Float
+  deliveryFee     Float    @default(0)
+  discountAmount  Float    @default(0)
+  discountCode    String?
+  total           Float
+  address         String?
+  addressDetails  String?
+  city            String?
+  notes           String?
+  observation     String?
+  userLat         Float?
+  userLng         Float?
+  freeCode        String?
+  discountApplied String?
+  processedBy     Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Reservation {
+  id            String   @id
+  userId        String?
+  name          String   @default("")
+  email         String   @default("")
+  phone         String   @default("")
+  location      String
+  date          String
+  time          String
+  guests        Int
+  eventType     String?
+  notes         String?
+  status        String   @default("noua")
+  observation   String?
+  adminNote     String?
+  notifications Json     @default("[]")
+  processedBy   Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  name      String
+  rating    Int
+  text      String
+  date      String?
+  source    String   @default("manual")
+  approved  Boolean  @default(false)
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model GdprRequest {
+  id              String    @id
+  receivedAt      DateTime
+  deadline        DateTime?
+  requesterEmail  String
+  requesterName   String
+  type            String
+  status          String    @default("pending")
+  notes           String?
+  processedAt     DateTime?
+  relatedUserId   String?
+  createdAt       DateTime  @default(now())
+}
+
+model LoyaltyProfile {
+  id                        String    @id @default(cuid())
+  userId                    String    @unique
+  totalCompletedOrders      Int       @default(0)
+  completedOrdersCurrentMonth Int     @default(0)
+  currentTier               String?
+  walletBalance             Float     @default(0)
+  firstCompletedOrderAt     DateTime?
+  lastCompletedOrderAt      DateTime?
+  referralCode              String?   @unique
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  rewardGrants       RewardGrant[]
+  walletTransactions WalletTransaction[]
+}
+
+model RewardGrant {
+  id               String    @id @default(cuid())
+  loyaltyProfileId String
+  campaignId       String
+  rewardType       String
+  code             String?   @unique
+  discountPercent  Float?
+  maxOrderValue    Float?
+  maxDiscount      Float?
+  freeProductId    String?
+  walletCredit     Float?
+  issuedAt         DateTime  @default(now())
+  expiresAt        DateTime?
+  usedAt           DateTime?
+  usedOnOrderId    String?
+  status           String    @default("active")
+  triggerOrderId   String?
+  uniqueRewardKey  String    @unique
+  createdAt        DateTime  @default(now())
+
+  loyaltyProfile LoyaltyProfile @relation(fields: [loyaltyProfileId], references: [id])
+}
+
+model WalletTransaction {
+  id               String    @id @default(cuid())
+  loyaltyProfileId String
+  type             String
+  amount           Float
+  orderId          String?
+  description      String?
+  expiresAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  loyaltyProfile LoyaltyProfile @relation(fields: [loyaltyProfileId], references: [id])
+}
+
+model CampaignSettings {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  isActive  Boolean  @default(true)
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
