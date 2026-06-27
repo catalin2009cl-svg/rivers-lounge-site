@@ -307,6 +307,12 @@ export interface BrandingConfig {
   logoHeight: number;
 }
 
+export interface MaintenanceModeConfig {
+  enabled: boolean;
+  title: string;
+  message: string;
+}
+
 export interface SiteSettings {
   heroImage: string;
   heroTitle: string;
@@ -321,6 +327,7 @@ export interface SiteSettings {
   popup?: PopupConfig;
   branding?: BrandingConfig;
   dailyMenu?: DailyMenuConfig;
+  maintenanceMode?: MaintenanceModeConfig;
 }
 
 const DEFAULT_HERO_IMAGES: HeroImages = {

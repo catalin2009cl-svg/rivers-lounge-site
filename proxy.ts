@@ -32,18 +32,66 @@ function parseSession(
   }
 }
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect admin routes; login and access-denied pages are exempt
-  if (!pathname.startsWith('/admin') || pathname.startsWith('/admin/login') || pathname.startsWith('/admin/access-denied')) {
+  // Skip static asset files (images, fonts, etc. served from public/)
+  if (pathname.includes('.') && !pathname.startsWith('/admin')) {
+    return NextResponse.next();
+  }
+
+  // ── Maintenance mode check (public routes only) ─────────────────────────
+  if (
+    !pathname.startsWith('/admin') &&
+    !pathname.startsWith('/mentenanta') &&
+    pathname !== '/mentenanta'
+  ) {
+    const secret = process.env.ADMIN_SESSION_SECRET;
+    const sessionCookie = request.cookies.get('admin_session');
+    const hasAdminSession =
+      secret && sessionCookie?.value
+        ? parseSession(sessionCookie.value, secret) !== null
+        : false;
+
+    // Only check maintenance if the visitor has no valid admin session
+    if (!hasAdminSession) {
+      try {
+        const origin = request.nextUrl.origin;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(`${origin}/api/maintenance`, {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = (await res.json()) as { enabled: boolean };
+          if (data.enabled) {
+            return NextResponse.redirect(new URL('/mentenanta', request.url));
+          }
+        }
+      } catch {
+        // Fail open — if the check fails, let the request through
+      }
+    }
+  }
+
+  // ── Admin auth check ────────────────────────────────────────────────────
+  if (!pathname.startsWith('/admin')) {
+    return NextResponse.next();
+  }
+
+  // Login and access-denied pages are exempt from auth
+  if (
+    pathname.startsWith('/admin/login') ||
+    pathname.startsWith('/admin/access-denied')
+  ) {
     return NextResponse.next();
   }
 
   const secret = process.env.ADMIN_SESSION_SECRET;
   const sessionCookie = request.cookies.get('admin_session');
 
-  // Not authenticated → redirect to login
   if (!secret || !sessionCookie?.value) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
@@ -68,5 +116,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/((?!_next|api|favicon\\.ico).*)'],
 };
