@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Soup,
   Star,
+  Wrench,
 } from 'lucide-react';
 import { logoutAction } from '@/lib/actions/auth';
 import { hasPermission, type Permission } from '@/lib/permissions';
@@ -47,7 +48,8 @@ const NAV_ITEMS = [
   { href: '/admin/popup',        label: 'Popup Promoțional',   icon: Megaphone,       exact: false, permission: 'popup.view'      as Permission },
   { href: '/admin/setari',      label: 'Setări Site',         icon: Settings2,       exact: false, permission: 'setari.view'     as Permission },
   { href: '/admin/gdpr',        label: 'GDPR & Date',         icon: ShieldCheck,     exact: false, permission: 'gdpr.view'       as Permission },
-  { href: '/admin/arhiva',      label: 'Arhivă',              icon: Archive,         exact: false, permission: 'arhiva.view'     as Permission },
+  { href: '/admin/arhiva',      label: 'Arhivă',              icon: Archive,         exact: false, permission: 'arhiva.view'      as Permission },
+  { href: '/admin/mentenanta',  label: 'Mod Mentenanță',      icon: Wrench,          exact: false, permission: 'mentenanta.view'  as Permission },
 ] as const;
 
 // ── Role badge config ─────────────────────────────────────────────────────────
