@@ -339,7 +339,7 @@ export async function uploadAvatar(
 
     const userId = users[idx].id;
     const pathname = `avatars/${userId}-${Date.now()}.jpg`;
-    const blob = await put(pathname, file, { access: 'private' });
+    const blob = await put(pathname, file);
     const url = blob.url;
     users[idx] = { ...users[idx], avatar: url };
     await saveUsers(users);
