@@ -64,63 +64,188 @@ export interface SocialSettings {
   tiktokVideos: { id: string; url: string }[];
 }
 
-const DATA_DIR = path.join(process.cwd(), 'lib', 'data');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
-async function readJSON<T>(filename: string, defaultValue: T): Promise<T> {
-  try {
-    const raw = await fs.readFile(path.join(DATA_DIR, filename), 'utf-8');
-    return JSON.parse(raw) as T;
-  } catch {
-    return defaultValue;
-  }
-}
+// ── Menu — DB-backed ────────────────────────────────────────────────────────
 
-async function writeJSON<T>(filename: string, data: T): Promise<void> {
-  await fs.writeFile(path.join(DATA_DIR, filename), JSON.stringify(data, null, 2), 'utf-8');
+function mapDbToMenuProduct(row: {
+  id: string; categoryId: string; subcategory: string | null; name: string;
+  description: string | null; price: number; unit: string | null; image: string | null;
+  status: string; featured: boolean; order: number;
+}): MenuProduct {
+  const status = row.status as MenuProduct['status'];
+  return {
+    id: row.id,
+    name: row.name,
+    description: row.description ?? '',
+    price: row.price,
+    unit: row.unit ?? '',
+    category: row.categoryId as MenuProduct['category'],
+    subcategory: row.subcategory ?? '',
+    image: row.image ?? '',
+    popular: row.featured,
+    available: row.status === 'disponibil',
+    status,
+  };
 }
 
 export async function getMenuItems(): Promise<MenuProduct[]> {
-  const data = await readJSON<{ items: MenuProduct[] }>('menu.json', { items: [] });
-  return data.items.map((item) => {
-    const status = item.status ?? (item.available ? 'disponibil' : 'indisponibil');
-    return { ...item, status, available: status === 'disponibil' };
-  });
+  const rows = await prisma.menuItem.findMany({ orderBy: { order: 'asc' } });
+  return rows.map(mapDbToMenuProduct);
 }
 
 export async function saveMenuItems(items: MenuProduct[]): Promise<void> {
-  await writeJSON('menu.json', { items });
-}
-
-export async function getNewsPosts(): Promise<NewsPost[]> {
-  const data = await readJSON<{ posts: NewsPost[] }>('news.json', { posts: [] });
-  return data.posts;
-}
-
-export async function saveNewsPosts(posts: NewsPost[]): Promise<void> {
-  await writeJSON('news.json', { posts });
-}
-
-export async function getSpecialEvents(): Promise<SpecialEvent[]> {
-  const data = await readJSON<{ events: SpecialEvent[] }>('events.json', { events: [] });
-  return data.events;
-}
-
-export async function saveSpecialEvents(events: SpecialEvent[]): Promise<void> {
-  await writeJSON('events.json', { events });
-}
-
-export async function getSocialSettings(): Promise<SocialSettings> {
-  return readJSON<SocialSettings>('social.json', {
-    showFacebook: false,
-    facebookVideos: [],
-    showTiktok: false,
-    tiktokVideos: [],
+  const ids = items.map((i) => i.id);
+  await prisma.$transaction(async (tx) => {
+    if (ids.length > 0) {
+      await tx.menuItem.deleteMany({ where: { id: { notIn: ids } } });
+    } else {
+      await tx.menuItem.deleteMany({});
+    }
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const status = item.status ?? (item.available ? 'disponibil' : 'indisponibil');
+      const data = {
+        categoryId: item.category,
+        subcategory: item.subcategory || null,
+        name: item.name,
+        description: item.description || null,
+        price: item.price,
+        unit: item.unit || null,
+        image: item.image || null,
+        status,
+        featured: item.popular ?? false,
+        order: i,
+      };
+      await tx.menuItem.upsert({ where: { id: item.id }, create: { id: item.id, ...data }, update: data });
+    }
   });
 }
 
+// ── News — DB-backed ────────────────────────────────────────────────────────
+
+function mapDbToNewsPost(row: {
+  id: string; title: string; slug: string; date: string | null; image: string | null;
+  excerpt: string | null; content: string; category: string; status: string; publishAt: string | null;
+}): NewsPost {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    date: row.date ?? '',
+    image: row.image ?? '',
+    excerpt: row.excerpt ?? '',
+    content: row.content,
+    category: row.category as NewsPost['category'],
+    status: row.status as NewsPost['status'],
+    publishAt: row.publishAt ?? undefined,
+  };
+}
+
+export async function getNewsPosts(): Promise<NewsPost[]> {
+  const rows = await prisma.newsArticle.findMany({ orderBy: { createdAt: 'desc' } });
+  return rows.map(mapDbToNewsPost);
+}
+
+export async function saveNewsPosts(posts: NewsPost[]): Promise<void> {
+  const ids = posts.map((p) => p.id);
+  await prisma.$transaction(async (tx) => {
+    if (ids.length > 0) {
+      await tx.newsArticle.deleteMany({ where: { id: { notIn: ids } } });
+    } else {
+      await tx.newsArticle.deleteMany({});
+    }
+    for (const post of posts) {
+      const publishedAt =
+        post.status === 'published' && post.date ? new Date(post.date) : null;
+      const data = {
+        title: post.title,
+        slug: post.slug,
+        date: post.date || null,
+        excerpt: post.excerpt || null,
+        content: post.content ?? '',
+        image: post.image || null,
+        category: post.category ?? 'events',
+        status: post.status ?? 'draft',
+        publishAt: post.publishAt || null,
+        publishedAt,
+      };
+      await tx.newsArticle.upsert({ where: { id: post.id }, create: { id: post.id, ...data }, update: data });
+    }
+  });
+}
+
+// ── Special Events — DB-backed ──────────────────────────────────────────────
+
+function mapDbToSpecialEvent(row: {
+  id: string; title: string; description: string | null; date: string | null;
+  time: string | null; location: string | null; image: string | null;
+  ctaLabel: string | null; ctaUrl: string | null; status: string;
+}): SpecialEvent {
+  return {
+    id: row.id,
+    title: row.title,
+    date: row.date ?? '',
+    time: row.time ?? '',
+    description: row.description ?? '',
+    image: row.image ?? '',
+    ctaLabel: row.ctaLabel ?? '',
+    ctaUrl: row.ctaUrl ?? '',
+    location: (row.location ?? 'Restaurant') as SpecialEvent['location'],
+  };
+}
+
+export async function getSpecialEvents(): Promise<SpecialEvent[]> {
+  const rows = await prisma.specialEvent.findMany({ orderBy: { createdAt: 'asc' } });
+  return rows.map(mapDbToSpecialEvent);
+}
+
+export async function saveSpecialEvents(events: SpecialEvent[]): Promise<void> {
+  const ids = events.map((e) => e.id);
+  await prisma.$transaction(async (tx) => {
+    if (ids.length > 0) {
+      await tx.specialEvent.deleteMany({ where: { id: { notIn: ids } } });
+    } else {
+      await tx.specialEvent.deleteMany({});
+    }
+    for (const event of events) {
+      const data = {
+        title: event.title,
+        description: event.description || null,
+        date: event.date || null,
+        time: event.time || null,
+        location: event.location || null,
+        image: event.image || null,
+        ctaLabel: event.ctaLabel || null,
+        ctaUrl: event.ctaUrl || null,
+        status: 'active',
+      };
+      await tx.specialEvent.upsert({ where: { id: event.id }, create: { id: event.id, ...data }, update: data });
+    }
+  });
+}
+
+// ── Social — DB-backed ──────────────────────────────────────────────────────
+
+const DEFAULT_SOCIAL: SocialSettings = {
+  showFacebook: false,
+  facebookVideos: [],
+  showTiktok: false,
+  tiktokVideos: [],
+};
+
+export async function getSocialSettings(): Promise<SocialSettings> {
+  const row = await prisma.siteSettings.findUnique({ where: { key: 'social' } });
+  if (!row) return DEFAULT_SOCIAL;
+  return { ...DEFAULT_SOCIAL, ...(row.value as unknown as SocialSettings) };
+}
+
 export async function saveSocialSettings(settings: SocialSettings): Promise<void> {
-  await writeJSON('social.json', settings);
+  await prisma.siteSettings.upsert({
+    where: { key: 'social' },
+    create: { key: 'social', value: settings as never },
+    update: { value: settings as never },
+  });
 }
 
 // ── Reviews — DB-backed ─────────────────────────────────────────────────────
@@ -380,12 +505,17 @@ export interface CabanaPhoto {
 }
 
 export async function getCabanaGallery(): Promise<CabanaPhoto[]> {
-  const data = await readJSON<{ photos: CabanaPhoto[] }>('cabana-gallery.json', { photos: [] });
-  return (data.photos ?? []).sort((a, b) => a.order - b.order);
+  const row = await prisma.siteSettings.findUnique({ where: { key: 'gallery-cabana' } });
+  const photos = (row?.value as unknown as CabanaPhoto[]) ?? [];
+  return photos.sort((a, b) => a.order - b.order);
 }
 
 export async function saveCabanaGallery(photos: CabanaPhoto[]): Promise<void> {
-  await writeJSON('cabana-gallery.json', { photos });
+  await prisma.siteSettings.upsert({
+    where: { key: 'gallery-cabana' },
+    create: { key: 'gallery-cabana', value: photos as never },
+    update: { value: photos as never },
+  });
 }
 
 export interface ReservationNotification {
@@ -503,12 +633,17 @@ export interface RiversLandPhoto {
 }
 
 export async function getRiversLandGallery(): Promise<RiversLandPhoto[]> {
-  const data = await readJSON<{ photos: RiversLandPhoto[] }>('rivers-land-gallery.json', { photos: [] });
-  return (data.photos ?? []).sort((a, b) => a.order - b.order);
+  const row = await prisma.siteSettings.findUnique({ where: { key: 'gallery-rivers-land' } });
+  const photos = (row?.value as unknown as RiversLandPhoto[]) ?? [];
+  return photos.sort((a, b) => a.order - b.order);
 }
 
 export async function saveRiversLandGallery(photos: RiversLandPhoto[]): Promise<void> {
-  await writeJSON('rivers-land-gallery.json', { photos });
+  await prisma.siteSettings.upsert({
+    where: { key: 'gallery-rivers-land' },
+    create: { key: 'gallery-rivers-land', value: photos as never },
+    update: { value: photos as never },
+  });
 }
 
 export interface RiversMarinaPhoto {
@@ -519,12 +654,17 @@ export interface RiversMarinaPhoto {
 }
 
 export async function getRiversMarinaGallery(): Promise<RiversMarinaPhoto[]> {
-  const data = await readJSON<{ photos: RiversMarinaPhoto[] }>('rivers-marina-gallery.json', { photos: [] });
-  return (data.photos ?? []).sort((a, b) => a.order - b.order);
+  const row = await prisma.siteSettings.findUnique({ where: { key: 'gallery-rivers-marina' } });
+  const photos = (row?.value as unknown as RiversMarinaPhoto[]) ?? [];
+  return photos.sort((a, b) => a.order - b.order);
 }
 
 export async function saveRiversMarinaGallery(photos: RiversMarinaPhoto[]): Promise<void> {
-  await writeJSON('rivers-marina-gallery.json', { photos });
+  await prisma.siteSettings.upsert({
+    where: { key: 'gallery-rivers-marina' },
+    create: { key: 'gallery-rivers-marina', value: photos as never },
+    update: { value: photos as never },
+  });
 }
 
 export interface User {
@@ -681,23 +821,79 @@ export interface Operator {
   activityLog: OperatorActivityLog[];
 }
 
+// ── Operators — DB-backed ───────────────────────────────────────────────────
+
+function mapDbToOperator(row: {
+  id: string; name: string; username: string; role: string; passwordHash: string;
+  pin: string | null; isActive: boolean; totalOrdersProcessed: number;
+  totalReservationsProcessed: number; loginHistory: unknown; activityLog: unknown;
+  createdAt: Date; lastLoginAt: Date | null; lastActivityAt: Date | null;
+}): Operator {
+  return {
+    id: row.id,
+    name: row.name,
+    username: row.username,
+    role: row.role as Operator['role'],
+    passwordHash: row.passwordHash,
+    pin: row.pin ?? undefined,
+    isActive: row.isActive,
+    totalOrdersProcessed: row.totalOrdersProcessed,
+    totalReservationsProcessed: row.totalReservationsProcessed,
+    loginHistory: (row.loginHistory as Operator['loginHistory']) ?? [],
+    activityLog: (row.activityLog as Operator['activityLog']) ?? [],
+    createdAt: row.createdAt.toISOString(),
+    lastLoginAt: row.lastLoginAt?.toISOString() ?? '',
+    lastActivityAt: row.lastActivityAt?.toISOString() ?? '',
+  };
+}
+
 export async function getOperators(): Promise<Operator[]> {
-  const data = await readJSON<{ operators: Operator[] }>('operators.json', { operators: [] });
-  return data.operators ?? [];
+  const rows = await prisma.operator.findMany({ orderBy: { createdAt: 'asc' } });
+  return rows.map(mapDbToOperator);
 }
 
 export async function saveOperators(operators: Operator[]): Promise<void> {
-  await writeJSON('operators.json', { operators });
+  const ids = operators.map((o) => o.id);
+  await prisma.$transaction(async (tx) => {
+    if (ids.length > 0) {
+      await tx.operator.deleteMany({ where: { id: { notIn: ids } } });
+    } else {
+      await tx.operator.deleteMany({});
+    }
+    for (const op of operators) {
+      const data = {
+        name: op.name,
+        username: op.username,
+        role: op.role,
+        passwordHash: op.passwordHash,
+        pin: op.pin ?? null,
+        isActive: op.isActive,
+        totalOrdersProcessed: op.totalOrdersProcessed,
+        totalReservationsProcessed: op.totalReservationsProcessed,
+        loginHistory: (op.loginHistory ?? []) as never,
+        activityLog: (op.activityLog ?? []) as never,
+        lastLoginAt: op.lastLoginAt ? new Date(op.lastLoginAt) : null,
+        lastActivityAt: op.lastActivityAt && op.lastActivityAt !== '' ? new Date(op.lastActivityAt) : null,
+      };
+      await tx.operator.upsert({
+        where: { id: op.id },
+        create: { id: op.id, createdAt: op.createdAt ? new Date(op.createdAt) : new Date(), ...data },
+        update: data,
+      });
+    }
+  });
 }
 
 export async function getOperatorById(id: string): Promise<Operator | null> {
-  const operators = await getOperators();
-  return operators.find((op) => op.id === id) ?? null;
+  const row = await prisma.operator.findUnique({ where: { id } });
+  return row ? mapDbToOperator(row) : null;
 }
 
 export async function getOperatorByUsername(username: string): Promise<Operator | null> {
-  const operators = await getOperators();
-  return operators.find((op) => op.username.toLowerCase() === username.toLowerCase()) ?? null;
+  const row = await prisma.operator.findFirst({
+    where: { username: { equals: username, mode: 'insensitive' } },
+  });
+  return row ? mapDbToOperator(row) : null;
 }
 
 export interface OrderItem {
