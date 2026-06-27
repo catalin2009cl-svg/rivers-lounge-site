@@ -185,3 +185,74 @@ model CampaignSettings {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model MenuCategory {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+  order Int    @default(0)
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  categoryId  String
+  subcategory String?
+  name        String
+  description String?
+  price       Float
+  unit        String?
+  image       String?
+  status      String   @default("disponibil")
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NewsArticle {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  date        String?
+  excerpt     String?
+  content     String
+  image       String?
+  category    String    @default("events")
+  status      String    @default("draft")
+  publishAt   String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SpecialEvent {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        String?
+  time        String?
+  location    String?
+  image       String?
+  ctaLabel    String?
+  ctaUrl      String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Operator {
+  id                         String    @id @default(cuid())
+  name                       String
+  username                   String    @unique
+  role                       String    @default("operator")
+  passwordHash               String
+  pin                        String?
+  isActive                   Boolean   @default(true)
+  totalOrdersProcessed       Int       @default(0)
+  totalReservationsProcessed Int       @default(0)
+  loginHistory               Json      @default("[]")
+  activityLog                Json      @default("[]")
+  createdAt                  DateTime  @default(now())
+  lastLoginAt                DateTime?
+  lastActivityAt             DateTime?
+}
