@@ -148,7 +148,7 @@ export async function uploadBrandingImage(
   const pathname = `branding/${type}-${Date.now()}.${ext}`;
 
   try {
-    const blob = await put(pathname, file, { access: 'public' });
+    const blob = await put(pathname, file, { access: 'private' });
     const url = blob.url;
 
     const fieldMap: Record<typeof type, keyof BrandingConfig> = {
@@ -293,7 +293,7 @@ export async function uploadHeroImage(
   const pathname = `hero/${page}-${Date.now()}.${ext}`;
 
   try {
-    const blob = await put(pathname, file, { access: 'public' });
+    const blob = await put(pathname, file, { access: 'private' });
     return { url: blob.url };
   } catch (e) {
     return { error: `Eroare la salvare: ${String(e)}` };

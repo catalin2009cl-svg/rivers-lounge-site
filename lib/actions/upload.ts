@@ -17,7 +17,7 @@ export async function uploadImage(
   const pathname = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
   try {
-    const blob = await put(pathname, file, { access: 'public' });
+    const blob = await put(pathname, file, { access: 'private' });
     return { url: blob.url };
   } catch (e) {
     return { error: `Eroare la salvarea fișierului: ${String(e)}` };
