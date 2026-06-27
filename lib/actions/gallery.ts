@@ -10,7 +10,7 @@ const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 async function putPhoto(prefix: string, file: File): Promise<string> {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
   const pathname = `gallery/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 5)}.${ext}`;
-  const blob = await put(pathname, file);
+  const blob = await put(pathname, file, { access: 'public' });
   return blob.url;
 }
 

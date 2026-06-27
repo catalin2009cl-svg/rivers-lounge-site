@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   const pathname = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
   try {
-    const blob = await put(pathname, file);
+    const blob = await put(pathname, file, { access: 'public' });
     return NextResponse.json({ url: blob.url });
   } catch (e) {
     return NextResponse.json({ error: `Eroare la încărcare: ${String(e)}` }, { status: 500 });
