@@ -65,8 +65,7 @@ export function MediaPickerModal({ open, onClose, onSelect }: MediaPickerModalPr
   }
 
   async function handleDelete(url: string) {
-    const filename = url.split('/').pop()!;
-    const result = await deleteImage(filename);
+    const result = await deleteImage(url);
     if (result.success) {
       setImages((prev) => prev.filter((u) => u !== url));
       toast.success('Imagine ștearsă.');

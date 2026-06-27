@@ -1,8 +1,7 @@
 'use server';
 
 import { randomBytes, scryptSync } from 'crypto';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -339,14 +338,9 @@ export async function uploadAvatar(
     if (idx === -1) return { error: 'Utilizatorul nu există.' };
 
     const userId = users[idx].id;
-    const avatarsDir = path.join(process.cwd(), 'public', 'uploads', 'avatars');
-    await mkdir(avatarsDir, { recursive: true });
-
-    const filename = `${userId}-${Date.now()}.jpg`;
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(avatarsDir, filename), Buffer.from(bytes));
-
-    const url = `/uploads/avatars/${filename}`;
+    const pathname = `avatars/${userId}-${Date.now()}.jpg`;
+    const blob = await put(pathname, file, { access: 'public' });
+    const url = blob.url;
     users[idx] = { ...users[idx], avatar: url };
     await saveUsers(users);
     revalidatePath('/cont');
