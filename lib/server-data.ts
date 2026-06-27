@@ -1,5 +1,4 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { list } from '@vercel/blob';
 import { prisma } from './prisma';
 
 export interface MenuProduct {
@@ -63,8 +62,6 @@ export interface SocialSettings {
   showTiktok: boolean;
   tiktokVideos: { id: string; url: string }[];
 }
-
-const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 
 // ── Menu — DB-backed ────────────────────────────────────────────────────────
 
@@ -297,11 +294,10 @@ export async function saveReviews(reviews: Review[]): Promise<void> {
 
 export async function listUploadedImages(): Promise<string[]> {
   try {
-    const files = await fs.readdir(UPLOADS_DIR);
-    return files
-      .filter((f) => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
-      .sort((a, b) => b.localeCompare(a))
-      .map((f) => `/uploads/${f}`);
+    const { blobs } = await list({ prefix: 'uploads/', limit: 1000 });
+    return blobs
+      .sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime())
+      .map((b) => b.url);
   } catch {
     return [];
   }

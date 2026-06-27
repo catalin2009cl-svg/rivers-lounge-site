@@ -1,35 +1,42 @@
 'use server';
 
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import path from 'path';
+import { put, del } from '@vercel/blob';
 import { getCabanaGallery, saveCabanaGallery, getRiversLandGallery, saveRiversLandGallery, getRiversMarinaGallery, saveRiversMarinaGallery } from '@/lib/server-data';
 import type { CabanaPhoto, RiversLandPhoto, RiversMarinaPhoto } from '@/lib/server-data';
 import { revalidatePath } from 'next/cache';
+
+const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
+
+async function putPhoto(prefix: string, file: File): Promise<string> {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
+  const pathname = `gallery/${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 5)}.${ext}`;
+  const blob = await put(pathname, file, { access: 'public' });
+  return blob.url;
+}
+
+async function tryDeleteBlob(src: string) {
+  if (src.startsWith('http')) {
+    try { await del(src); } catch { /* already gone */ }
+  }
+}
+
+// ── Cabana gallery ────────────────────────────────────────────────────────────
 
 export async function uploadCabanaPhoto(
   formData: FormData
 ): Promise<{ photo: CabanaPhoto } | { error: string }> {
   const file = formData.get('file') as File | null;
   if (!file || file.size === 0) return { error: 'Niciun fișier selectat.' };
-
-  const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
   if (!ALLOWED.includes(file.type)) return { error: 'Tip nepermis. Folosiți JPG, PNG sau WebP.' };
   if (file.size > 10 * 1024 * 1024) return { error: 'Fișierul este prea mare (max 10 MB).' };
 
-  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-  const filename = `cabana-${Date.now()}.${ext}`;
-  const dir = path.join(process.cwd(), 'public', 'images', 'cabana');
-
   try {
-    await mkdir(dir, { recursive: true });
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(dir, filename), Buffer.from(bytes));
-
+    const src = await putPhoto('cabana', file);
     const photos = await getCabanaGallery();
     const maxOrder = photos.reduce((m, p) => Math.max(m, p.order), 0);
     const newPhoto: CabanaPhoto = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      src: `/images/cabana/${filename}`,
+      src,
       caption: '',
       order: maxOrder + 1,
     };
@@ -49,12 +56,7 @@ export async function deleteCabanaPhoto(
     const photo = photos.find((p) => p.id === id);
     if (!photo) return { success: false, error: 'Fotografia nu există.' };
 
-    const filePath = path.join(process.cwd(), 'public', photo.src);
-    try {
-      await unlink(filePath);
-    } catch {
-      // File already gone — not a fatal error
-    }
+    await tryDeleteBlob(photo.src);
 
     const updated = photos
       .filter((p) => p.id !== id)
@@ -93,8 +95,6 @@ export async function uploadRiversLandPhoto(
 ): Promise<{ photo: RiversLandPhoto } | { error: string }> {
   const file = formData.get('file') as File | null;
   if (!file || file.size === 0) return { error: 'Niciun fișier selectat.' };
-
-  const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
   if (!ALLOWED.includes(file.type)) return { error: 'Tip nepermis. Folosiți JPG, PNG sau WebP.' };
   if (file.size > 10 * 1024 * 1024) return { error: 'Fișierul este prea mare (max 10 MB).' };
 
@@ -103,19 +103,12 @@ export async function uploadRiversLandPhoto(
     return { error: `Limita de ${MAX_RL_PHOTOS} fotografii a fost atinsă. Șterge una înainte de a încărca alta.` };
   }
 
-  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-  const filename = `rl-${Date.now()}-${Math.random().toString(36).slice(2, 5)}.${ext}`;
-  const dir = path.join(process.cwd(), 'public', 'images', 'rivers-land');
-
   try {
-    await mkdir(dir, { recursive: true });
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(dir, filename), Buffer.from(bytes));
-
+    const src = await putPhoto('rl', file);
     const maxOrder = photos.reduce((m, p) => Math.max(m, p.order), 0);
     const newPhoto: RiversLandPhoto = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      src: `/images/rivers-land/${filename}`,
+      src,
       caption: '',
       order: maxOrder + 1,
     };
@@ -135,12 +128,7 @@ export async function deleteRiversLandPhoto(
     const photo = photos.find((p) => p.id === id);
     if (!photo) return { success: false, error: 'Fotografia nu există.' };
 
-    const filePath = path.join(process.cwd(), 'public', photo.src);
-    try {
-      await unlink(filePath);
-    } catch {
-      // File already gone — not fatal
-    }
+    await tryDeleteBlob(photo.src);
 
     const updated = photos
       .filter((p) => p.id !== id)
@@ -179,8 +167,6 @@ export async function uploadRiversMarinaPhoto(
 ): Promise<{ photo: RiversMarinaPhoto } | { error: string }> {
   const file = formData.get('file') as File | null;
   if (!file || file.size === 0) return { error: 'Niciun fișier selectat.' };
-
-  const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
   if (!ALLOWED.includes(file.type)) return { error: 'Tip nepermis. Folosiți JPG, PNG sau WebP.' };
   if (file.size > 10 * 1024 * 1024) return { error: 'Fișierul este prea mare (max 10 MB).' };
 
@@ -189,19 +175,12 @@ export async function uploadRiversMarinaPhoto(
     return { error: `Limita de ${MAX_RM_PHOTOS} fotografii a fost atinsă. Șterge una înainte de a încărca alta.` };
   }
 
-  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-  const filename = `rm-${Date.now()}-${Math.random().toString(36).slice(2, 5)}.${ext}`;
-  const dir = path.join(process.cwd(), 'public', 'images', 'rivers-marina');
-
   try {
-    await mkdir(dir, { recursive: true });
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(dir, filename), Buffer.from(bytes));
-
+    const src = await putPhoto('rm', file);
     const maxOrder = photos.reduce((m, p) => Math.max(m, p.order), 0);
     const newPhoto: RiversMarinaPhoto = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      src: `/images/rivers-marina/${filename}`,
+      src,
       caption: '',
       order: maxOrder + 1,
     };
@@ -221,12 +200,7 @@ export async function deleteRiversMarinaPhoto(
     const photo = photos.find((p) => p.id === id);
     if (!photo) return { success: false, error: 'Fotografia nu există.' };
 
-    const filePath = path.join(process.cwd(), 'public', photo.src);
-    try {
-      await unlink(filePath);
-    } catch {
-      // File already gone — not fatal
-    }
+    await tryDeleteBlob(photo.src);
 
     const updated = photos
       .filter((p) => p.id !== id)

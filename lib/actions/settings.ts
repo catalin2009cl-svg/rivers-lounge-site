@@ -1,7 +1,6 @@
 'use server';
 
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 import { getSettings, saveSettings } from '@/lib/server-data';
 import type {
   SiteSettings,
@@ -146,14 +145,11 @@ export async function uploadBrandingImage(
   if (file.size > 5 * 1024 * 1024) return { error: 'Fișierul este prea mare (max 5 MB).' };
 
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png';
-  const filename = `${type}-${Date.now()}.${ext}`;
-  const brandingDir = path.join(process.cwd(), 'public', 'uploads', 'branding');
+  const pathname = `branding/${type}-${Date.now()}.${ext}`;
 
   try {
-    await mkdir(brandingDir, { recursive: true });
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(brandingDir, filename), Buffer.from(bytes));
-    const url = `/uploads/branding/${filename}`;
+    const blob = await put(pathname, file, { access: 'public' });
+    const url = blob.url;
 
     const fieldMap: Record<typeof type, keyof BrandingConfig> = {
       light: 'logoLight',
@@ -294,14 +290,11 @@ export async function uploadHeroImage(
   if (file.size > 10 * 1024 * 1024) return { error: 'Fișierul este prea mare (max 10 MB).' };
 
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-  const filename = `${page}-${Date.now()}.${ext}`;
-  const heroDir = path.join(process.cwd(), 'public', 'uploads', 'hero');
+  const pathname = `hero/${page}-${Date.now()}.${ext}`;
 
   try {
-    await mkdir(heroDir, { recursive: true });
-    const bytes = await file.arrayBuffer();
-    await writeFile(path.join(heroDir, filename), Buffer.from(bytes));
-    return { url: `/uploads/hero/${filename}` };
+    const blob = await put(pathname, file, { access: 'public' });
+    return { url: blob.url };
   } catch (e) {
     return { error: `Eroare la salvare: ${String(e)}` };
   }

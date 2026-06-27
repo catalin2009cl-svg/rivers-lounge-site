@@ -67,8 +67,7 @@ export function MediaAdminClient({ initialImages, initialCabanaPhotos, initialRi
 
   async function handleDelete() {
     if (!deleteTarget) return;
-    const filename = deleteTarget.split('/').pop()!;
-    const result = await deleteImage(filename);
+    const result = await deleteImage(deleteTarget);
     if (result.success) {
       setImages((prev) => prev.filter((u) => u !== deleteTarget));
       toast.success('Imagine ștearsă.');
@@ -79,7 +78,7 @@ export function MediaAdminClient({ initialImages, initialCabanaPhotos, initialRi
   }
 
   function handleCopy(url: string) {
-    const fullUrl = window.location.origin + url;
+    const fullUrl = url.startsWith('http') ? url : window.location.origin + url;
     navigator.clipboard.writeText(fullUrl);
     setCopiedUrl(url);
     setTimeout(() => setCopiedUrl(null), 2000);
@@ -104,7 +103,7 @@ export function MediaAdminClient({ initialImages, initialCabanaPhotos, initialRi
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">
             {activeTab === 'media'
-              ? `${images.length} imagini în /public/uploads/`
+              ? `${images.length} imagini în Vercel Blob`
               : activeTab === 'cabana'
               ? 'Fotografii galerie Cabana Rivers'
               : activeTab === 'rivers-land'
