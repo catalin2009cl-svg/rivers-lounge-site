@@ -11,7 +11,6 @@ import {
   TrendingUp,
   Megaphone,
   Soup,
-  Wrench,
 } from 'lucide-react';
 import {
   getMenuItems,
@@ -30,7 +29,6 @@ import { isBirthdayWindow, formatBirthday } from '@/lib/birthday-utils';
 import { getSession } from '@/lib/auth';
 import { PopupQuickToggle } from '@/components/admin/popup-quick-toggle';
 import { DailyMenuQuickToggle } from '@/components/admin/daily-menu-quick-toggle';
-import { MaintenanceQuickToggle } from '@/components/admin/maintenance-quick-toggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -311,71 +309,6 @@ export default async function AdminDashboardPage() {
               <ArrowRight className="h-4 w-4 text-gray-300 dark:text-gray-600 group-hover:text-primary transition-colors ml-auto shrink-0" />
             </Link>
           ))}
-        </div>
-      </div>
-
-      {/* Maintenance Mode card */}
-      <div className="mb-8">
-        <div
-          className={`bg-white dark:bg-[#1a1a1a] rounded-2xl border p-5 transition-all ${
-            settings.maintenanceMode?.enabled
-              ? 'border-red-500/40 dark:border-red-500/40'
-              : 'border-gray-100 dark:border-white/10'
-          }`}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  settings.maintenanceMode?.enabled
-                    ? 'bg-red-500/10'
-                    : 'bg-gray-100 dark:bg-white/5'
-                }`}
-              >
-                <Wrench
-                  className={`h-5 w-5 ${
-                    settings.maintenanceMode?.enabled ? 'text-red-500' : 'text-gray-400'
-                  }`}
-                />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-sm font-semibold text-gray-800 dark:text-white">Mod Mentenanță</p>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      settings.maintenanceMode?.enabled
-                        ? 'bg-red-500/10 text-red-600 dark:text-red-400'
-                        : 'bg-gray-100 dark:bg-white/5 text-gray-500'
-                    }`}
-                  >
-                    {settings.maintenanceMode?.enabled ? '● ACTIV' : '○ INACTIV'}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-400">
-                  {settings.maintenanceMode?.title?.trim()
-                    ? settings.maintenanceMode.title
-                    : 'Revenim în curând'}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 sm:shrink-0">
-              <MaintenanceQuickToggle
-                enabled={settings.maintenanceMode?.enabled ?? false}
-                title={settings.maintenanceMode?.title ?? 'Revenim în curând'}
-                message={
-                  settings.maintenanceMode?.message ??
-                  'Lucrăm la ceva deosebit pentru voi. Ne întoarcem în curând!'
-                }
-              />
-            </div>
-          </div>
-          {settings.maintenanceMode?.enabled && (
-            <div className="mt-3 p-3 bg-red-500/5 border border-red-500/20 rounded-xl">
-              <p className="text-xs text-red-400">
-                ⚠️ Site-ul este în modul mentenanță. Vizitatorii sunt redirecționați automat.
-              </p>
-            </div>
-          )}
         </div>
       </div>
 

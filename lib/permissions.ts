@@ -78,6 +78,10 @@ export const PERMISSIONS = {
   'gdpr.view':    ['admin'],
   'gdpr.process': ['admin'],
 
+  // Mentenanță
+  'mentenanta.view': ['admin'],
+  'mentenanta.edit': ['admin'],
+
   // Recenzii
   'recenzii.view':   ['admin', 'manager'],
   'recenzii.edit':   ['admin', 'manager'],
