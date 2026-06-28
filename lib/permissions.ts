@@ -89,6 +89,10 @@ export const PERMISSIONS = {
 
   // Verificare utilizatori
   'utilizatori.verify': ['admin'],
+
+  // Program Loialitate
+  'loialitate.view': ['admin', 'manager'],
+  'loialitate.edit': ['admin'],
 } as const;
 
 export type Permission = keyof typeof PERMISSIONS;

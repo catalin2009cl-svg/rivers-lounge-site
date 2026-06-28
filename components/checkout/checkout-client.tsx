@@ -32,6 +32,7 @@ import { DELIVERY_ZONES, validateDelivery, validateGpsDelivery } from '@/lib/del
 import { getStreetsForCity } from '@/lib/data/streets';
 import { toast } from 'sonner';
 import type { DeliveryConfig } from '@/lib/server-data';
+import type { ActiveReward } from '@/lib/loyalty/types';
 
 interface CheckoutUser {
   id: string;
@@ -67,11 +68,16 @@ interface CheckoutClientProps {
   deliveryConfig: DeliveryConfig;
   currentUser: CheckoutUser | null;
   savedAddresses: { address: string; city: string; count: number }[];
+  activeReward?: ActiveReward | null;
+  walletBalance?: number;
+  walletExpiresAt?: string | null;
 }
 
-export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses }: CheckoutClientProps) {
+export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, activeReward, walletBalance = 0, walletExpiresAt = null }: CheckoutClientProps) {
   const { items, totalPrice, clearCart } = useCart();
   const router = useRouter();
+  const [rewardApplied, setRewardApplied] = useState(false);
+  const [walletCreditApplied, setWalletCreditApplied] = useState(false);
 
   // Delivery method state (maps to spec's form state fields)
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('manual');
@@ -125,7 +131,15 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses }: 
 
   const { deliveryFee, minOrder, missing } = feeCalc;
   const belowMinimum = !feeCalc.valid && orderType === 'livrare';
-  const total = subtotal + deliveryFee;
+  const loyaltyDiscount =
+    rewardApplied && activeReward
+      ? Math.min(activeReward.rewardValue, subtotal)
+      : 0;
+  const walletCredit =
+    walletCreditApplied && walletBalance > 0
+      ? Math.min(walletBalance, Math.max(0, subtotal - loyaltyDiscount))
+      : 0;
+  const total = Math.max(0, subtotal + deliveryFee - loyaltyDiscount - walletCredit);
 
   const derivedDetails = [
     bloc && `Bl. ${bloc}`,
@@ -297,6 +311,10 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses }: 
       ...(gps.userLat !== undefined ? { userLat: gps.userLat, userLng: gps.userLng } : {}),
       ...(currentUser?.email ? { userEmail: currentUser.email } : {}),
       ...(currentUser?.id ? { userId: currentUser.id } : {}),
+      ...(rewardApplied && activeReward
+        ? { loyaltyRewardId: activeReward.id, loyaltyDiscountAmount: loyaltyDiscount }
+        : {}),
+      ...(walletCredit > 0 ? { walletCreditAmount: walletCredit } : {}),
     });
     setSubmitting(false);
 
@@ -815,6 +833,98 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses }: 
               />
             </section>
 
+            {/* Loyalty reward banner */}
+            {activeReward && currentUser && (
+              <section className="bg-card border border-green-500/30 rounded-2xl p-5">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0">🎁</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-foreground text-sm mb-1">
+                      Ai o comandă gratuită disponibilă!
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Valoare: <strong>{activeReward.rewardValue.toFixed(0)} RON</strong>
+                      {activeReward.expiresAt && (
+                        <> · Valabilă până pe{' '}
+                          <strong>
+                            {new Date(activeReward.expiresAt).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' })}
+                          </strong>
+                        </>
+                      )}
+                    </p>
+                    {rewardApplied ? (
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                          ✓ Recompensă aplicată — {loyaltyDiscount.toFixed(0)} RON reducere
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setRewardApplied(false)}
+                          className="text-xs text-muted-foreground hover:text-red-500 transition-colors"
+                        >
+                          Elimină
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setRewardApplied(true)}
+                        className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all"
+                      >
+                        Aplică recompensa →
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Wallet credit banner (Level 2+) */}
+            {walletBalance > 0 && currentUser && (
+              <section className="bg-card border border-primary/20 rounded-2xl p-5">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0">💳</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-foreground text-sm mb-1">
+                      Ai {walletBalance.toFixed(2)} RON credit în portofel!
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Câștigat prin cashback 3%
+                      {walletExpiresAt && (
+                        <> · Valabil până pe{' '}
+                          <strong>
+                            {new Date(walletExpiresAt).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' })}
+                          </strong>
+                        </>
+                      )}
+                    </p>
+                    {walletCreditApplied ? (
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                          ✓ Credit aplicat — {walletCredit.toFixed(2)} RON reducere
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setWalletCreditApplied(false)}
+                          className="text-xs text-muted-foreground hover:text-red-500 transition-colors"
+                        >
+                          Elimină
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setWalletCreditApplied(true)}
+                        className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all"
+                      >
+                        Folosește creditul →
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* Submit */}
             <Button
               type="submit"
@@ -873,6 +983,18 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses }: 
                     <span>Subtotal</span>
                     <span>{subtotal.toFixed(0)} RON</span>
                   </div>
+                  {loyaltyDiscount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600 font-medium">
+                      <span>Recompensă loialitate</span>
+                      <span>-{loyaltyDiscount.toFixed(0)} RON</span>
+                    </div>
+                  )}
+                  {walletCredit > 0 && (
+                    <div className="flex justify-between text-sm font-medium" style={{ color: '#C9A84C' }}>
+                      <span>Credit portofel</span>
+                      <span>-{walletCredit.toFixed(2)} RON</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Livrare</span>
                     {orderType === 'ridicare' ? (

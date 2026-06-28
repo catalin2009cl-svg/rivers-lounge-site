@@ -3,6 +3,8 @@ import { CheckoutClient } from '@/components/checkout/checkout-client';
 import { getSettings } from '@/lib/server-data';
 import { getCurrentUser } from '@/lib/actions/auth-user';
 import { getSavedAddressesForUser } from '@/lib/actions/orders';
+import { getLoyaltyProfileForUser } from '@/lib/loyalty/getLoyaltyProfile';
+import { expireWalletIfNeeded } from '@/lib/loyalty/expireWallet';
 import type { DeliveryConfig } from '@/lib/server-data';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +33,17 @@ export default async function CheckoutPage() {
     ? { id: user.id, name: user.name, email: user.email, phone: user.phone }
     : null;
 
-  const savedAddresses = user ? await getSavedAddressesForUser(user.email) : [];
+  // Expire stale wallet credits before showing checkout
+  if (user) await expireWalletIfNeeded(user.id);
+
+  const [savedAddresses, loyaltyProfile] = await Promise.all([
+    user ? getSavedAddressesForUser(user.email) : Promise.resolve([]),
+    user ? getLoyaltyProfileForUser(user.id) : Promise.resolve(null),
+  ]);
+
+  const activeReward = loyaltyProfile?.activeReward ?? null;
+  const walletBalance = loyaltyProfile?.walletBalance ?? 0;
+  const walletExpiresAt = loyaltyProfile?.walletExpiresAt ?? null;
 
   return (
     <SiteLayout>
@@ -40,6 +52,9 @@ export default async function CheckoutPage() {
           deliveryConfig={deliveryConfig}
           currentUser={currentUser}
           savedAddresses={savedAddresses}
+          activeReward={activeReward}
+          walletBalance={walletBalance}
+          walletExpiresAt={walletExpiresAt}
         />
       </div>
     </SiteLayout>

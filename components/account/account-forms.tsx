@@ -209,12 +209,24 @@ export function RegisterForm() {
 
 // ── Account dashboard ─────────────────────────────────────────────────────────
 
+interface LoyaltyWidgetData {
+  currentLevel: number;
+  currentLevelName: string;
+  totalCompletedOrders: number;
+  ordersRequired: number;
+  hasActiveReward: boolean;
+  activeRewardValue?: number;
+  walletBalance?: number;
+  walletExpiresAt?: string | null;
+}
+
 interface AccountDashboardProps {
   user: SafeUser | null;
   initialOrders: Order[];
   upcomingReservationsCount: number;
   lastOrderDate: string | null;
   clientCode: string | null;
+  loyaltyWidget?: LoyaltyWidgetData | null;
 }
 
 export function AccountDashboard({
@@ -223,6 +235,7 @@ export function AccountDashboard({
   upcomingReservationsCount,
   lastOrderDate,
   clientCode,
+  loyaltyWidget,
 }: AccountDashboardProps) {
   if (!user) {
     return (
@@ -353,6 +366,80 @@ export function AccountDashboard({
               {clientCode}
             </span>
           </div>
+        )}
+
+        {/* Loyalty widget */}
+        {loyaltyWidget && (
+          <Link href="/cont/fidelizare" className="block group">
+            <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4 hover:border-primary/50 hover:bg-primary/10 transition-all">
+              <div className="flex items-center justify-between gap-4 flex-wrap mb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-base">🏆</span>
+                  <div>
+                    <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                      Nivel {loyaltyWidget.currentLevel}
+                    </span>
+                    <span className="text-xs text-muted-foreground mx-1.5">—</span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {loyaltyWidget.currentLevelName}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-xs text-primary font-semibold group-hover:underline underline-offset-2 shrink-0">
+                  Vezi detalii →
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div
+                className="rounded-full overflow-hidden mb-2"
+                style={{ height: 6, background: 'rgba(201,168,76,0.15)' }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${Math.min(100, (loyaltyWidget.totalCompletedOrders / loyaltyWidget.ordersRequired) * 100)}%`,
+                    background: 'linear-gradient(90deg, #C9A84C, #F5D98B)',
+                  }}
+                />
+              </div>
+
+              {/* Status text */}
+              <p className="text-xs text-muted-foreground">
+                {loyaltyWidget.hasActiveReward ? (
+                  <span className="font-semibold" style={{ color: '#4ade80' }}>
+                    🎁 Ai o recompensă activă — comandă gratuită
+                    {loyaltyWidget.activeRewardValue ? ` (${loyaltyWidget.activeRewardValue.toFixed(0)} RON)` : ''}!
+                  </span>
+                ) : (
+                  <>
+                    <strong className="text-foreground">{loyaltyWidget.totalCompletedOrders}</strong>
+                    {' / '}
+                    <strong className="text-foreground">{loyaltyWidget.ordersRequired}</strong>
+                    {' comenzi · mai ai '}
+                    <strong className="text-foreground">
+                      {Math.max(0, loyaltyWidget.ordersRequired - loyaltyWidget.totalCompletedOrders)}
+                    </strong>
+                    {' până la recompensă'}
+                  </>
+                )}
+              </p>
+
+              {/* Wallet balance (Level 2+) */}
+              {(loyaltyWidget.walletBalance ?? 0) > 0 && (
+                <p className="text-xs mt-1.5">
+                  {'💳 Portofel: '}
+                  <strong className="text-primary">{loyaltyWidget.walletBalance!.toFixed(2)} RON</strong>
+                  {loyaltyWidget.walletExpiresAt && (
+                    <span className="text-muted-foreground">
+                      {' · expiră '}
+                      {new Date(loyaltyWidget.walletExpiresAt).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short' })}
+                    </span>
+                  )}
+                </p>
+              )}
+            </div>
+          </Link>
         )}
 
         {/* Order history */}

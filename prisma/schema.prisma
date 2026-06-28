@@ -32,8 +32,11 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  orders       Order[]
-  reservations Reservation[]
+  orders             Order[]
+  reservations       Reservation[]
+  loyaltyProfile     LoyaltyProfile?
+  rewardLedger       RewardLedger[]
+  walletTransactions WalletTransaction[]
 }
 
 model Order {
@@ -123,21 +126,65 @@ model GdprRequest {
   createdAt       DateTime  @default(now())
 }
 
+enum WalletTransactionType {
+  CASHBACK_EARNED
+  CASHBACK_EXPIRED
+  CREDIT_USED
+  CREDIT_EXPIRED
+  MANUAL_CREDIT
+  MANUAL_DEBIT
+}
+
+enum RewardStatus {
+  ACTIVE
+  USED
+  EXPIRED
+  CANCELLED
+}
+
 model LoyaltyProfile {
-  id                        String    @id @default(cuid())
-  userId                    String    @unique
-  totalCompletedOrders      Int       @default(0)
-  completedOrdersCurrentMonth Int     @default(0)
-  currentTier               String?
-  walletBalance             Float     @default(0)
-  firstCompletedOrderAt     DateTime?
-  lastCompletedOrderAt      DateTime?
-  referralCode              String?   @unique
-  createdAt                 DateTime  @default(now())
-  updatedAt                 DateTime  @updatedAt
+  id                          String    @id @default(cuid())
+  userId                      String    @unique
+  user                        User      @relation(fields: [userId], references: [id])
+  totalCompletedOrders        Int       @default(0)
+  completedOrdersCurrentMonth Int       @default(0)
+  currentTier                 String?
+  currentLevel                Int       @default(1)
+  walletBalance               Float     @default(0)
+  totalSpentEligible          Float     @default(0)
+  firstCompletedOrderAt       DateTime?
+  lastCompletedOrderAt        DateTime?
+  referralCode                String?   @unique
+  processedOrderIds           String[]  @default([])
+  walletExpiresAt             DateTime?
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
 
   rewardGrants       RewardGrant[]
   walletTransactions WalletTransaction[]
+  rewards            RewardLedger[]
+}
+
+model RewardLedger {
+  id               String       @id @default(cuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  loyaltyProfileId String
+  loyaltyProfile   LoyaltyProfile @relation(fields: [loyaltyProfileId], references: [id])
+  campaignId       String?
+  levelId          Int?
+  rewardType       String
+  rewardValue      Float
+  rewardMetadata   Json?
+  status           RewardStatus @default(ACTIVE)
+  triggerOrderId   String?
+  uniqueRewardKey  String       @unique
+  issuedAt         DateTime     @default(now())
+  expiresAt        DateTime?
+  usedAt           DateTime?
+  usedOnOrderId    String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 }
 
 model RewardGrant {
@@ -164,16 +211,22 @@ model RewardGrant {
 }
 
 model WalletTransaction {
-  id               String    @id @default(cuid())
+  id               String                @id @default(cuid())
   loyaltyProfileId String
-  type             String
+  userId           String
+  type             WalletTransactionType
   amount           Float
+  balanceBefore    Float                 @default(0)
+  balanceAfter     Float                 @default(0)
   orderId          String?
+  sourceOrderId    String?
+  usedOnOrderId    String?
   description      String?
   expiresAt        DateTime?
-  createdAt        DateTime  @default(now())
+  createdAt        DateTime              @default(now())
 
   loyaltyProfile LoyaltyProfile @relation(fields: [loyaltyProfileId], references: [id])
+  user           User           @relation(fields: [userId], references: [id])
 }
 
 model CampaignSettings {

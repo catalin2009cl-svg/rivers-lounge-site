@@ -25,6 +25,7 @@ import {
   Soup,
   Star,
   Wrench,
+  Gift,
 } from 'lucide-react';
 import { logoutAction } from '@/lib/actions/auth';
 import { hasPermission, type Permission } from '@/lib/permissions';
@@ -38,6 +39,7 @@ const NAV_ITEMS = [
   { href: '/admin/comenzi',     label: 'Comenzi',             icon: ShoppingBag,     exact: false, permission: 'comenzi.view'    as Permission, badge: 'orders' },
   { href: '/admin/rezervari',   label: 'Rezervări',           icon: CalendarCheck,   exact: false, permission: 'rezervari.view'  as Permission, badge: 'reservations' },
   { href: '/admin/utilizatori', label: 'Utilizatori',         icon: Users,           exact: false, permission: 'utilizatori.view' as Permission },
+  { href: '/admin/loialitate',  label: 'Program Loialitate',  icon: Gift,            exact: false, permission: 'loialitate.view'  as Permission },
   { href: '/admin/meniu',       label: 'Meniu',               icon: UtensilsCrossed, exact: false, permission: 'meniu.view'       as Permission },
   { href: '/admin/meniu-zilei', label: 'Meniu Zilei',         icon: Soup,            exact: false, permission: 'meniu-zilei.view' as Permission },
   { href: '/admin/noutati',     label: 'Noutăți',             icon: Newspaper,       exact: false, permission: 'noutati.view'     as Permission },

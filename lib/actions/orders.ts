@@ -6,6 +6,9 @@ import { getOrders, saveOrders, getUsers, saveUsers } from '@/lib/server-data';
 import type { Order, OrderItem, User } from '@/lib/server-data';
 import { getSession } from '@/lib/auth';
 import { logOperatorActivity } from '@/lib/actions/operators';
+import { processOrderForLoyalty } from '@/lib/loyalty/processLoyalty';
+import { applyRewardToOrder } from '@/lib/loyalty/applyReward';
+import { prisma } from '@/lib/prisma';
 
 export interface OrderInput {
   name: string;
@@ -24,6 +27,9 @@ export interface OrderInput {
   userLng?: number;
   userId?: string;
   userEmail?: string;
+  loyaltyRewardId?: string;
+  loyaltyDiscountAmount?: number;
+  walletCreditAmount?: number;
 }
 
 export async function saveOrder(
@@ -34,6 +40,65 @@ export async function saveOrder(
     const now = new Date().toISOString();
     const suffix = Math.random().toString(36).slice(2, 5).toUpperCase();
     const id = `ORD-${Date.now()}-${suffix}`;
+
+    // Validate loyalty reward server-side before saving order
+    let finalDiscountAmount = 0;
+    let discountApplied: string | undefined;
+    if (input.loyaltyRewardId && input.userId && input.loyaltyDiscountAmount) {
+      const rewardResult = await applyRewardToOrder({
+        rewardId: input.loyaltyRewardId,
+        userId: input.userId,
+        orderId: id,
+        orderSubtotal: input.subtotal,
+        hasOtherDiscount: false,
+      });
+      if (rewardResult.success && rewardResult.discountAmount) {
+        finalDiscountAmount = rewardResult.discountAmount;
+        discountApplied = `LOYALTY:${input.loyaltyRewardId}`;
+      }
+    }
+
+    // Apply wallet credit deduction
+    let walletDeduction = 0;
+    if (input.walletCreditAmount && input.walletCreditAmount > 0 && input.userId) {
+      try {
+        const profile = await prisma.loyaltyProfile.findUnique({
+          where: { userId: input.userId },
+          select: { id: true, walletBalance: true },
+        });
+        if (profile && profile.walletBalance >= 0.01) {
+          const deductAmount = Math.min(
+            input.walletCreditAmount,
+            profile.walletBalance,
+            Math.max(0, input.subtotal - finalDiscountAmount)
+          );
+          if (deductAmount > 0) {
+            const newBalance = Math.max(0, Math.round((profile.walletBalance - deductAmount) * 100) / 100);
+            await prisma.$transaction(async (tx) => {
+              await tx.loyaltyProfile.update({
+                where: { id: profile.id },
+                data: { walletBalance: newBalance },
+              });
+              await tx.walletTransaction.create({
+                data: {
+                  loyaltyProfileId: profile.id,
+                  userId: input.userId!,
+                  type: 'CREDIT_USED',
+                  amount: -deductAmount,
+                  balanceBefore: profile.walletBalance,
+                  balanceAfter: newBalance,
+                  usedOnOrderId: id,
+                  description: `Credit folosit pe comanda #${id.slice(-6).toUpperCase()}`,
+                },
+              });
+            });
+            walletDeduction = deductAmount;
+          }
+        }
+      } catch {
+        // Non-critical — do not break order flow
+      }
+    }
 
     const newOrder: Order = {
       id,
@@ -47,7 +112,9 @@ export async function saveOrder(
       items: input.items,
       subtotal: input.subtotal,
       deliveryFee: input.deliveryFee,
-      total: input.total,
+      total: Math.max(0, input.total - finalDiscountAmount - walletDeduction),
+      discountAmount: (finalDiscountAmount + walletDeduction) > 0 ? finalDiscountAmount + walletDeduction : undefined,
+      discountApplied: discountApplied ?? (walletDeduction > 0 ? `WALLET:${walletDeduction.toFixed(2)}` : undefined),
       paymentMethod: input.paymentMethod,
       paymentStatus: 'pending',
       orderType: input.orderType,
@@ -120,6 +187,15 @@ export async function updateOrderStatus(
         const newSpent = (users[uIdx].totalSpent ?? 0) + order.total;
         users[uIdx] = { ...users[uIdx], totalOrders: newTotal, totalSpent: newSpent, lastOrderAt: now };
         await saveUsers(users);
+      }
+
+      // Process loyalty points for logged-in users
+      if (order.userId) {
+        try {
+          await processOrderForLoyalty(order.id, order.userId, order.subtotal);
+        } catch {
+          // Non-critical — do not break order flow
+        }
       }
     }
 

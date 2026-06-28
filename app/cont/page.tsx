@@ -6,6 +6,8 @@ import { AccountDashboard } from '@/components/account/account-forms';
 import { getCurrentUser } from '@/lib/actions/auth-user';
 import { getOrdersByEmail } from '@/lib/actions/orders';
 import { getMyReservations } from '@/lib/actions/reservations';
+import { getLoyaltyProfileForUser } from '@/lib/loyalty/getLoyaltyProfile';
+import { getLoyaltyConfig } from '@/lib/loyalty/config';
 import type { SafeUser } from '@/components/account/account-forms';
 
 export const dynamic = 'force-dynamic';
@@ -22,15 +24,38 @@ function deriveClientCode(userId: string): string {
 
 export default async function AccountPage() {
   const user = await getCurrentUser();
-  const [orders, reservations] = user
-    ? await Promise.all([getOrdersByEmail(user.email), getMyReservations()])
-    : await Promise.all([Promise.resolve([]), Promise.resolve([])]);
+  const [orders, reservations, loyaltyProfile, loyaltyConfig] = user
+    ? await Promise.all([
+        getOrdersByEmail(user.email),
+        getMyReservations(),
+        getLoyaltyProfileForUser(user.id),
+        getLoyaltyConfig(),
+      ])
+    : await Promise.all([
+        Promise.resolve([]),
+        Promise.resolve([]),
+        Promise.resolve(null),
+        Promise.resolve(null),
+      ]);
 
   const safeUser: SafeUser | null = user
     ? (({ passwordHash: _pw, ...rest }) => rest)(user)
     : null;
 
   const clientCode = user ? deriveClientCode(user.id) : null;
+  const ordersRequired = loyaltyConfig?.level1.ordersRequired ?? 9;
+  const loyaltyWidget = loyaltyProfile
+    ? {
+        currentLevel: loyaltyProfile.currentLevel,
+        currentLevelName: loyaltyProfile.currentLevelName,
+        totalCompletedOrders: loyaltyProfile.totalCompletedOrders,
+        ordersRequired,
+        hasActiveReward: loyaltyProfile.activeReward !== null,
+        activeRewardValue: loyaltyProfile.activeReward?.rewardValue,
+        walletBalance: loyaltyProfile.walletBalance,
+        walletExpiresAt: loyaltyProfile.walletExpiresAt,
+      }
+    : null;
   const upcomingCount = reservations.filter(
     (r) => new Date(r.date) >= new Date(new Date().toDateString()) && r.status !== 'refuzata'
   ).length;
@@ -99,6 +124,7 @@ export default async function AccountPage() {
         upcomingReservationsCount={upcomingCount}
         lastOrderDate={lastOrder?.createdAt ?? null}
         clientCode={clientCode}
+        loyaltyWidget={loyaltyWidget}
       />
     </SiteLayout>
   );

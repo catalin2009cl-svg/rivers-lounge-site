@@ -31,8 +31,19 @@ export function DrinksUpsellModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    // Save scroll position and lock body — restore on close
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      window.scrollTo(0, scrollY);
+    };
   }, [isOpen]);
 
   if (!isOpen || drinks.length === 0) return null;
@@ -42,14 +53,14 @@ export function DrinksUpsellModal({
       <style>{`
         @keyframes drinkSlideUp {
           from { opacity: 0; transform: translateY(32px); }
-          to   { opacity: 1; transform: translateY(0);    }
+          to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes drinkSheetUp {
           from { transform: translateY(100%); }
-          to   { transform: translateY(0);    }
+          to   { transform: translateY(0); }
         }
-        .drinks-modal-desktop { animation: drinkSlideUp  0.28s ease-out; }
-        .drinks-modal-mobile  { animation: drinkSheetUp  0.32s cubic-bezier(0.32,0.72,0,1); }
+        .drinks-modal-desktop { animation: drinkSlideUp 0.28s ease-out; }
+        .drinks-modal-mobile  { animation: drinkSheetUp 0.32s cubic-bezier(0.32,0.72,0,1); }
       `}</style>
 
       {/* Backdrop */}
@@ -65,9 +76,11 @@ export function DrinksUpsellModal({
       />
 
       {isMobile ? (
-        /* ── Mobile: bottom sheet ── */
+        /* ── Mobile: bottom sheet with sticky header + scrollable body + sticky footer ── */
         <div
           className="drinks-modal-mobile"
+          onClick={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
           style={{
             position: 'fixed', bottom: 0, left: 0, right: 0,
             zIndex: 9991,
@@ -75,14 +88,77 @@ export function DrinksUpsellModal({
             borderRadius: '20px 20px 0 0',
             border: '1px solid rgba(201,168,76,0.25)',
             borderBottom: 'none',
-            padding: '20px 16px 36px',
-            maxHeight: '88vh',
-            overflowY: 'auto',
+            maxHeight: '92vh',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          {/* Drag handle */}
-          <div style={{ width: 40, height: 4, background: '#2E2E2E', borderRadius: 2, margin: '0 auto 20px' }} />
-          <ModalContent drinks={drinks} onClose={onClose} onContinue={onContinue} onAddDrink={onAddDrink} cols={2} />
+          {/* Sticky header */}
+          <div style={{ flexShrink: 0, padding: '16px 16px 0' }}>
+            <div style={{ width: 40, height: 4, background: '#2E2E2E', borderRadius: 2, margin: '0 auto 16px' }} />
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div>
+                <h2 style={{ color: '#F0EDE6', fontSize: 18, fontWeight: 700, marginBottom: 2, fontFamily: 'Georgia, serif' }}>
+                  🥤 Adaugă o băutură?
+                </h2>
+                <p style={{ color: '#9A9490', fontSize: 13 }}>
+                  Completează comanda cu o băutură răcoritoare
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                aria-label="Închide"
+                style={{
+                  background: 'rgba(255,255,255,0.05)', border: '1px solid #2E2E2E',
+                  borderRadius: 8, cursor: 'pointer', color: '#9A9490',
+                  padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0,
+                  touchAction: 'manipulation',
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Scrollable drink grid — this is the only part that scrolls */}
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch' as never,
+            overscrollBehavior: 'contain',
+            padding: '8px 16px 12px',
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: 10,
+            }}>
+              {drinks.map((drink) => (
+                <DrinkCard key={drink.id} drink={drink} onAdd={() => onAddDrink(drink)} />
+              ))}
+            </div>
+          </div>
+
+          {/* Sticky footer — always visible above keyboard/home indicator */}
+          <div style={{
+            flexShrink: 0,
+            padding: '12px 16px',
+            paddingBottom: 'max(28px, env(safe-area-inset-bottom, 28px))',
+            borderTop: '1px solid #2E2E2E',
+            background: '#1A1A1A',
+          }}>
+            <button
+              onClick={onContinue}
+              style={{
+                width: '100%', background: 'transparent', color: '#9A9490',
+                border: '1px solid #2E2E2E', borderRadius: 10,
+                padding: '13px 16px', fontSize: 14, fontWeight: 500,
+                cursor: 'pointer', touchAction: 'manipulation',
+              }}
+            >
+              Nu, mulțumesc → Mergi la checkout
+            </button>
+          </div>
         </div>
       ) : (
         /* ── Desktop: centered card ── */
@@ -102,27 +178,25 @@ export function DrinksUpsellModal({
             boxShadow: '0 0 50px rgba(0,0,0,0.8)',
           }}
         >
-          <ModalContent drinks={drinks} onClose={onClose} onContinue={onContinue} onAddDrink={onAddDrink} cols={3} />
+          <ModalContent drinks={drinks} onClose={onClose} onContinue={onContinue} onAddDrink={onAddDrink} />
         </div>
       )}
     </>
   );
 }
 
-// ── Internal card content ─────────────────────────────────────────────────────
+// ── Desktop modal content ─────────────────────────────────────────────────────
 
 interface ModalContentProps {
   drinks: MenuProduct[];
   onClose: () => void;
   onContinue: () => void;
   onAddDrink: (drink: MenuProduct) => void;
-  cols: 2 | 3;
 }
 
-function ModalContent({ drinks, onClose, onContinue, onAddDrink, cols }: ModalContentProps) {
+function ModalContent({ drinks, onClose, onContinue, onAddDrink }: ModalContentProps) {
   return (
     <>
-      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
         <div>
           <h2 style={{ color: '#F0EDE6', fontSize: 18, fontWeight: 700, marginBottom: 4, fontFamily: 'Georgia, serif' }}>
@@ -139,16 +213,16 @@ function ModalContent({ drinks, onClose, onContinue, onAddDrink, cols }: ModalCo
             background: 'rgba(255,255,255,0.05)', border: '1px solid #2E2E2E',
             borderRadius: 8, cursor: 'pointer', color: '#9A9490',
             padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0,
+            touchAction: 'manipulation',
           }}
         >
           <X size={16} />
         </button>
       </div>
 
-      {/* Drink grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gridTemplateColumns: 'repeat(3, 1fr)',
         gap: 10,
         margin: '16px 0',
       }}>
@@ -157,14 +231,14 @@ function ModalContent({ drinks, onClose, onContinue, onAddDrink, cols }: ModalCo
         ))}
       </div>
 
-      {/* Footer */}
       <div style={{ marginTop: 8 }}>
         <button
           onClick={onContinue}
           style={{
             width: '100%', background: 'transparent', color: '#9A9490',
             border: '1px solid #2E2E2E', borderRadius: 10,
-            padding: '11px 16px', fontSize: 13, fontWeight: 500, cursor: 'pointer',
+            padding: '11px 16px', fontSize: 13, fontWeight: 500,
+            cursor: 'pointer', touchAction: 'manipulation',
           }}
         >
           Nu, mulțumesc → Mergi la checkout
@@ -215,8 +289,10 @@ function DrinkCard({ drink, onAdd }: { drink: MenuProduct; onAdd: () => void }) 
         style={{
           background: '#C9A84C', color: '#0F0F0F',
           border: 'none', borderRadius: 6,
-          padding: '6px 12px', fontSize: 12, fontWeight: 700,
+          padding: '8px 12px', fontSize: 12, fontWeight: 700,
           cursor: 'pointer', width: '100%',
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent',
         }}
       >
         + Adaugă
