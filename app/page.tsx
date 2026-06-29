@@ -10,8 +10,13 @@ import { UpcomingEventsSection } from '@/components/home/upcoming-events-section
 import { SocialSection } from '@/components/home/social-section';
 import { getMenuItems, getSettings } from '@/lib/server-data';
 import { PromoPopup } from '@/components/popup/promo-popup';
+import { RestaurantJsonLd } from '@/components/seo/JsonLd';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  alternates: { canonical: 'https://riverslounge.ro' },
+};
 
 export default async function HomePage() {
   const [products, settings] = await Promise.all([getMenuItems(), getSettings()]);
@@ -28,6 +33,7 @@ export default async function HomePage() {
 
   return (
     <SiteLayout>
+      <RestaurantJsonLd />
       <HeroSection heroImage={settings.heroImages?.acasa || settings.heroImage} />
       <FacilitiesOverview cardImages={cardImages} />
       <NewsSection />

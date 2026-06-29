@@ -14,8 +14,16 @@ import { SupportContactForm } from './SupportContactForm';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Suport Clienți | Rivers Lounge',
-  description: 'Ai nevoie de ajutor? Contactează echipa Rivers Lounge sau găsește răspunsuri în secțiunea FAQ.',
+  title: 'Suport Clienți',
+  description: "Ai nevoie de ajutor? Contactează echipa River's Lounge sau găsește răspunsuri în secțiunea FAQ.",
+  alternates: { canonical: '/suport' },
+  openGraph: {
+    title: "Suport Clienți | River's Lounge",
+    description: "Ai nevoie de ajutor? Contactează echipa River's Lounge sau găsește răspunsuri în FAQ.",
+    url: '/suport',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "Suport River's Lounge" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 const faqCategories = [

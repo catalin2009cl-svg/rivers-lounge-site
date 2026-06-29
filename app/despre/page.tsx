@@ -2,8 +2,16 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 
 export const metadata = {
-  title: "Despre Noi | River's Lounge",
-  description: "Aflați povestea River's Lounge — restaurant, evenimente și relaxare în Călărași.",
+  title: 'Despre Noi',
+  description: "Aflați povestea River's Lounge — restaurant premium, evenimente și relaxare în Călărași. O experiență culinară și de entertainment unică.",
+  alternates: { canonical: '/despre' },
+  openGraph: {
+    title: "Despre Noi | River's Lounge",
+    description: "Aflați povestea River's Lounge — restaurant, evenimente și relaxare în Călărași.",
+    url: '/despre',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "Despre River's Lounge" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 export default function DesprePage() {

@@ -2,8 +2,16 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 
 export const metadata = {
-  title: "Cariere | River's Lounge",
-  description: "Alătură-te echipei River's Lounge. Vezi pozițiile disponibile.",
+  title: 'Cariere',
+  description: "Alătură-te echipei River's Lounge din Călărași. Descoperă pozițiile disponibile și aplică astăzi.",
+  alternates: { canonical: '/cariere' },
+  openGraph: {
+    title: "Cariere | River's Lounge",
+    description: "Alătură-te echipei River's Lounge. Vezi pozițiile disponibile.",
+    url: '/cariere',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "Cariere River's Lounge" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 export default function CarierePage() {

@@ -14,8 +14,9 @@ import type { SafeUser } from '@/components/account/account-forms';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "Contul Meu | River's Lounge",
+  title: 'Contul Meu',
   description: "Gestionează contul tău River's Lounge — comenzi, rezervări și setări.",
+  robots: { index: false, follow: false },
 };
 
 function deriveClientCode(userId: string): string {

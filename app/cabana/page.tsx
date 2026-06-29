@@ -8,9 +8,16 @@ import { getSettings, getCabanaGallery } from '@/lib/server-data';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "Cabana Rivers | Evenimente & Petreceri | River's Lounge",
-  description:
-    'Cabana Rivers — locul perfect pentru evenimente speciale, petreceri private și weekend-uri în natură.',
+  title: 'Cabana Rivers | Evenimente & Petreceri',
+  description: 'Cabana Rivers — locul perfect pentru evenimente speciale, petreceri private și weekend-uri memorabile în natură, în Călărași.',
+  alternates: { canonical: '/cabana' },
+  openGraph: {
+    title: "Cabana Rivers | Evenimente & Petreceri | River's Lounge",
+    description: 'Cabana Rivers — locul perfect pentru evenimente speciale și petreceri private în natură.',
+    url: '/cabana',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Cabana Rivers' }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 const FALLBACK = 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1920&h=600&fit=crop';

@@ -6,8 +6,16 @@ import { getMenuItems, getSettings } from '@/lib/server-data';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "Meniu & Comenzi Online | River's Lounge",
-  description: "Comandă mâncare online de la River's Lounge — livrare rapidă în Călărași.",
+  title: 'Meniu & Comenzi Online',
+  description: "Comandă mâncare online de la River's Lounge — preparate din meniu livrate rapid în Călărași. Pizze, grătar, paste, salate, deserturi și băuturi.",
+  alternates: { canonical: '/meniu' },
+  openGraph: {
+    title: "Meniu & Comenzi Online | River's Lounge",
+    description: "Comandă mâncare online de la River's Lounge — livrare rapidă în Călărași.",
+    url: '/meniu',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "Meniu River's Lounge" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 const FALLBACK = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&h=600&fit=crop';

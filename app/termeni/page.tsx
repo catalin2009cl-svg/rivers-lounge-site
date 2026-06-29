@@ -2,8 +2,10 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 
 export const metadata = {
-  title: "Termeni și Condiții | River's Lounge",
+  title: 'Termeni și Condiții',
   description: "Termenii și condițiile de utilizare a serviciilor River's Lounge.",
+  alternates: { canonical: '/termeni' },
+  robots: { index: false, follow: false },
 };
 
 export default function TermeniPage() {

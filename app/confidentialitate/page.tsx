@@ -2,8 +2,10 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 
 export const metadata = {
-  title: "Politica de Confidențialitate | River's Lounge",
+  title: 'Politică de Confidențialitate',
   description: "Cum colectăm, folosim și protejăm datele dvs. personale la River's Lounge.",
+  alternates: { canonical: '/confidentialitate' },
+  robots: { index: false, follow: false },
 };
 
 export default function ConfidentialitatePage() {

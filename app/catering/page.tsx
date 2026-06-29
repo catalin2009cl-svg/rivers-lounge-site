@@ -2,8 +2,16 @@ import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 
 export const metadata = {
-  title: "Catering | River's Lounge",
-  description: "Servicii de catering pentru evenimente corporate, nunți, botezuri și petreceri private în Călărași.",
+  title: 'Catering',
+  description: "Servicii de catering pentru evenimente corporate, nunți, botezuri și petreceri private în Călărași. Meniuri personalizate de la River's Lounge.",
+  alternates: { canonical: '/catering' },
+  openGraph: {
+    title: "Catering | River's Lounge",
+    description: "Servicii de catering pentru evenimente corporate, nunți, botezuri și petreceri private în Călărași.",
+    url: '/catering',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "Catering River's Lounge" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 export default function CateringPage() {

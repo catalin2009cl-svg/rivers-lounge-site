@@ -10,9 +10,17 @@ import { getSettings, getRiversLandGallery } from '@/lib/server-data';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "River's Land | Loc de Joacă pentru Copii | River's Lounge",
+  title: "River's Land | Loc de Joacă pentru Copii",
   description:
     "River's Land — loc de joacă și distracție special amenajat pentru copii, în cadrul complexului River's Lounge din Călărași.",
+  alternates: { canonical: '/rivers-land' },
+  openGraph: {
+    title: "River's Land | Loc de Joacă pentru Copii | River's Lounge",
+    description: "River's Land — loc de joacă special amenajat pentru copii în Călărași.",
+    url: '/rivers-land',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "River's Land" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 const HERO_FALLBACK =

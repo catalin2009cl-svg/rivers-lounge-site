@@ -25,19 +25,43 @@ const inter = Inter({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const b = settings.branding;
+  const ogImage = b?.ogImage ?? '/og-image.jpg';
+
   return {
-    title: "River's Lounge | Restaurant, Evenimente & Cabană în Călărași",
+    metadataBase: new URL('https://riverslounge.ro'),
+    title: {
+      default: "River's Lounge | Restaurant, Evenimente & Cabană în Călărași",
+      template: "%s | River's Lounge",
+    },
     description: 'Restaurant premium, comenzi online, evenimente private și Cabana Rivers în Călărași. Experiență culinară de neuitat într-o atmosferă elegantă de lounge.',
-    keywords: 'restaurant Călărași, comandă mâncare Călărași, rezervări evenimente Călărași, Cabana Rivers, River\'s Lounge, catering evenimente',
-    generator: 'v0.app',
+    keywords: [
+      'restaurant Călărași', 'comandă mâncare Călărași', 'rezervări evenimente Călărași',
+      'Cabana Rivers', "River's Lounge", 'catering Călărași', "River's Land",
+      "River's Marina", 'lounge Călărași', 'livrare mâncare Călărași',
+    ],
+    authors: [{ name: "River's Lounge", url: 'https://riverslounge.ro' }],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+    },
     openGraph: {
-      title: "River's Lounge | Restaurant & Evenimente",
-      description: 'Restaurant premium, comenzi online și evenimente private în Călărași',
+      title: "River's Lounge | Restaurant, Evenimente & Cabană în Călărași",
+      description: 'Restaurant premium, comenzi online și evenimente private în Călărași.',
       type: 'website',
       locale: 'ro_RO',
-      images: b?.ogImage
-        ? [{ url: b.ogImage, alt: "River's Lounge" }]
-        : [{ url: b?.logoLight ?? '/uploads/1782418815754-6p2rttowpm3.png', alt: "River's Lounge" }],
+      siteName: "River's Lounge",
+      url: 'https://riverslounge.ro',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: "River's Lounge — Restaurant & Evenimente în Călărași" }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: "River's Lounge | Restaurant, Evenimente & Cabană în Călărași",
+      description: 'Restaurant premium, comenzi online și evenimente private în Călărași.',
+      images: [ogImage],
+    },
+    alternates: {
+      canonical: 'https://riverslounge.ro',
     },
     icons: {
       icon: b?.favicon && b.favicon !== '/favicon.ico'

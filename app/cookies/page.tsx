@@ -5,8 +5,10 @@ import { GdprRequestForm } from '@/components/cookies/gdpr-request-form';
 import { Shield, BarChart2, Megaphone } from 'lucide-react';
 
 export const metadata = {
-  title: "Politica Cookies | River's Lounge",
+  title: 'Politica Cookies',
   description: 'Informații despre utilizarea cookie-urilor pe riverslounge.ro și gestionarea preferințelor tale.',
+  alternates: { canonical: '/cookies' },
+  robots: { index: false, follow: false },
 };
 
 const cookies = [

@@ -11,9 +11,17 @@ import { getSettings, getRiversMarinaGallery } from '@/lib/server-data';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "River's Marina | Club & Evenimente | River's Lounge",
+  title: "River's Marina | Club & Evenimente",
   description:
     "River's Marina — club exclusivist, evenimente live și vibrații de lounge la malul apei, în cadrul complexului River's Lounge din Călărași.",
+  alternates: { canonical: '/rivers-marina' },
+  openGraph: {
+    title: "River's Marina | Club & Evenimente | River's Lounge",
+    description: "River's Marina — club exclusivist și evenimente live la malul apei în Călărași.",
+    url: '/rivers-marina',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: "River's Marina" }],
+  },
+  twitter: { card: 'summary_large_image' as const, images: ['/og-image.jpg'] },
 };
 
 const HERO_FALLBACK =
