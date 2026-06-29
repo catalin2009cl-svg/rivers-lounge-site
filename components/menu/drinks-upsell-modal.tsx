@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import type { MenuProduct } from '@/lib/server-data';
@@ -20,47 +20,16 @@ export function DrinksUpsellModal({
   onContinue,
   onAddDrink,
 }: DrinksUpsellModalProps) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    // Save scroll position and lock body — restore on close
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      window.scrollTo(0, scrollY);
-    };
-  }, [isOpen]);
-
   if (!isOpen || drinks.length === 0) return null;
 
   return (
     <>
       <style>{`
         @keyframes drinkSlideUp {
-          from { opacity: 0; transform: translateY(32px); }
-          to   { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translate(-50%, calc(-50% + 24px)); }
+          to   { opacity: 1; transform: translate(-50%, -50%); }
         }
-        @keyframes drinkSheetUp {
-          from { transform: translateY(100%); }
-          to   { transform: translateY(0); }
-        }
-        .drinks-modal-desktop { animation: drinkSlideUp 0.28s ease-out; }
-        .drinks-modal-mobile  { animation: drinkSheetUp 0.32s cubic-bezier(0.32,0.72,0,1); }
+        .drinks-modal { animation: drinkSlideUp 0.25s ease-out; }
       `}</style>
 
       {/* Backdrop */}
@@ -75,170 +44,63 @@ export function DrinksUpsellModal({
         }}
       />
 
-      {isMobile ? (
-        /* ── Mobile: bottom sheet with sticky header + scrollable body + sticky footer ── */
-        <div
-          className="drinks-modal-mobile"
-          onClick={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-          style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0,
-            zIndex: 9991,
-            background: '#1A1A1A',
-            borderRadius: '20px 20px 0 0',
-            border: '1px solid rgba(201,168,76,0.25)',
-            borderBottom: 'none',
-            maxHeight: '92vh',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* Sticky header */}
-          <div style={{ flexShrink: 0, padding: '16px 16px 0' }}>
-            <div style={{ width: 40, height: 4, background: '#2E2E2E', borderRadius: 2, margin: '0 auto 16px' }} />
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-              <div>
-                <h2 style={{ color: '#F0EDE6', fontSize: 18, fontWeight: 700, marginBottom: 2, fontFamily: 'Georgia, serif' }}>
-                  🥤 Adaugă o băutură?
-                </h2>
-                <p style={{ color: '#9A9490', fontSize: 13 }}>
-                  Completează comanda cu o băutură răcoritoare
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                aria-label="Închide"
-                style={{
-                  background: 'rgba(255,255,255,0.05)', border: '1px solid #2E2E2E',
-                  borderRadius: 8, cursor: 'pointer', color: '#9A9490',
-                  padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0,
-                  touchAction: 'manipulation',
-                }}
-              >
-                <X size={16} />
-              </button>
-            </div>
+      {/* Desktop centered card */}
+      <div
+        className="drinks-modal"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'fixed', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 9991,
+          background: '#1A1A1A',
+          border: '1px solid rgba(201,168,76,0.3)',
+          borderRadius: 16,
+          padding: 28,
+          width: '100%', maxWidth: 560,
+          maxHeight: '90vh', overflowY: 'auto',
+          boxShadow: '0 0 50px rgba(0,0,0,0.8)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <h2 style={{ color: '#F0EDE6', fontSize: 18, fontWeight: 700, marginBottom: 4, fontFamily: 'Georgia, serif' }}>
+              🥤 Adaugă o băutură?
+            </h2>
+            <p style={{ color: '#9A9490', fontSize: 13 }}>
+              Completează comanda cu o băutură răcoritoare
+            </p>
           </div>
-
-          {/* Scrollable drink grid — this is the only part that scrolls */}
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            WebkitOverflowScrolling: 'touch' as never,
-            overscrollBehavior: 'contain',
-            padding: '8px 16px 12px',
-          }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: 10,
-            }}>
-              {drinks.map((drink) => (
-                <DrinkCard key={drink.id} drink={drink} onAdd={() => onAddDrink(drink)} />
-              ))}
-            </div>
-          </div>
-
-          {/* Sticky footer — always visible above keyboard/home indicator */}
-          <div style={{
-            flexShrink: 0,
-            padding: '12px 16px',
-            paddingBottom: 'max(28px, env(safe-area-inset-bottom, 28px))',
-            borderTop: '1px solid #2E2E2E',
-            background: '#1A1A1A',
-          }}>
-            <button
-              onClick={onContinue}
-              style={{
-                width: '100%', background: 'transparent', color: '#9A9490',
-                border: '1px solid #2E2E2E', borderRadius: 10,
-                padding: '13px 16px', fontSize: 14, fontWeight: 500,
-                cursor: 'pointer', touchAction: 'manipulation',
-              }}
-            >
-              Nu, mulțumesc → Mergi la checkout
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            aria-label="Închide"
+            style={{
+              background: 'rgba(255,255,255,0.05)', border: '1px solid #2E2E2E',
+              borderRadius: 8, cursor: 'pointer', color: '#9A9490',
+              padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0,
+            }}
+          >
+            <X size={16} />
+          </button>
         </div>
-      ) : (
-        /* ── Desktop: centered card ── */
-        <div
-          className="drinks-modal-desktop"
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            position: 'fixed', top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 9991,
-            background: '#1A1A1A',
-            border: '1px solid rgba(201,168,76,0.3)',
-            borderRadius: 16,
-            padding: 28,
-            width: '100%', maxWidth: 560,
-            maxHeight: '90vh', overflowY: 'auto',
-            boxShadow: '0 0 50px rgba(0,0,0,0.8)',
-          }}
-        >
-          <ModalContent drinks={drinks} onClose={onClose} onContinue={onContinue} onAddDrink={onAddDrink} />
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 10,
+          margin: '16px 0',
+        }}>
+          {drinks.map((drink) => (
+            <DrinkCard key={drink.id} drink={drink} onAdd={() => onAddDrink(drink)} />
+          ))}
         </div>
-      )}
-    </>
-  );
-}
 
-// ── Desktop modal content ─────────────────────────────────────────────────────
-
-interface ModalContentProps {
-  drinks: MenuProduct[];
-  onClose: () => void;
-  onContinue: () => void;
-  onAddDrink: (drink: MenuProduct) => void;
-}
-
-function ModalContent({ drinks, onClose, onContinue, onAddDrink }: ModalContentProps) {
-  return (
-    <>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div>
-          <h2 style={{ color: '#F0EDE6', fontSize: 18, fontWeight: 700, marginBottom: 4, fontFamily: 'Georgia, serif' }}>
-            🥤 Adaugă o băutură?
-          </h2>
-          <p style={{ color: '#9A9490', fontSize: 13 }}>
-            Completează comanda cu o băutură răcoritoare
-          </p>
-        </div>
-        <button
-          onClick={onClose}
-          aria-label="Închide"
-          style={{
-            background: 'rgba(255,255,255,0.05)', border: '1px solid #2E2E2E',
-            borderRadius: 8, cursor: 'pointer', color: '#9A9490',
-            padding: '6px', display: 'flex', alignItems: 'center', flexShrink: 0,
-            touchAction: 'manipulation',
-          }}
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: 10,
-        margin: '16px 0',
-      }}>
-        {drinks.map((drink) => (
-          <DrinkCard key={drink.id} drink={drink} onAdd={() => onAddDrink(drink)} />
-        ))}
-      </div>
-
-      <div style={{ marginTop: 8 }}>
         <button
           onClick={onContinue}
           style={{
             width: '100%', background: 'transparent', color: '#9A9490',
             border: '1px solid #2E2E2E', borderRadius: 10,
             padding: '11px 16px', fontSize: 13, fontWeight: 500,
-            cursor: 'pointer', touchAction: 'manipulation',
+            cursor: 'pointer', marginTop: 8,
           }}
         >
           Nu, mulțumesc → Mergi la checkout
@@ -248,34 +110,17 @@ function ModalContent({ drinks, onClose, onContinue, onAddDrink }: ModalContentP
   );
 }
 
-// ── Single drink card ─────────────────────────────────────────────────────────
+// ── Single drink card (desktop modal only) ────────────────────────────────────
 
 function DrinkCard({ drink, onAdd }: { drink: MenuProduct; onAdd: () => void }) {
   const [active, setActive] = useState(false);
 
-  function handlePointerDown(e: React.PointerEvent) {
-    e.stopPropagation();
-    setActive(true);
-  }
-
-  function handlePointerUp(e: React.PointerEvent) {
-    e.stopPropagation();
-    if (active) {
-      setActive(false);
-      onAdd();
-    }
-  }
-
-  function handlePointerLeave() {
-    setActive(false);
-  }
-
   return (
     <div
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerLeave}
-      onPointerCancel={handlePointerLeave}
+      onPointerDown={(e) => { e.stopPropagation(); setActive(true); }}
+      onPointerUp={(e) => { e.stopPropagation(); if (active) { setActive(false); onAdd(); } }}
+      onPointerLeave={() => setActive(false)}
+      onPointerCancel={() => setActive(false)}
       style={{
         background: active ? 'rgba(201,168,76,0.12)' : '#0F0F0F',
         border: `1px solid ${active ? '#C9A84C' : '#2E2E2E'}`,
@@ -298,7 +143,6 @@ function DrinkCard({ drink, onAdd }: { drink: MenuProduct; onAdd: () => void }) 
       ) : (
         <div style={{ fontSize: 28, marginBottom: 8, pointerEvents: 'none' }}>🥤</div>
       )}
-
       <p style={{ color: '#F0EDE6', fontSize: 12, fontWeight: 600, marginBottom: 4, lineHeight: 1.3, pointerEvents: 'none' }}>
         {drink.name}
       </p>
@@ -308,15 +152,7 @@ function DrinkCard({ drink, onAdd }: { drink: MenuProduct; onAdd: () => void }) 
       <p style={{ color: '#C9A84C', fontSize: 12, fontWeight: 700, marginBottom: 8, pointerEvents: 'none' }}>
         {drink.price} RON
       </p>
-
-      <div
-        style={{
-          background: '#C9A84C', color: '#0F0F0F',
-          borderRadius: 6,
-          padding: '8px 12px', fontSize: 12, fontWeight: 700,
-          pointerEvents: 'none',
-        }}
-      >
+      <div style={{ background: '#C9A84C', color: '#0F0F0F', borderRadius: 6, padding: '8px 12px', fontSize: 12, fontWeight: 700, pointerEvents: 'none' }}>
         + Adaugă
       </div>
     </div>

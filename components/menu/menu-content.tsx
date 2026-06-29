@@ -86,7 +86,12 @@ export function MenuContent({ products }: MenuContentProps) {
   const handleOrder = () => {
     if (items.length === 0) return;
     if (!cartHasDrinks && availableDrinks.length > 0) {
-      setShowDrinksModal(true);
+      if (window.innerWidth < 768) {
+        sessionStorage.setItem('upsell_drinks', JSON.stringify(availableDrinks));
+        router.push('/bauturi-upsell');
+      } else {
+        setShowDrinksModal(true);
+      }
     } else {
       router.push('/comanda/checkout');
     }
@@ -303,15 +308,15 @@ export function MenuContent({ products }: MenuContentProps) {
 }
 
 export function MobileCartButton({ drinks = [] }: { drinks?: MenuProduct[] }) {
-  const { items, totalItems, totalPrice, updateQuantity, removeItem, addItem } = useCart();
+  const { items, totalItems, totalPrice, updateQuantity, removeItem } = useCart();
   const router = useRouter();
-  const [showDrinksModal, setShowDrinksModal] = useState(false);
 
   const cartHasDrinks = items.some((i) => i.product.subcategory === 'bauturi');
 
   function handleCheckout() {
     if (!cartHasDrinks && drinks.length > 0) {
-      setShowDrinksModal(true);
+      sessionStorage.setItem('upsell_drinks', JSON.stringify(drinks));
+      router.push('/bauturi-upsell');
     } else {
       router.push('/comanda/checkout');
     }
@@ -321,17 +326,6 @@ export function MobileCartButton({ drinks = [] }: { drinks?: MenuProduct[] }) {
 
   return (
     <>
-      <DrinksUpsellModal
-        isOpen={showDrinksModal}
-        drinks={drinks}
-        onClose={() => setShowDrinksModal(false)}
-        onContinue={() => { setShowDrinksModal(false); router.push('/comanda/checkout'); }}
-        onAddDrink={(drink) => {
-          addItem(drink);
-          setShowDrinksModal(false);
-          router.push('/comanda/checkout');
-        }}
-      />
       <Sheet>
         <SheetTrigger asChild>
           <Button className="fixed bottom-6 right-6 z-40 lg:hidden gap-2 shadow-lg bg-primary text-primary-foreground">
