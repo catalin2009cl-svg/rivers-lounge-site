@@ -92,7 +92,8 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch {
+  } catch (err) {
+    console.error('[WebAuthn] authenticate/verify error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

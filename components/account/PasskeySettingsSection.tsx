@@ -21,6 +21,7 @@ export function PasskeySettingsSection() {
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [regError, setRegError] = useState('');
 
   const fetchCredentials = useCallback(async () => {
     try {
@@ -45,14 +46,33 @@ export function PasskeySettingsSection() {
 
   async function handleRegister() {
     setRegistering(true);
+    setRegError('');
     try {
       const optRes = await fetch('/api/auth/webauthn/register/options');
-      if (!optRes.ok) { toast.error('Eroare la configurare.'); return; }
+      if (!optRes.ok) {
+        const body = await optRes.json().catch(() => ({})) as { error?: string };
+        const msg = body.error ?? `Server error ${optRes.status}`;
+        console.error('[WebAuthn] register/options failed:', msg);
+        toast.error(msg);
+        setRegError(msg);
+        return;
+      }
       const options = await optRes.json() as PublicKeyCredentialCreationOptionsJSON;
+      console.log('[WebAuthn] Got registration options, rp.id:', options.rp?.id, 'timeout:', options.timeout);
+
+      // Collect device name BEFORE calling startRegistration so we never
+      // block the WebAuthn ceremony with a synchronous dialog on iOS Safari.
+      const ua = navigator.userAgent;
+      const deviceName =
+        /iPhone/.test(ua) ? 'iPhone' :
+        /iPad/.test(ua)   ? 'iPad' :
+        /Mac/.test(ua)    ? 'Mac' :
+        /Android/.test(ua)? 'Android' :
+        /Windows/.test(ua)? 'Windows' :
+        'Dispozitivul meu';
 
       const registrationResponse = await startRegistration({ optionsJSON: options });
-
-      const deviceName = prompt('Cum vrei să numești acest dispozitiv?\n(ex: iPhone 15, MacBook Pro)') ?? 'Dispozitivul meu';
+      console.log('[WebAuthn] startRegistration succeeded');
 
       const verifyRes = await fetch('/api/auth/webauthn/register/verify', {
         method: 'POST',
@@ -65,14 +85,20 @@ export function PasskeySettingsSection() {
         toast.success('Face ID activat cu succes! Data viitoare te poți loga fără parolă.');
         await fetchCredentials();
       } else {
+        console.error('[WebAuthn] register/verify failed:', data.error);
         toast.error(data.error ?? 'Configurare eșuată.');
+        setRegError(data.error ?? 'Configurare eșuată.');
       }
     } catch (err: unknown) {
-      const errName = err instanceof Error ? err.name : '';
-      if (errName === 'NotAllowedError') {
+      const name = err instanceof Error ? err.name : 'UnknownError';
+      const msg  = err instanceof Error ? err.message : String(err);
+      console.error('[WebAuthn] Registration error:', name, msg, err);
+      if (name === 'NotAllowedError') {
         toast.error('Configurare anulată.');
       } else {
-        toast.error('Configurare eșuată. Încearcă din nou.');
+        const detail = `${name}: ${msg}`;
+        toast.error(`Configurare eșuată: ${name}`);
+        setRegError(detail);
       }
     } finally {
       setRegistering(false);
@@ -166,6 +192,13 @@ export function PasskeySettingsSection() {
         <p style={{ color: '#9A9490', fontSize: 13, fontStyle: 'italic', marginBottom: 14 }}>
           Face ID / Touch ID nu este suportat de browserul sau dispozitivul tău curent.
           Funcția este disponibilă pe Chrome, Safari și Edge moderne.
+        </p>
+      )}
+
+      {/* Registration error */}
+      {regError && (
+        <p style={{ color: '#F87171', fontSize: 12, marginBottom: 10, fontFamily: 'monospace', wordBreak: 'break-word' }}>
+          {regError}
         </p>
       )}
 

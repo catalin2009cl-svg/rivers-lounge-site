@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(options);
-  } catch {
+  } catch (err) {
+    console.error('[WebAuthn] authenticate/options error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

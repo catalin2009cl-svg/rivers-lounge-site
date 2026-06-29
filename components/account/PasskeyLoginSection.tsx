@@ -8,20 +8,56 @@ import { useRouter } from 'next/navigation';
 type SupportState = 'checking' | 'supported' | 'unsupported';
 type Status = 'idle' | 'loading' | 'success' | 'error' | 'no_credentials' | 'cancelled';
 
+function parseWebAuthnError(err: unknown): { userMsg: string; debugInfo: string } {
+  const name = err instanceof Error ? err.name : 'UnknownError';
+  const msg  = err instanceof Error ? err.message : String(err);
+  const debug = `${name}: ${msg}`;
+
+  switch (name) {
+    case 'NotAllowedError':
+      return {
+        userMsg: 'Autentificare anulată sau refuzată. Apasă butonul și completează cu Face ID.',
+        debugInfo: debug,
+      };
+    case 'SecurityError':
+      return {
+        userMsg: 'Eroare de securitate — domeniu neconfigurat corect. Contactează suportul.',
+        debugInfo: debug,
+      };
+    case 'AbortError':
+      return {
+        userMsg: 'Operațiunea a fost întreruptă. Încearcă din nou.',
+        debugInfo: debug,
+      };
+    default:
+      return {
+        userMsg: `Eroare (${name}). Încearcă cu parola sau contactează suportul.`,
+        debugInfo: debug,
+      };
+  }
+}
+
 export function PasskeyLoginSection() {
   const router = useRouter();
   const [support, setSupport] = useState<SupportState>('checking');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [debugMsg, setDebugMsg] = useState('');
 
   useEffect(() => {
     async function checkSupport() {
+      if (!window.PublicKeyCredential) {
+        console.log('[WebAuthn] PublicKeyCredential API not available in this browser.');
+        setSupport('unsupported');
+        return;
+      }
       try {
-        if (!window.PublicKeyCredential) { setSupport('unsupported'); return; }
         const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        console.log('[WebAuthn] isUserVerifyingPlatformAuthenticatorAvailable:', available);
         setSupport(available ? 'supported' : 'unsupported');
-      } catch {
+      } catch (err) {
+        console.error('[WebAuthn] Support check threw:', err);
         setSupport('unsupported');
       }
     }
@@ -34,9 +70,10 @@ export function PasskeyLoginSection() {
     if (!email.trim()) { setErrorMsg('Introdu adresa de email mai întâi.'); return; }
     setStatus('loading');
     setErrorMsg('');
+    setDebugMsg('');
 
     try {
-      // 1. Get options
+      // 1. Get authentication options from server
       const optRes = await fetch('/api/auth/webauthn/authenticate/options', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,15 +82,19 @@ export function PasskeyLoginSection() {
       const optData = await optRes.json() as PublicKeyCredentialRequestOptionsJSON & { error?: string };
 
       if (!optRes.ok || optData.error) {
+        console.warn('[WebAuthn] authenticate/options returned error:', optData.error, 'status:', optRes.status);
         setStatus('no_credentials');
         setErrorMsg(optData.error ?? 'Nu ai Face ID înregistrat pe acest cont.');
         return;
       }
 
+      console.log('[WebAuthn] Got authentication options, rpId:', optData.rpId ?? '(not set)', 'timeout:', optData.timeout);
+
       // 2. Trigger Face ID / Touch ID / Windows Hello
       const authResponse = await startAuthentication({ optionsJSON: optData });
+      console.log('[WebAuthn] startAuthentication succeeded, credential id prefix:', authResponse.id.slice(0, 12));
 
-      // 3. Verify
+      // 3. Verify with server
       const verifyRes = await fetch('/api/auth/webauthn/authenticate/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,18 +107,17 @@ export function PasskeyLoginSection() {
         router.push('/cont');
         router.refresh();
       } else {
+        console.warn('[WebAuthn] verify returned error:', verifyData.error, 'status:', verifyRes.status);
         setStatus('error');
         setErrorMsg(verifyData.error ?? 'Autentificare eșuată.');
       }
     } catch (err: unknown) {
-      const errName = err instanceof Error ? err.name : '';
-      if (errName === 'NotAllowedError') {
-        setStatus('cancelled');
-        setErrorMsg('Autentificare anulată. Încearcă din nou.');
-      } else {
-        setStatus('error');
-        setErrorMsg('A apărut o eroare. Încearcă cu parola.');
-      }
+      const { userMsg, debugInfo } = parseWebAuthnError(err);
+      console.error('[WebAuthn] Authentication flow error:', debugInfo, err);
+      const name = err instanceof Error ? err.name : '';
+      setStatus(name === 'NotAllowedError' ? 'cancelled' : 'error');
+      setErrorMsg(userMsg);
+      setDebugMsg(debugInfo);
     }
   }
 
@@ -97,14 +137,19 @@ export function PasskeyLoginSection() {
             id="passkey-email"
             type="email"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); setStatus('idle'); setErrorMsg(''); }}
+            onChange={(e) => { setEmail(e.target.value); setStatus('idle'); setErrorMsg(''); setDebugMsg(''); }}
             placeholder="email@exemplu.ro"
             className="w-full border border-input bg-background text-foreground rounded-md px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         {errorMsg && (
-          <p className="text-xs text-destructive">{errorMsg}</p>
+          <div>
+            <p className="text-xs text-destructive">{errorMsg}</p>
+            {debugMsg && (
+              <p className="text-xs text-muted-foreground mt-0.5 font-mono opacity-70">{debugMsg}</p>
+            )}
+          </div>
         )}
 
         {status === 'no_credentials' && (

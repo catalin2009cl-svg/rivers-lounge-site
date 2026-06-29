@@ -45,7 +45,8 @@ export async function GET() {
     });
 
     return NextResponse.json(options);
-  } catch {
+  } catch (err) {
+    console.error('[WebAuthn] register/options error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

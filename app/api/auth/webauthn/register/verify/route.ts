@@ -60,7 +60,8 @@ export async function POST(req: NextRequest) {
     ]);
 
     return NextResponse.json({ ok: true, credentialId: credential.id });
-  } catch {
+  } catch (err) {
+    console.error('[WebAuthn] register/verify error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

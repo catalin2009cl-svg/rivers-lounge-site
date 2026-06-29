@@ -12,6 +12,7 @@ export function PasskeyPrompt() {
   const [show, setShow] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [done, setDone] = useState(false);
+  const [regError, setRegError] = useState('');
 
   useEffect(() => {
     async function check() {
@@ -52,26 +53,43 @@ export function PasskeyPrompt() {
 
   async function handleActivate() {
     setRegistering(true);
+    setRegError('');
     try {
       const optRes = await fetch('/api/auth/webauthn/register/options');
-      if (!optRes.ok) { setRegistering(false); return; }
+      if (!optRes.ok) {
+        const body = await optRes.json().catch(() => ({})) as { error?: string };
+        const msg = body.error ?? `Server error ${optRes.status}`;
+        console.error('[WebAuthn] register/options failed:', msg);
+        setRegError(msg);
+        return;
+      }
       const options = await optRes.json() as PublicKeyCredentialCreationOptionsJSON;
+      console.log('[WebAuthn] Got registration options, rp.id:', options.rp?.id, 'timeout:', options.timeout);
 
       const registrationResponse = await startRegistration({ optionsJSON: options });
+      console.log('[WebAuthn] startRegistration succeeded');
 
       const verifyRes = await fetch('/api/auth/webauthn/register/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ registrationResponse, deviceName: 'Dispozitivul meu' }),
       });
-      const data = await verifyRes.json() as { ok?: boolean };
+      const data = await verifyRes.json() as { ok?: boolean; error?: string };
 
       if (verifyRes.ok && data.ok) {
         setDone(true);
         setTimeout(() => setShow(false), 2500);
+      } else {
+        console.error('[WebAuthn] register/verify failed:', data.error);
+        setRegError(data.error ?? 'Verificare eșuată.');
       }
-    } catch {
-      // silent — user can activate from settings
+    } catch (err: unknown) {
+      const name = err instanceof Error ? err.name : 'UnknownError';
+      const msg  = err instanceof Error ? err.message : String(err);
+      console.error('[WebAuthn] Registration error:', name, msg, err);
+      if (name !== 'NotAllowedError') {
+        setRegError(`${name}: ${msg}`);
+      }
     } finally {
       setRegistering(false);
     }
@@ -111,6 +129,12 @@ export function PasskeyPrompt() {
               </p>
             </div>
           </div>
+
+          {regError && (
+            <p style={{ color: '#F87171', fontSize: 12, marginBottom: 10, fontFamily: 'monospace', wordBreak: 'break-word' }}>
+              {regError}
+            </p>
+          )}
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button
