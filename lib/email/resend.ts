@@ -1,6 +1,9 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient(): Resend {
+  if (!process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY is not set');
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 const EMAIL_HEADER = `
   <tr>
@@ -50,7 +53,7 @@ export async function sendReviewRequestEmail(
     )
     .join('');
 
-  await resend.emails.send({
+  await getResendClient().emails.send({
     from: 'Rivers Lounge <no_reply@riverslounge.ro>',
     to,
     subject: 'Cum a fost comanda ta? Lasă o recenzie — Rivers Lounge',
@@ -74,7 +77,7 @@ export async function sendLowRatingAlertEmail(
   rating: number,
   comment: string | null
 ): Promise<void> {
-  await resend.emails.send({
+  await getResendClient().emails.send({
     from: 'Rivers Lounge <no_reply@riverslounge.ro>',
     to: 'renetrading@yahoo.com',
     subject: `⚠️ Recenzie negativă (${rating}★) — comanda #${orderId.slice(-8).toUpperCase()}`,
@@ -98,7 +101,7 @@ export async function sendBirthdayEmail(
   userName: string,
   creditAmount: number
 ): Promise<void> {
-  await resend.emails.send({
+  await getResendClient().emails.send({
     from: 'Rivers Lounge <no_reply@riverslounge.ro>',
     to,
     subject: '🎂 La mulți ani! Ai primit credit în portofel — Rivers Lounge',
@@ -128,7 +131,7 @@ export async function sendWeeklyReportEmail(
   pdfBuffer: Buffer,
   weekLabel: string
 ): Promise<void> {
-  await resend.emails.send({
+  await getResendClient().emails.send({
     from: 'Rivers Lounge <no_reply@riverslounge.ro>',
     to: 'renetrading@yahoo.com',
     subject: `📊 Raport săptămânal Rivers Lounge — ${weekLabel}`,
@@ -155,7 +158,7 @@ export async function sendPasswordResetEmail(
   resetLink: string,
   userName: string
 ): Promise<void> {
-  await resend.emails.send({
+  await getResendClient().emails.send({
     from: 'Rivers Lounge <no_reply@riverslounge.ro>',
     to,
     subject: 'Resetare parolă — Rivers Lounge',
