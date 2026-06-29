@@ -30,7 +30,7 @@ export async function POST() {
     u.lastOrderAt?.toISOString()        ?? '',
   ]);
 
-  const csv = [header, ...rows]
+  const csv = '﻿' + [header, ...rows]
     .map((row) => row.map((cell) => csvCell(String(cell))).join(','))
     .join('\n');
 
