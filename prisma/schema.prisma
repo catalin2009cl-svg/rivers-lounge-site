@@ -38,6 +38,11 @@ model User {
   birthDate          DateTime?
   lastBirthdayReward DateTime?
 
+  googleId     String? @unique
+  facebookId   String? @unique
+  avatarUrl    String?
+  authProvider String?
+
   orders               Order[]
   reservations         Reservation[]
   loyaltyProfile       LoyaltyProfile?

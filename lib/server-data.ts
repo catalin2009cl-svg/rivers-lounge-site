@@ -685,6 +685,10 @@ export interface User {
   avatar?: string;
   birthday?: string;
   referredByCode?: string;
+  googleId?: string | null;
+  facebookId?: string | null;
+  avatarUrl?: string | null;
+  authProvider?: string | null;
 }
 
 // ── Users — DB-backed ───────────────────────────────────────────────────────
@@ -696,6 +700,8 @@ function mapDbToUser(row: {
   totalSpent: number; lastOrderAt: Date | null; adminNote: string | null;
   isVerified: boolean; verifiedAt: Date | null; verifiedBy: string | null;
   avatar: string | null; birthday: string | null;
+  googleId?: string | null; facebookId?: string | null;
+  avatarUrl?: string | null; authProvider?: string | null;
 }): User {
   return {
     id: row.id,
@@ -718,6 +724,10 @@ function mapDbToUser(row: {
     verifiedBy: row.verifiedBy ?? undefined,
     avatar: row.avatar ?? undefined,
     birthday: row.birthday ?? undefined,
+    googleId: row.googleId ?? null,
+    facebookId: row.facebookId ?? null,
+    avatarUrl: row.avatarUrl ?? null,
+    authProvider: row.authProvider ?? null,
   };
 }
 

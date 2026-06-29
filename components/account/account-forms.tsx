@@ -38,7 +38,67 @@ export type SafeUser = {
   verifiedAt?: string;
   avatar?: string;
   birthday?: string;
+  googleId?: string | null;
+  facebookId?: string | null;
+  avatarUrl?: string | null;
+  authProvider?: string | null;
 };
+
+// ── OAuth buttons ─────────────────────────────────────────────────────────────
+
+function OAuthButtons({
+  mode,
+  hasGoogle,
+  hasFacebook,
+}: {
+  mode: 'login' | 'register';
+  hasGoogle: boolean;
+  hasFacebook: boolean;
+}) {
+  if (!hasGoogle && !hasFacebook) return null;
+  const verb = mode === 'login' ? 'Continuă cu' : 'Înregistrare cu';
+  return (
+    <div className="space-y-2 mb-4">
+      {hasGoogle && (
+        <a
+          href="/api/auth/google"
+          className="flex items-center justify-center gap-3 w-full py-2.5 rounded-md border text-sm font-semibold transition-colors hover:bg-muted/50"
+          style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'inherit' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.29-8.16 2.29-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          {verb} Google
+        </a>
+      )}
+      {hasFacebook && (
+        <a
+          href="/api/auth/facebook"
+          className="flex items-center justify-center gap-3 w-full py-2.5 rounded-md text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          style={{ background: '#1877F2' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+          {verb} Facebook
+        </a>
+      )}
+      <div className="relative my-5">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="px-3 text-xs text-muted-foreground" style={{ background: 'hsl(var(--card))' }}>
+            sau cu email
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Schemas ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +124,13 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 // ── Login form ────────────────────────────────────────────────────────────────
 
-export function LoginForm() {
+export function LoginForm({
+  hasGoogle = false,
+  hasFacebook = false,
+}: {
+  hasGoogle?: boolean;
+  hasFacebook?: boolean;
+}) {
   const router = useRouter();
   const {
     register,
@@ -91,6 +157,7 @@ export function LoginForm() {
         <p className="text-sm text-muted-foreground">Accesează contul tău River&apos;s Lounge</p>
       </CardHeader>
       <CardContent>
+        <OAuthButtons mode="login" hasGoogle={hasGoogle} hasFacebook={hasFacebook} />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -134,7 +201,15 @@ export function LoginForm() {
 
 // ── Register form ─────────────────────────────────────────────────────────────
 
-export function RegisterForm({ defaultReferralCode = '' }: { defaultReferralCode?: string }) {
+export function RegisterForm({
+  defaultReferralCode = '',
+  hasGoogle = false,
+  hasFacebook = false,
+}: {
+  defaultReferralCode?: string;
+  hasGoogle?: boolean;
+  hasFacebook?: boolean;
+}) {
   const router = useRouter();
   const [referralValidState, setReferralValidState] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
@@ -202,6 +277,7 @@ export function RegisterForm({ defaultReferralCode = '' }: { defaultReferralCode
         <p className="text-sm text-muted-foreground">Creează un cont nou</p>
       </CardHeader>
       <CardContent>
+        <OAuthButtons mode="register" hasGoogle={hasGoogle} hasFacebook={hasFacebook} />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="name">Nume complet</Label>

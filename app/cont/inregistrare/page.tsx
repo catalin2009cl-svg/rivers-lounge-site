@@ -20,7 +20,11 @@ export default async function RegisterPage({ searchParams }: Props) {
     <SiteLayout>
       <PageHero title="Înregistrare" subtitle="Creează un cont nou" />
       <section className="py-12">
-        <RegisterForm defaultReferralCode={refCode} />
+        <RegisterForm
+          defaultReferralCode={refCode}
+          hasGoogle={!!process.env.GOOGLE_CLIENT_ID}
+          hasFacebook={!!process.env.FACEBOOK_CLIENT_ID}
+        />
       </section>
     </SiteLayout>
   );
