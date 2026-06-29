@@ -6,9 +6,18 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const clientId = process.env.FACEBOOK_CLIENT_ID;
   const clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
+
+  console.log('[OAuth/Facebook] clientId:', clientId ? `SET (${clientId.slice(0, 8)}…)` : 'MISSING');
+  console.log('[OAuth/Facebook] clientSecret:', clientSecret ? 'SET' : 'MISSING');
+
   if (!clientId || !clientSecret) {
+    const missing = [!clientId && 'FACEBOOK_CLIENT_ID', !clientSecret && 'FACEBOOK_CLIENT_SECRET']
+      .filter(Boolean)
+      .join(',');
     const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://riverslounge.ro';
-    return NextResponse.redirect(`${base}/cont/autentificare?error=oauth_not_configured`);
+    return NextResponse.redirect(
+      `${base}/cont/autentificare?error=oauth_not_configured&missing=${missing}`
+    );
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://riverslounge.ro';
