@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getLoyaltyConfig, calculateLevel } from './config';
 import { getOrCreateLoyaltyProfile } from './getLoyaltyProfile';
 import { processCashback } from './processCashback';
+import { processReferralCashback } from './processReferralCashback';
 
 interface ProcessResult {
   rewarded: boolean;
@@ -51,7 +52,6 @@ export async function processOrderForLoyalty(
 
     const existing = await prisma.rewardLedger.findUnique({ where: { uniqueRewardKey } });
     if (!existing) {
-      // Use the current order subtotal as the base for reward value (max freeOrderMaxValue)
       const rewardValue = Math.min(orderSubtotal, level1.freeOrderMaxValue);
 
       const expiresAt = new Date(now);
@@ -88,14 +88,23 @@ export async function processOrderForLoyalty(
       profile.id,
       orderId,
       orderSubtotal,
-      level2
+      config,
+      newLevel,
+      profile.level3CashbackBoostLeft ?? 0
     );
+
+    // Referral cashback: process for ALL levels (referrer can be any level)
+    await processReferralCashback(orderId, userId, orderSubtotal, config);
+
     return {
       rewarded: false,
       cashbackCredited: cashbackResult.credited,
       cashbackAmount: cashbackResult.creditAmount,
     };
   }
+
+  // Level 1 users can still be referred — process referral cashback for referrer
+  await processReferralCashback(orderId, userId, orderSubtotal, config);
 
   return { rewarded: false };
 }

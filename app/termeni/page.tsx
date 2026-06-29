@@ -12,7 +12,7 @@ export default function TermeniPage() {
       <PageHero
         badge="Legal"
         title="Termeni și Condiții"
-        subtitle="Ultima actualizare: ianuarie 2025"
+        subtitle="Ultima actualizare: Iulie 2026"
         backgroundImage="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1920&h=600&fit=crop"
       />
       <section className="py-16">
@@ -21,7 +21,7 @@ export default function TermeniPage() {
           <div className="space-y-3">
             <h2 className="text-xl font-semibold text-foreground">1. Dispoziții generale</h2>
             <p>
-              Prin utilizarea site-ului riverslounge.ro și a serviciilor River&apos;s Lounge SRL,
+              Prin utilizarea site-ului riverslounge.ro și a serviciilor RIVERS LOUNGE CROWD SRL,
               acceptați prezentele Termeni și Condiții. Vă rugăm să le citiți cu atenție înainte
               de a plasa o comandă sau de a efectua o rezervare.
             </p>
@@ -85,12 +85,12 @@ export default function TermeniPage() {
             <h2 className="text-xl font-semibold text-foreground">7. Contact</h2>
             <p>
               Pentru orice întrebări referitoare la acești termeni, ne puteți contacta la{' '}
-              <a href="mailto:contact@riverslounge.ro" className="text-primary hover:underline">
-                contact@riverslounge.ro
+              <a href="mailto:renetrading@yahoo.com" className="text-primary hover:underline">
+                renetrading@yahoo.com
               </a>{' '}
               sau la telefon{' '}
-              <a href="tel:+40734642449" className="text-primary hover:underline">
-                0734 642 449
+              <a href="tel:+40725635020" className="text-primary hover:underline">
+                0725 635 020
               </a>.
             </p>
           </div>

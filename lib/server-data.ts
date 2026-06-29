@@ -684,6 +684,7 @@ export interface User {
   verifiedBy?: string;
   avatar?: string;
   birthday?: string;
+  referredByCode?: string;
 }
 
 // ── Users — DB-backed ───────────────────────────────────────────────────────
@@ -749,6 +750,7 @@ function mapUserCreate(u: User) {
     id: u.id,
     clientCode: `RL-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
     createdAt: u.createdAt ? new Date(u.createdAt) : new Date(),
+    referredByCode: u.referredByCode ?? null,
   };
 }
 
@@ -927,6 +929,8 @@ export interface Order {
   freeCode?: string;
   discountApplied?: string;
   discountAmount?: number;
+  isPriority?: boolean;
+  priorityLevel?: number;
   processedBy?: {
     operatorId: string;
     operatorName: string;
@@ -945,6 +949,7 @@ function mapDbToOrder(row: {
   observation: string | null; notes: string | null; userLat: number | null;
   userLng: number | null; userId: string | null; userEmail: string | null;
   freeCode: string | null; discountApplied: string | null; discountAmount: number;
+  isPriority: boolean; priorityLevel: number | null;
   processedBy: unknown;
 }): Order {
   return {
@@ -973,6 +978,8 @@ function mapDbToOrder(row: {
     freeCode: row.freeCode ?? undefined,
     discountApplied: row.discountApplied ?? undefined,
     discountAmount: row.discountAmount ?? undefined,
+    isPriority: row.isPriority ?? false,
+    priorityLevel: row.priorityLevel ?? undefined,
     processedBy: row.processedBy as Order['processedBy'],
   };
 }
@@ -1002,6 +1009,8 @@ function mapOrderToDb(o: Order) {
     userLng: o.userLng ?? null,
     freeCode: o.freeCode ?? null,
     discountApplied: o.discountApplied ?? null,
+    isPriority: o.isPriority ?? false,
+    priorityLevel: o.priorityLevel ?? null,
     processedBy: (o.processedBy ?? null) as never,
     createdAt: new Date(o.createdAt),
     updatedAt: new Date(o.updatedAt),

@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { createUser } from '@/lib/actions/users';
 import { loginUser, logoutUser } from '@/lib/actions/auth-user';
 import { OrderHistoryClient } from '@/components/account/order-history-client';
+import { PasskeyLoginSection } from '@/components/account/PasskeyLoginSection';
 import type { Order } from '@/lib/server-data';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -50,6 +51,7 @@ const registerSchema = loginSchema
     name: z.string().min(2, 'Numele trebuie să aibă cel puțin 2 caractere'),
     phone: z.string().min(10, 'Număr de telefon invalid'),
     confirmPassword: z.string(),
+    referralCode: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Parolele nu coincid',
@@ -88,6 +90,7 @@ export function LoginForm() {
         <p className="text-sm text-muted-foreground">Accesează contul tău River&apos;s Lounge</p>
       </CardHeader>
       <CardContent>
+        <PasskeyLoginSection />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -109,6 +112,14 @@ export function LoginForm() {
             <LogIn className="h-4 w-4" />
             {isSubmitting ? 'Se autentifică...' : 'Autentificare'}
           </Button>
+          <p className="text-center">
+            <Link
+              href="/uitare-parola"
+              className="text-sm text-primary hover:underline underline-offset-2"
+            >
+              Ai uitat parola?
+            </Link>
+          </p>
         </form>
         <p className="text-center text-sm text-muted-foreground mt-6">
           Nu ai cont?{' '}
@@ -123,13 +134,50 @@ export function LoginForm() {
 
 // ── Register form ─────────────────────────────────────────────────────────────
 
-export function RegisterForm() {
+export function RegisterForm({ defaultReferralCode = '' }: { defaultReferralCode?: string }) {
   const router = useRouter();
+  const [referralValidState, setReferralValidState] = useState<
+    'idle' | 'checking' | 'valid' | 'invalid'
+  >('idle');
+  const [referrerName, setReferrerName] = useState('');
+  const [referralCodeValue, setReferralCodeValue] = useState(defaultReferralCode);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
+  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema), defaultValues: { referralCode: defaultReferralCode } });
+
+  // Auto-validate referral code from URL param
+  useState(() => {
+    if (defaultReferralCode) {
+      validateReferralCode(defaultReferralCode);
+    }
+  });
+
+  async function validateReferralCode(code: string) {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) { setReferralValidState('idle'); return; }
+    if (!/^RL-[A-Z0-9]{4,8}$/.test(trimmed)) { setReferralValidState('invalid'); return; }
+    setReferralValidState('checking');
+    try {
+      const res = await fetch('/api/loyalty/validate-referral-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: trimmed }),
+      });
+      const data = await res.json() as { valid: boolean; referrerName?: string };
+      if (data.valid) {
+        setReferralValidState('valid');
+        setReferrerName(data.referrerName ?? '');
+      } else {
+        setReferralValidState('invalid');
+      }
+    } catch {
+      setReferralValidState('idle');
+    }
+  }
 
   const onSubmit = async (data: RegisterForm) => {
     const result = await createUser({
@@ -137,6 +185,7 @@ export function RegisterForm() {
       email: data.email,
       phone: data.phone,
       password: data.password,
+      referralCode: data.referralCode?.trim() || undefined,
     });
     if (result.success) {
       toast.success('Cont creat cu succes!');
@@ -187,6 +236,53 @@ export function RegisterForm() {
               <p className="text-xs text-destructive mt-1">{errors.confirmPassword.message}</p>
             )}
           </div>
+
+          {/* Referral code (optional) */}
+          <div style={{ borderTop: '1px solid rgba(201,168,76,0.15)', paddingTop: 16 }}>
+            <Label htmlFor="referralCode" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+              <span>🎁</span>
+              <span>Cod de invitație</span>
+              <span className="text-xs text-muted-foreground font-normal">(opțional)</span>
+            </Label>
+            <Input
+              id="referralCode"
+              {...register('referralCode')}
+              placeholder="Ex: RL-XXXX"
+              value={referralCodeValue}
+              style={{
+                borderColor:
+                  referralValidState === 'valid'
+                    ? '#16a34a'
+                    : referralValidState === 'invalid'
+                    ? '#dc2626'
+                    : undefined,
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                setReferralCodeValue(v);
+                setValue('referralCode', v);
+                if (v.trim().length === 0) {
+                  setReferralValidState('idle');
+                  return;
+                }
+                // Debounce: validate after 600ms of no typing
+                const t = setTimeout(() => validateReferralCode(v), 600);
+                return () => clearTimeout(t);
+              }}
+            />
+            {referralValidState === 'valid' && (
+              <p className="text-xs mt-1" style={{ color: '#16a34a' }}>
+                ✅ Cod valid! Vei primi {referrerName ? `de la ${referrerName} — ` : ''}30 RON credit cadou + acces direct la Nivel 2.
+              </p>
+            )}
+            {referralValidState === 'invalid' && (
+              <p className="text-xs text-destructive mt-1">❌ Cod de invitație invalid.</p>
+            )}
+            {referralValidState === 'checking' && (
+              <p className="text-xs text-muted-foreground mt-1">Se verifică codul...</p>
+            )}
+          </div>
+
           <Button
             type="submit"
             disabled={isSubmitting}
@@ -218,6 +314,12 @@ interface LoyaltyWidgetData {
   activeRewardValue?: number;
   walletBalance?: number;
   walletExpiresAt?: string | null;
+  priorityDelivery?: boolean;
+  level3CashbackBoostLeft?: number;
+  totalReferrals?: number;
+  referralCashbackEarned?: number;
+  referralCode?: string | null;
+  upgradeReferralsRequired?: number;
 }
 
 interface AccountDashboardProps {
@@ -424,6 +526,47 @@ export function AccountDashboard({
                   </>
                 )}
               </p>
+
+              {/* Priority delivery badge (Level 3+) */}
+              {loyaltyWidget.priorityDelivery && (
+                <p className="text-xs mt-1.5 font-semibold" style={{ color: '#FACC15' }}>
+                  ⚡ Livrare Prioritară activă
+                  {(loyaltyWidget.level3CashbackBoostLeft ?? 0) > 0 && (
+                    <span style={{ color: '#9A9490', fontWeight: 400 }}>
+                      {' · '}boost 5% ({loyaltyWidget.level3CashbackBoostLeft} comenzi)
+                    </span>
+                  )}
+                </p>
+              )}
+
+              {/* Level 4 Silver badge */}
+              {loyaltyWidget.currentLevel >= 4 && (
+                <p className="text-xs mt-1.5 font-semibold" style={{ color: '#a78bfa' }}>
+                  ⭐ Silver — {loyaltyWidget.totalReferrals ?? 0} referrali activi
+                  {(loyaltyWidget.referralCashbackEarned ?? 0) > 0 && (
+                    <span style={{ color: '#9A9490', fontWeight: 400 }}>
+                      {' · '}{(loyaltyWidget.referralCashbackEarned ?? 0).toFixed(2)} RON câștigat din referrali
+                    </span>
+                  )}
+                </p>
+              )}
+
+              {/* Level 3 → Level 4 progress */}
+              {loyaltyWidget.currentLevel === 3 && (loyaltyWidget.upgradeReferralsRequired ?? 2) > 0 && (
+                <p className="text-xs mt-1.5" style={{ color: '#a78bfa' }}>
+                  ⭐ {loyaltyWidget.totalReferrals ?? 0}/{loyaltyWidget.upgradeReferralsRequired ?? 2} referrali pentru Silver
+                </p>
+              )}
+
+              {/* Referral code for all users */}
+              {loyaltyWidget.referralCode && (
+                <p className="text-xs mt-1.5" style={{ color: '#9A9490' }}>
+                  🤝 Cod invitație:{' '}
+                  <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#C9A84C' }}>
+                    {loyaltyWidget.referralCode}
+                  </span>
+                </p>
+              )}
 
               {/* Wallet balance (Level 2+) */}
               {(loyaltyWidget.walletBalance ?? 0) > 0 && (

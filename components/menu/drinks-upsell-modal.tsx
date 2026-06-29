@@ -251,52 +251,74 @@ function ModalContent({ drinks, onClose, onContinue, onAddDrink }: ModalContentP
 // ── Single drink card ─────────────────────────────────────────────────────────
 
 function DrinkCard({ drink, onAdd }: { drink: MenuProduct; onAdd: () => void }) {
-  const [hovered, setHovered] = useState(false);
+  const [active, setActive] = useState(false);
+
+  function handlePointerDown(e: React.PointerEvent) {
+    e.stopPropagation();
+    setActive(true);
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    e.stopPropagation();
+    if (active) {
+      setActive(false);
+      onAdd();
+    }
+  }
+
+  function handlePointerLeave() {
+    setActive(false);
+  }
 
   return (
     <div
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerLeave}
+      onPointerCancel={handlePointerLeave}
       style={{
-        background: '#0F0F0F',
-        border: `1px solid ${hovered ? '#C9A84C' : '#2E2E2E'}`,
+        background: active ? 'rgba(201,168,76,0.12)' : '#0F0F0F',
+        border: `1px solid ${active ? '#C9A84C' : '#2E2E2E'}`,
         borderRadius: 10,
         padding: '12px 8px',
         textAlign: 'center',
-        transition: 'border-color 0.18s',
+        transition: 'border-color 0.12s, background 0.12s, transform 0.1s',
+        transform: active ? 'scale(0.97)' : 'scale(1)',
+        cursor: 'pointer',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        touchAction: 'manipulation',
+        WebkitTapHighlightColor: 'transparent',
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       {drink.image ? (
-        <div style={{ position: 'relative', width: 48, height: 48, margin: '0 auto 8px', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ position: 'relative', width: 48, height: 48, margin: '0 auto 8px', borderRadius: 8, overflow: 'hidden', pointerEvents: 'none' }}>
           <Image src={drink.image} alt={drink.name} fill style={{ objectFit: 'cover' }} />
         </div>
       ) : (
-        <div style={{ fontSize: 28, marginBottom: 8 }}>🥤</div>
+        <div style={{ fontSize: 28, marginBottom: 8, pointerEvents: 'none' }}>🥤</div>
       )}
 
-      <p style={{ color: '#F0EDE6', fontSize: 12, fontWeight: 600, marginBottom: 4, lineHeight: 1.3 }}>
+      <p style={{ color: '#F0EDE6', fontSize: 12, fontWeight: 600, marginBottom: 4, lineHeight: 1.3, pointerEvents: 'none' }}>
         {drink.name}
       </p>
       {drink.unit && (
-        <p style={{ color: '#9A9490', fontSize: 11, marginBottom: 4 }}>{drink.unit}</p>
+        <p style={{ color: '#9A9490', fontSize: 11, marginBottom: 4, pointerEvents: 'none' }}>{drink.unit}</p>
       )}
-      <p style={{ color: '#C9A84C', fontSize: 12, fontWeight: 700, marginBottom: 8 }}>
+      <p style={{ color: '#C9A84C', fontSize: 12, fontWeight: 700, marginBottom: 8, pointerEvents: 'none' }}>
         {drink.price} RON
       </p>
 
-      <button
-        onClick={onAdd}
+      <div
         style={{
           background: '#C9A84C', color: '#0F0F0F',
-          border: 'none', borderRadius: 6,
+          borderRadius: 6,
           padding: '8px 12px', fontSize: 12, fontWeight: 700,
-          cursor: 'pointer', width: '100%',
-          touchAction: 'manipulation',
-          WebkitTapHighlightColor: 'transparent',
+          pointerEvents: 'none',
         }}
       >
         + Adaugă
-      </button>
+      </div>
     </div>
   );
 }

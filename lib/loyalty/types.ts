@@ -18,10 +18,33 @@ export interface LoyaltyLevel2Config {
   walletExpiryDays: number;
 }
 
+export interface LoyaltyLevel3Config {
+  enabled: boolean;
+  cashbackThreshold30Days: number;
+  walletExpiryDays: number;
+  bonusChoiceWindowHours: number;
+  cashbackBoostPercent: number;
+  cashbackBoostOrders: number;
+}
+
+export interface LoyaltyLevel4Config {
+  enabled: boolean;
+  upgradeReferralsRequired: number;
+  referralCashbackPercent: number;
+  referralCashbackMaxOrderValue: number;
+  referralCashbackMaxOrders: number;
+  welcomeBonusEnabled: boolean;
+  welcomeBonusCreditAmount: number;
+  welcomeBonusMinOrderValue: number;
+  welcomeBonusExpiryDays: number;
+}
+
 export interface LoyaltyConfig {
   enabled: boolean;
   level1: LoyaltyLevel1Config;
   level2: LoyaltyLevel2Config;
+  level3: LoyaltyLevel3Config;
+  level4: LoyaltyLevel4Config;
   levels: LoyaltyLevel[];
 }
 
@@ -46,6 +69,15 @@ export interface WalletTransactionSummary {
   createdAt: string;
 }
 
+export interface ReferralSummary {
+  id: string;
+  referredUserFirstName: string;
+  status: string;
+  referredOrdersCount: number;
+  totalCashbackEarned: number;
+  createdAt: string;
+}
+
 export interface LoyaltyProfileSummary {
   id: string;
   userId: string;
@@ -61,6 +93,17 @@ export interface LoyaltyProfileSummary {
   walletBalance: number;
   walletExpiresAt: string | null;
   recentWalletTransactions: WalletTransactionSummary[];
+  totalCashbackEarned: number;
+  cashbackLast30Days: number;
+  level3BonusChoice: string | null;
+  level3BonusExpiresAt: string | null;
+  level3CashbackBoostLeft: number;
+  priorityDelivery: boolean;
+  totalReferrals: number;
+  referralCashbackEarned: number;
+  welcomeBonusActive: boolean;
+  referralCode: string | null;
+  referrals: ReferralSummary[];
 }
 
 export type RewardStatusValue = 'ACTIVE' | 'USED' | 'EXPIRED' | 'CANCELLED';

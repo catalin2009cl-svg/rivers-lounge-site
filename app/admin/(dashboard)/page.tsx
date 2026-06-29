@@ -12,6 +12,7 @@ import {
   Megaphone,
   Soup,
 } from 'lucide-react';
+import { KpiDashboard } from '@/components/admin/KpiDashboard';
 import {
   getMenuItems,
   getNewsPosts,
@@ -265,6 +266,14 @@ export default async function AdminDashboardPage() {
         <p className="text-gray-500 dark:text-gray-400 mt-1">
           Gestionează conținutul site-ului River&apos;s Lounge
         </p>
+      </div>
+
+      {/* Live KPI Dashboard */}
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+          KPI Live — actualizat la 60s
+        </h2>
+        <KpiDashboard />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">

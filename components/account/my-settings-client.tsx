@@ -3,8 +3,58 @@
 import { useState, useTransition, useRef } from 'react';
 import { toast } from 'sonner';
 import { updateMyProfile, changePassword, deleteAccount, uploadAvatar } from '@/lib/actions/users';
-import { saveBirthday } from '@/lib/actions/birthday';
+import { saveBirthday, saveBirthDate } from '@/lib/actions/birthday';
+import { PasskeySettingsSection } from '@/components/account/PasskeySettingsSection';
 import type { SafeUser } from '@/components/account/account-forms';
+
+function ForgotPasswordInline({ userEmail }: { userEmail: string }) {
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  async function handleSend() {
+    setSending(true);
+    try {
+      await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail }),
+      });
+      setSent(true);
+    } catch {
+      toast.error('Eroare la trimitere. Încearcă din nou.');
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (sent) {
+    return (
+      <p style={{ fontSize: 12, color: '#4ADE80' }}>
+        ✓ Am trimis un link de resetare la emailul contului tău.
+      </p>
+    );
+  }
+
+  return (
+    <div style={{ borderTop: '1px solid #2E2E2E', paddingTop: 12, marginTop: 2 }}>
+      <p style={{ fontSize: 12, color: '#9A9490', marginBottom: 8 }}>
+        Nu îți știi parola actuală?
+      </p>
+      <button
+        type="button"
+        disabled={sending}
+        onClick={handleSend}
+        style={{
+          fontSize: 12, color: '#C9A84C', background: 'transparent', border: 'none',
+          padding: 0, cursor: sending ? 'not-allowed' : 'pointer', opacity: sending ? 0.6 : 1,
+          textDecoration: 'underline', textUnderlineOffset: 3,
+        }}
+      >
+        {sending ? 'Se trimite...' : 'Trimite link de resetare pe email'}
+      </button>
+    </div>
+  );
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -169,6 +219,8 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
   const initialBdayParts = user.birthday?.split('-') ?? [];
   const [bdayMonth, setBdayMonth] = useState(initialBdayParts[0] ?? '');
   const [bdayDay, setBdayDay] = useState(initialBdayParts[1] ?? '');
+  const currentYear = new Date().getFullYear();
+  const [bdayYear, setBdayYear] = useState('');
   const [, startBdayTransition] = useTransition();
 
   function handleSaveBirthday() {
@@ -176,11 +228,17 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
       toast.error('Selectează luna și ziua nașterii.');
       return;
     }
-    const value = `${bdayMonth.padStart(2, '0')}-${bdayDay.padStart(2, '0')}`;
     startBdayTransition(async () => {
-      const res = await saveBirthday(value);
-      if (res.success) toast.success('Data nașterii a fost salvată.');
-      else toast.error(res.error ?? 'Eroare.');
+      if (bdayYear) {
+        const res = await saveBirthDate(bdayMonth, bdayDay, bdayYear);
+        if (res.success) toast.success('Data nașterii a fost salvată.');
+        else toast.error(res.error ?? 'Eroare.');
+      } else {
+        const value = `${bdayMonth.padStart(2, '0')}-${bdayDay.padStart(2, '0')}`;
+        const res = await saveBirthday(value);
+        if (res.success) toast.success('Data nașterii a fost salvată.');
+        else toast.error(res.error ?? 'Eroare.');
+      }
     });
   }
 
@@ -299,7 +357,8 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
       <SectionCard title="🎂 Zi de naștere">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <p style={{ color: '#9A9490', fontSize: 13, marginBottom: 2 }}>
-            Salvăm doar ziua și luna — nu și anul (GDPR). Primești un cod de reducere în perioada zilei tale de naștere.
+            Adaugă data nașterii pentru a primi credit în portofel de ziua ta (valoare = vârsta ta în RON).
+            Adăugând și anul, creditul se calculează automat.
           </p>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <label style={{ color: '#9A9490', fontSize: 13, flex: 1, minWidth: 120 }}>
@@ -315,7 +374,7 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
                 ))}
               </select>
             </label>
-            <label style={{ color: '#9A9490', fontSize: 13, flex: 1, minWidth: 100 }}>
+            <label style={{ color: '#9A9490', fontSize: 13, flex: 1, minWidth: 80 }}>
               Ziua
               <select
                 value={bdayDay}
@@ -325,6 +384,19 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
                 <option value="">Ziua</option>
                 {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
                   <option key={d} value={String(d).padStart(2, '0')}>{d}</option>
+                ))}
+              </select>
+            </label>
+            <label style={{ color: '#9A9490', fontSize: 13, flex: 1, minWidth: 100 }}>
+              Anul <span style={{ color: '#C9A84C' }}>(opțional, pentru credit)</span>
+              <select
+                value={bdayYear}
+                onChange={(e) => setBdayYear(e.target.value)}
+                style={{ ...inputStyle, marginTop: 4 }}
+              >
+                <option value="">Anul nașterii</option>
+                {Array.from({ length: currentYear - 1924 }, (_, i) => currentYear - 5 - i).map((y) => (
+                  <option key={y} value={String(y)}>{y}</option>
                 ))}
               </select>
             </label>
@@ -369,6 +441,7 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
           <button style={{ ...btnGold, alignSelf: 'flex-start' }} onClick={handleChangePassword}>
             Schimbă parola
           </button>
+          <ForgotPasswordInline userEmail={user.email} />
         </div>
       </SectionCard>
 
@@ -428,7 +501,10 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
         </div>
       </SectionCard>
 
-      {/* 6. Zona periculoasă */}
+      {/* 6. Securitate & Autentificare */}
+      <PasskeySettingsSection />
+
+      {/* 7. Zona periculoasă */}
       <div style={{ background: '#1A1A1A', border: '1px solid #EF444433', borderRadius: 12, padding: '22px 24px' }}>
         <h3 style={{ color: '#F87171', fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Zona periculoasă</h3>
         {!showDeleteConfirm ? (

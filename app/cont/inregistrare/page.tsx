@@ -8,12 +8,19 @@ export const metadata = {
   title: "Înregistrare | River's Lounge",
 };
 
-export default function RegisterPage() {
+interface Props {
+  searchParams: Promise<{ ref?: string }>;
+}
+
+export default async function RegisterPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const refCode = (params.ref ?? '').trim().toUpperCase();
+
   return (
     <SiteLayout>
       <PageHero title="Înregistrare" subtitle="Creează un cont nou" />
       <section className="py-12">
-        <RegisterForm />
+        <RegisterForm defaultReferralCode={refCode} />
       </section>
     </SiteLayout>
   );

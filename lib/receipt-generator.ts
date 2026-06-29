@@ -115,6 +115,12 @@ export function generateReceiptHTML(order: Order): string {
 </head>
 <body>
 
+  ${order.isPriority ? `
+  <div style="text-align:center;margin-bottom:14px;padding:10px 16px;background:#fff8e7;border:2px solid #b8860b;border-radius:4px">
+    <div style="font-size:15px;font-weight:bold;letter-spacing:1px;color:#7a5800">⚡ COMANDĂ PRIORITARĂ</div>
+    <div style="font-size:11px;color:#7a5800;margin-top:3px">CLIENT PREMIUM — NIVEL ${order.priorityLevel ?? 3} · Livrare ~39 minute</div>
+  </div>
+  ` : ''}
   <div class="header">
     <div class="logo">RIVER'S LOUNGE</div>
     <div class="subtitle">Restaurant &amp; Evenimente</div>

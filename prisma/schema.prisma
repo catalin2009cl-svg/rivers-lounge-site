@@ -26,17 +26,28 @@ model User {
   lastActivityAt      DateTime?
   lastLoginAt         DateTime?
   lastOrderAt         DateTime?
-  adminNote           String?
-  retentionNotifiedAt DateTime?
-  role                String    @default("client")
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  adminNote                String?
+  retentionNotifiedAt      DateTime?
+  role                     String    @default("client")
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  passwordResetToken       String?   @unique
+  passwordResetExpiresAt   DateTime?
 
-  orders             Order[]
-  reservations       Reservation[]
-  loyaltyProfile     LoyaltyProfile?
-  rewardLedger       RewardLedger[]
-  walletTransactions WalletTransaction[]
+  referredByCode     String?
+  birthDate          DateTime?
+  lastBirthdayReward DateTime?
+  webAuthnChallenge  String?
+
+  orders               Order[]
+  reservations         Reservation[]
+  loyaltyProfile       LoyaltyProfile?
+  rewardLedger         RewardLedger[]
+  walletTransactions   WalletTransaction[]
+  referralsMade        Referral[]          @relation("ReferralsMade")
+  referredBy           Referral?           @relation("ReferredBy")
+  orderReviews         OrderReview[]
+  webAuthnCredentials  WebAuthnCredential[]
 }
 
 model Order {
@@ -65,10 +76,15 @@ model Order {
   freeCode        String?
   discountApplied String?
   processedBy     Json?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isPriority        Boolean  @default(false)
+  priorityLevel     Int?
+  reviewEmailSent   Boolean  @default(false)
+  reviewEmailSentAt DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user   User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  review OrderReview?
 }
 
 model Reservation {
@@ -133,6 +149,16 @@ enum WalletTransactionType {
   CREDIT_EXPIRED
   MANUAL_CREDIT
   MANUAL_DEBIT
+  LEVEL_BONUS
+  REFERRAL_CASHBACK
+  REFERRAL_WELCOME
+  BIRTHDAY_CREDIT
+}
+
+enum ReferralStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
 }
 
 enum RewardStatus {
@@ -157,12 +183,34 @@ model LoyaltyProfile {
   referralCode                String?   @unique
   processedOrderIds           String[]  @default([])
   walletExpiresAt             DateTime?
+  totalCashbackEarned         Float     @default(0)
+  level3BonusChoice           String?
+  level3BonusChosenAt         DateTime?
+  level3BonusExpiresAt        DateTime?
+  level3CashbackBoostLeft     Int       @default(0)
+  priorityDelivery            Boolean   @default(false)
+  totalReferrals              Int       @default(0)
+  referralCashbackEarned      Float     @default(0)
+  welcomeBonusActive          Boolean   @default(false)
   createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
 
   rewardGrants       RewardGrant[]
   walletTransactions WalletTransaction[]
   rewards            RewardLedger[]
+}
+
+model Referral {
+  id                  String        @id @default(cuid())
+  referrerId          String
+  referrer            User          @relation("ReferralsMade", fields: [referrerId], references: [id])
+  referredUserId      String        @unique
+  referredUser        User          @relation("ReferredBy", fields: [referredUserId], references: [id])
+  status              ReferralStatus @default(PENDING)
+  referredOrdersCount Int           @default(0)
+  totalCashbackEarned Float         @default(0)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 }
 
 model RewardLedger {
@@ -308,4 +356,63 @@ model Operator {
   createdAt                  DateTime  @default(now())
   lastLoginAt                DateTime?
   lastActivityAt             DateTime?
+}
+
+model SupportRequest {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderReview {
+  id           String   @id @default(cuid())
+  orderId      String   @unique
+  order        Order    @relation(fields: [orderId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  rating       Int
+  comment      String?
+  isLowRating  Boolean  @default(false)
+  adminAlerted Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model WeeklyReport {
+  id              String   @id @default(cuid())
+  weekStart       DateTime
+  weekEnd         DateTime
+  totalRevenue    Float
+  totalOrders     Int
+  completedOrders Int
+  cancelledOrders Int
+  newCustomers    Int
+  avgOrderValue   Float
+  topProducts     Json
+  peakDay         String
+  peakHour        Int
+  revenueByDay    Json
+  pdfUrl          String?
+  emailSentAt     DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model WebAuthnCredential {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId String    @unique
+  publicKey    Bytes
+  counter      BigInt    @default(0)
+  deviceType   String?
+  deviceName   String?
+  backedUp     Boolean   @default(false)
+  transports   String[]
+  createdAt    DateTime  @default(now())
+  lastUsedAt   DateTime?
 }

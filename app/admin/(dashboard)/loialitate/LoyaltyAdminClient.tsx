@@ -15,7 +15,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Settings, Users, Gift, BarChart3, XCircle, Download } from 'lucide-react';
+import { Settings, Users, Gift, BarChart3, XCircle, Download, Share2 } from 'lucide-react';
 import type { LoyaltyConfig } from '@/lib/loyalty/types';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -31,6 +31,28 @@ interface UserRow {
   hasActiveReward: boolean;
   walletBalance: number;
   walletExpiresAt: string | null;
+  priorityDelivery: boolean;
+  level3BonusChoice: string | null;
+  level3CashbackBoostLeft: number;
+  totalCashbackEarned: number;
+  totalReferrals: number;
+  referralCashbackEarned: number;
+}
+
+interface ReferralAdminRow {
+  id: string;
+  referrerId: string;
+  referrerName: string;
+  referrerEmail: string;
+  referrerCode: string | null;
+  referredUserId: string;
+  referredUserName: string;
+  referredUserEmail: string;
+  referredUserRegisteredAt: string;
+  status: string;
+  referredOrdersCount: number;
+  totalCashbackEarned: number;
+  createdAt: string;
 }
 
 interface RewardRow {
@@ -92,6 +114,9 @@ function fmt(dateStr: string | null) {
 export function LoyaltyAdminClient({ config: initialConfig, users, rewards: initialRewards, stats, canEdit }: Props) {
   const [config, setConfig] = useState<LoyaltyConfig>(initialConfig);
   const [rewards, setRewards] = useState<RewardRow[]>(initialRewards);
+  const [referrals, setReferrals] = useState<ReferralAdminRow[] | null>(null);
+  const [referralsLoading, setReferralsLoading] = useState(false);
+  const [referralStatusFilter, setReferralStatusFilter] = useState('all');
   const [saving, startSave] = useTransition();
 
   // Settings state
@@ -179,6 +204,24 @@ export function LoyaltyAdminClient({ config: initialConfig, users, rewards: init
 
   const filteredRewards = statusFilter === 'all' ? rewards : rewards.filter((r) => r.status === statusFilter);
 
+  async function loadReferrals() {
+    if (referrals !== null) return;
+    setReferralsLoading(true);
+    try {
+      const res = await fetch('/api/admin/loyalty/referrals');
+      if (res.ok) {
+        const data = await res.json() as { referrals: ReferralAdminRow[] };
+        setReferrals(data.referrals);
+      }
+    } finally {
+      setReferralsLoading(false);
+    }
+  }
+
+  const filteredReferrals = (referrals ?? []).filter(
+    (r) => referralStatusFilter === 'all' || r.status === referralStatusFilter
+  );
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
@@ -197,6 +240,9 @@ export function LoyaltyAdminClient({ config: initialConfig, users, rewards: init
           </TabsTrigger>
           <TabsTrigger value="rewards" className="flex items-center gap-2">
             <Gift className="h-4 w-4" /> Recompense ({rewards.length})
+          </TabsTrigger>
+          <TabsTrigger value="referrals" className="flex items-center gap-2" onClick={loadReferrals}>
+            <Share2 className="h-4 w-4" /> Referrali
           </TabsTrigger>
           <TabsTrigger value="stats" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" /> Statistici
@@ -294,6 +340,155 @@ export function LoyaltyAdminClient({ config: initialConfig, users, rewards: init
             </div>
 
             <div className="border-t border-border pt-4">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Nivel 3 — Client Premium</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <Switch
+                  id="l3-enabled"
+                  checked={config.level3.enabled}
+                  onCheckedChange={(v) => setConfig((c) => ({ ...c, level3: { ...c.level3, enabled: v } }))}
+                  disabled={!canEdit}
+                />
+                <Label htmlFor="l3-enabled">Upgrade automat Nivel 3 activ</Label>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Prag cashback 30 zile (RON)</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level3.cashbackThreshold30Days}
+                    onChange={(e) => setConfig((c) => ({ ...c, level3: { ...c.level3, cashbackThreshold30Days: parseFloat(e.target.value) || 50 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Expirare portofel Nivel 3 (zile)</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level3.walletExpiryDays}
+                    onChange={(e) => setConfig((c) => ({ ...c, level3: { ...c.level3, walletExpiryDays: parseInt(e.target.value) || 90 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Fereastră alegere bonus (ore)</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level3.bonusChoiceWindowHours}
+                    onChange={(e) => setConfig((c) => ({ ...c, level3: { ...c.level3, bonusChoiceWindowHours: parseInt(e.target.value) || 24 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Procent cashback boost (%)</Label>
+                  <Input
+                    type="number" min={1} max={100} step={0.5}
+                    value={config.level3.cashbackBoostPercent}
+                    onChange={(e) => setConfig((c) => ({ ...c, level3: { ...c.level3, cashbackBoostPercent: parseFloat(e.target.value) || 5 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Comenzi boost cashback</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level3.cashbackBoostOrders}
+                    onChange={(e) => setConfig((c) => ({ ...c, level3: { ...c.level3, cashbackBoostOrders: parseInt(e.target.value) || 10 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-4">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Nivel 4 — Silver (Sistem Referral)</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <Switch
+                  id="l4-enabled"
+                  checked={config.level4.enabled}
+                  onCheckedChange={(v) => setConfig((c) => ({ ...c, level4: { ...c.level4, enabled: v } }))}
+                  disabled={!canEdit}
+                />
+                <Label htmlFor="l4-enabled">Sistem referral Nivel 4 activ</Label>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Referrali necesari pentru Nivel 4</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level4.upgradeReferralsRequired}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, upgradeReferralsRequired: parseInt(e.target.value) || 2 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Cashback referral (%)</Label>
+                  <Input
+                    type="number" min={1} max={100} step={1}
+                    value={config.level4.referralCashbackPercent}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, referralCashbackPercent: parseFloat(e.target.value) || 20 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Valoare max. comandă referral (RON)</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level4.referralCashbackMaxOrderValue}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, referralCashbackMaxOrderValue: parseFloat(e.target.value) || 400 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Max. comenzi cu cashback/referral</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level4.referralCashbackMaxOrders}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, referralCashbackMaxOrders: parseInt(e.target.value) || 3 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <Switch
+                  id="l4-welcome"
+                  checked={config.level4.welcomeBonusEnabled}
+                  onCheckedChange={(v) => setConfig((c) => ({ ...c, level4: { ...c.level4, welcomeBonusEnabled: v } }))}
+                  disabled={!canEdit}
+                />
+                <Label htmlFor="l4-welcome">Bonus bun venit pentru utilizatori invitați</Label>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Credit bun venit (RON)</Label>
+                  <Input
+                    type="number" min={0}
+                    value={config.level4.welcomeBonusCreditAmount}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, welcomeBonusCreditAmount: parseFloat(e.target.value) || 30 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Valoare minimă comandă (RON)</Label>
+                  <Input
+                    type="number" min={0}
+                    value={config.level4.welcomeBonusMinOrderValue}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, welcomeBonusMinOrderValue: parseFloat(e.target.value) || 60 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground mb-1 block">Expirare credit bun venit (zile)</Label>
+                  <Input
+                    type="number" min={1}
+                    value={config.level4.welcomeBonusExpiryDays}
+                    onChange={(e) => setConfig((c) => ({ ...c, level4: { ...c.level4, welcomeBonusExpiryDays: parseInt(e.target.value) || 3 } }))}
+                    disabled={!canEdit}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-4">
               <h3 className="text-sm font-semibold text-foreground mb-3">Niveluri</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -364,7 +559,30 @@ export function LoyaltyAdminClient({ config: initialConfig, users, rewards: init
                         <p className="text-xs text-muted-foreground">{u.email}</p>
                       </td>
                       <td className="py-3 px-4">
-                        <Badge variant="outline" className="text-xs">Nivel {u.currentLevel}</Badge>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <Badge variant="outline" className="text-xs">Nivel {u.currentLevel}</Badge>
+                          {u.currentLevel >= 4 && (
+                            <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(167,139,250,0.15)', color: '#a78bfa', border: '1px solid rgba(167,139,250,0.4)' }}>
+                              ⭐ Silver
+                            </span>
+                          )}
+                          {u.priorityDelivery && u.currentLevel < 4 && (
+                            <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(234,179,8,0.15)', color: '#FACC15', border: '1px solid rgba(234,179,8,0.4)' }}>
+                              ⚡
+                            </span>
+                          )}
+                        </div>
+                        {u.level3BonusChoice && (
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {u.level3BonusChoice === 'WALLET_DOUBLE' ? '💳 Portofel dublat' : '🚀 Boost 5%'}
+                            {u.level3CashbackBoostLeft > 0 && ` (${u.level3CashbackBoostLeft} rămase)`}
+                          </p>
+                        )}
+                        {u.totalReferrals > 0 && (
+                          <p className="text-xs mt-0.5" style={{ color: '#a78bfa' }}>
+                            🤝 {u.totalReferrals} referrali · {u.referralCashbackEarned.toFixed(2)} RON
+                          </p>
+                        )}
                       </td>
                       <td className="py-3 px-4 text-muted-foreground">{u.totalCompletedOrders}</td>
                       <td className="py-3 px-4 text-muted-foreground">{fmt(u.firstCompletedOrderAt)}</td>
@@ -488,7 +706,88 @@ export function LoyaltyAdminClient({ config: initialConfig, users, rewards: init
           </div>
         </TabsContent>
 
-        {/* ── Tab 4: Statistics ────────────────────────────────────────────── */}
+        {/* ── Tab 4: Referrals ────────────────────────────────────────────── */}
+        <TabsContent value="referrals" className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex gap-2 flex-wrap">
+              {(['all', 'PENDING', 'ACTIVE', 'COMPLETED'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setReferralStatusFilter(s)}
+                  className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+                    referralStatusFilter === s
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:text-foreground hover:border-primary/40'
+                  }`}
+                >
+                  {s === 'all' ? 'Toate' : s === 'PENDING' ? 'Pending' : s === 'ACTIVE' ? 'Active' : 'Completate'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-card border border-border rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              {referralsLoading ? (
+                <div className="py-12 text-center text-muted-foreground text-sm">Se încarcă...</div>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead className="border-b border-border bg-secondary/30">
+                    <tr>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Referrer</th>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Invitat</th>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Status</th>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Comenzi (X/3)</th>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Cashback câștigat</th>
+                      <th className="text-left py-3 px-4 text-xs text-muted-foreground font-medium">Data</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {filteredReferrals.length === 0 && (
+                      <tr><td colSpan={6} className="py-8 text-center text-muted-foreground text-sm">
+                        {referrals === null ? 'Apasă tab-ul pentru a încărca datele.' : 'Niciun referral găsit.'}
+                      </td></tr>
+                    )}
+                    {filteredReferrals.map((r) => (
+                      <tr key={r.id} className="hover:bg-secondary/20 transition-colors">
+                        <td className="py-3 px-4">
+                          <p className="font-medium text-foreground">{r.referrerName}</p>
+                          <p className="text-xs text-muted-foreground">{r.referrerEmail}</p>
+                          {r.referrerCode && (
+                            <p className="text-xs font-mono" style={{ color: '#C9A84C' }}>{r.referrerCode}</p>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <p className="font-medium text-foreground">{r.referredUserName}</p>
+                          <p className="text-xs text-muted-foreground">{r.referredUserEmail}</p>
+                          <p className="text-xs text-muted-foreground">{fmt(r.referredUserRegisteredAt)}</p>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
+                            r.status === 'ACTIVE'
+                              ? 'bg-purple-100 text-purple-800 border-purple-200'
+                              : r.status === 'COMPLETED'
+                              ? 'bg-green-100 text-green-800 border-green-200'
+                              : 'bg-gray-100 text-gray-600 border-gray-200'
+                          }`}>
+                            {r.status === 'PENDING' ? 'Pending' : r.status === 'ACTIVE' ? 'Activ' : 'Complet'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-muted-foreground">{r.referredOrdersCount} / 3</td>
+                        <td className="py-3 px-4 font-semibold" style={{ color: '#a78bfa' }}>
+                          {r.totalCashbackEarned.toFixed(2)} RON
+                        </td>
+                        <td className="py-3 px-4 text-muted-foreground">{fmt(r.createdAt)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* ── Tab 5: Statistics ────────────────────────────────────────────── */}
         <TabsContent value="stats">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {[

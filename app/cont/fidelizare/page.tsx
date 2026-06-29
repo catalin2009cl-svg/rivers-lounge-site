@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/actions/auth-user';
 import { getLoyaltyProfileForUser, getOrCreateLoyaltyProfile } from '@/lib/loyalty/getLoyaltyProfile';
 import { getLoyaltyConfig, getLevelInfo, getNextLevel } from '@/lib/loyalty/config';
 import { expireWalletIfNeeded } from '@/lib/loyalty/expireWallet';
+import { expireLevel3BonusIfNeeded } from '@/lib/loyalty/expireLevel3Bonus';
 import { prisma } from '@/lib/prisma';
 import { SiteLayout } from '@/components/layout/site-layout';
 import { FidelizareClient } from './FidelizareClient';
@@ -18,8 +19,11 @@ export default async function FidelizarePage() {
   const user = await getCurrentUser();
   if (!user) redirect('/cont/autentificare');
 
-  // Expire stale wallet credits before showing the page
-  await expireWalletIfNeeded(user.id);
+  // Expire stale wallet credits and bonus window before showing the page
+  await Promise.all([
+    expireWalletIfNeeded(user.id),
+    expireLevel3BonusIfNeeded(user.id),
+  ]);
 
   const [profile, config] = await Promise.all([
     getLoyaltyProfileForUser(user.id),
@@ -56,6 +60,21 @@ export default async function FidelizarePage() {
     usedOnOrderId: r.usedOnOrderId,
   }));
 
+  // Birthday credit info
+  const bdayUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { birthDate: true, lastBirthdayReward: true },
+  });
+  const now = new Date();
+  let hasBirthdayCredit = false;
+  if (bdayUser?.lastBirthdayReward) {
+    const rewardDate = new Date(bdayUser.lastBirthdayReward);
+    hasBirthdayCredit = rewardDate.getFullYear() === now.getFullYear() &&
+      rewardDate.getMonth() === now.getMonth() &&
+      rewardDate.getDate() === now.getDate();
+  }
+  const hasBirthDate = !!bdayUser?.birthDate;
+
   const currentOrders = profile?.totalCompletedOrders ?? 0;
   const currentLevel = profile?.currentLevel ?? 1;
   const ordersRequired = config.level1.ordersRequired;
@@ -79,6 +98,22 @@ export default async function FidelizarePage() {
         walletBalance={profile?.walletBalance ?? 0}
         walletExpiresAt={profile?.walletExpiresAt ?? null}
         walletTransactions={profile?.recentWalletTransactions ?? []}
+        totalCashbackEarned={profile?.totalCashbackEarned ?? 0}
+        cashbackLast30Days={profile?.cashbackLast30Days ?? 0}
+        cashbackThreshold30Days={config.level3.cashbackThreshold30Days}
+        level3BonusChoice={profile?.level3BonusChoice ?? null}
+        level3BonusExpiresAt={profile?.level3BonusExpiresAt ?? null}
+        level3CashbackBoostLeft={profile?.level3CashbackBoostLeft ?? 0}
+        priorityDelivery={profile?.priorityDelivery ?? false}
+        totalReferrals={profile?.totalReferrals ?? 0}
+        referralCashbackEarned={profile?.referralCashbackEarned ?? 0}
+        upgradeReferralsRequired={config.level4.upgradeReferralsRequired}
+        referralCode={profile?.referralCode ?? null}
+        referrals={profile?.referrals ?? []}
+        welcomeBonusActive={profile?.welcomeBonusActive ?? false}
+        welcomeBonusMinOrderValue={config.level4.welcomeBonusMinOrderValue}
+        hasBirthdayCredit={hasBirthdayCredit}
+        hasBirthDate={hasBirthDate}
       />
     </SiteLayout>
   );

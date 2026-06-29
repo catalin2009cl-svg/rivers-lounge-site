@@ -71,9 +71,11 @@ interface CheckoutClientProps {
   activeReward?: ActiveReward | null;
   walletBalance?: number;
   walletExpiresAt?: string | null;
+  welcomeBonusActive?: boolean;
+  welcomeBonusMinOrderValue?: number;
 }
 
-export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, activeReward, walletBalance = 0, walletExpiresAt = null }: CheckoutClientProps) {
+export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, activeReward, walletBalance = 0, walletExpiresAt = null, welcomeBonusActive = false, welcomeBonusMinOrderValue = 60 }: CheckoutClientProps) {
   const { items, totalPrice, clearCart } = useCart();
   const router = useRouter();
   const [rewardApplied, setRewardApplied] = useState(false);
@@ -135,8 +137,9 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, ac
     rewardApplied && activeReward
       ? Math.min(activeReward.rewardValue, subtotal)
       : 0;
+  const welcomeBonusBlocked = welcomeBonusActive && subtotal < welcomeBonusMinOrderValue;
   const walletCredit =
-    walletCreditApplied && walletBalance > 0
+    walletCreditApplied && walletBalance > 0 && !welcomeBonusBlocked
       ? Math.min(walletBalance, Math.max(0, subtotal - loyaltyDiscount))
       : 0;
   const total = Math.max(0, subtotal + deliveryFee - loyaltyDiscount - walletCredit);
@@ -881,15 +884,19 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, ac
 
             {/* Wallet credit banner (Level 2+) */}
             {walletBalance > 0 && currentUser && (
-              <section className="bg-card border border-primary/20 rounded-2xl p-5">
+              <section className="bg-card rounded-2xl p-5" style={{ border: welcomeBonusBlocked ? '1px solid rgba(167,139,250,0.3)' : '1px solid rgba(201,168,76,0.2)' }}>
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl shrink-0">💳</span>
+                  <span className="text-2xl shrink-0">{welcomeBonusActive ? '🎉' : '💳'}</span>
                   <div className="flex-1">
                     <p className="font-semibold text-foreground text-sm mb-1">
-                      Ai {walletBalance.toFixed(2)} RON credit în portofel!
+                      {welcomeBonusActive
+                        ? `Bonus de bun venit — ${walletBalance.toFixed(2)} RON credit!`
+                        : `Ai ${walletBalance.toFixed(2)} RON credit în portofel!`}
                     </p>
                     <p className="text-xs text-muted-foreground mb-3">
-                      Câștigat prin cashback 3%
+                      {welcomeBonusActive
+                        ? `Cadou pentru prima comandă cu cod de invitație`
+                        : 'Câștigat prin cashback 3%'}
                       {walletExpiresAt && (
                         <> · Valabil până pe{' '}
                           <strong>
@@ -898,7 +905,14 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, ac
                         </>
                       )}
                     </p>
-                    {walletCreditApplied ? (
+                    {welcomeBonusBlocked ? (
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}>
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" style={{ color: '#a78bfa' }} />
+                        <p className="text-xs" style={{ color: '#a78bfa' }}>
+                          Adaugă produse pentru a ajunge la <strong>{welcomeBonusMinOrderValue} RON</strong> și deblochează bonusul
+                        </p>
+                      </div>
+                    ) : walletCreditApplied ? (
                       <div className="flex items-center gap-3">
                         <span className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
                           ✓ Credit aplicat — {walletCredit.toFixed(2)} RON reducere

@@ -14,6 +14,25 @@ export const DEFAULT_LOYALTY_CONFIG: LoyaltyConfig = {
     cashbackPercent: 3,
     walletExpiryDays: 30,
   },
+  level3: {
+    enabled: true,
+    cashbackThreshold30Days: 50,
+    walletExpiryDays: 90,
+    bonusChoiceWindowHours: 24,
+    cashbackBoostPercent: 5,
+    cashbackBoostOrders: 10,
+  },
+  level4: {
+    enabled: true,
+    upgradeReferralsRequired: 2,
+    referralCashbackPercent: 20,
+    referralCashbackMaxOrderValue: 400,
+    referralCashbackMaxOrders: 3,
+    welcomeBonusEnabled: true,
+    welcomeBonusCreditAmount: 30,
+    welcomeBonusMinOrderValue: 60,
+    welcomeBonusExpiryDays: 3,
+  },
   levels: [
     { level: 1, minOrders: 0,   maxOrders: 9,   name: 'Client Nou' },
     { level: 2, minOrders: 10,  maxOrders: 19,  name: 'Client Fidel' },
@@ -35,6 +54,8 @@ export async function getLoyaltyConfig(): Promise<LoyaltyConfig> {
     ...saved,
     level1: { ...DEFAULT_LOYALTY_CONFIG.level1, ...(saved.level1 ?? {}) },
     level2: { ...DEFAULT_LOYALTY_CONFIG.level2, ...(saved.level2 ?? {}) },
+    level3: { ...DEFAULT_LOYALTY_CONFIG.level3, ...(saved.level3 ?? {}) },
+    level4: { ...DEFAULT_LOYALTY_CONFIG.level4, ...(saved.level4 ?? {}) },
   };
 }
 

@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { SiteLayout } from '@/components/layout/site-layout';
 import { PageHero } from '@/components/layout/page-hero';
 import { AccountDashboard } from '@/components/account/account-forms';
+import { PasskeyPrompt } from '@/components/account/PasskeyPrompt';
 import { getCurrentUser } from '@/lib/actions/auth-user';
 import { getOrdersByEmail } from '@/lib/actions/orders';
 import { getMyReservations } from '@/lib/actions/reservations';
@@ -54,6 +55,12 @@ export default async function AccountPage() {
         activeRewardValue: loyaltyProfile.activeReward?.rewardValue,
         walletBalance: loyaltyProfile.walletBalance,
         walletExpiresAt: loyaltyProfile.walletExpiresAt,
+        priorityDelivery: loyaltyProfile.priorityDelivery,
+        level3CashbackBoostLeft: loyaltyProfile.level3CashbackBoostLeft,
+        totalReferrals: loyaltyProfile.totalReferrals,
+        referralCashbackEarned: loyaltyProfile.referralCashbackEarned,
+        referralCode: loyaltyProfile.referralCode,
+        upgradeReferralsRequired: loyaltyConfig?.level4.upgradeReferralsRequired ?? 2,
       }
     : null;
   const upcomingCount = reservations.filter(
@@ -126,6 +133,7 @@ export default async function AccountPage() {
         clientCode={clientCode}
         loyaltyWidget={loyaltyWidget}
       />
+      {safeUser && <PasskeyPrompt />}
     </SiteLayout>
   );
 }

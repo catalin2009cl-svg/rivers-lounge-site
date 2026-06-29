@@ -34,6 +34,7 @@ import { openReceipt } from '@/lib/receipt-generator';
 import type { Order } from '@/lib/server-data';
 import type { AdminRole } from '@/lib/auth';
 import { RevenueDashboard } from '@/components/admin/revenue-dashboard';
+import { UserProfilePanel } from '@/components/admin/UserProfilePanel';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -93,6 +94,7 @@ export function OrdersAdminClient({ initialOrders, filterUserId, filterUserName,
   );
   const [busyId, setBusyId] = useState<string | null>(null);
   const [savingObsId, setSavingObsId] = useState<string | null>(null);
+  const [panelUserId, setPanelUserId] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<OrderNotification[]>([]);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
@@ -305,8 +307,14 @@ export function OrdersAdminClient({ initialOrders, filterUserId, filterUserName,
     }
   }, []);
 
-  const filtered =
+  const filteredBase =
     tab === 'toate' ? orders : orders.filter((o) => o.status === tab);
+  // Priority orders float to the top within each tab
+  const filtered = [...filteredBase].sort((a, b) => {
+    if (a.isPriority && !b.isPriority) return -1;
+    if (!a.isPriority && b.isPriority) return 1;
+    return 0;
+  });
 
   function handleExpand(orderId: string) {
     setExpandedId((prev) => (prev === orderId ? null : orderId));
@@ -597,7 +605,27 @@ export function OrdersAdminClient({ initialOrders, filterUserId, filterUserName,
                           <p className="text-xs text-[#9A9490] mt-0.5">{fmtDateTime(o.createdAt)}</p>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="font-medium text-[#F0EDE6] whitespace-nowrap">{o.name}</p>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {o.userId ? (
+                              <button
+                                className="font-medium text-[#F0EDE6] hover:text-[#C9A84C] whitespace-nowrap transition-colors text-left"
+                                onClick={(e) => { e.stopPropagation(); setPanelUserId(o.userId ?? null); }}
+                                title="Deschide profil client"
+                              >
+                                {o.name}
+                              </button>
+                            ) : (
+                              <p className="font-medium text-[#F0EDE6] whitespace-nowrap">{o.name}</p>
+                            )}
+                            {o.isPriority && (
+                              <span
+                                className="inline-flex items-center gap-0.5 text-xs px-1.5 py-0.5 rounded font-bold whitespace-nowrap"
+                                style={{ background: 'rgba(234,179,8,0.15)', color: '#FACC15', border: '1px solid rgba(234,179,8,0.4)' }}
+                              >
+                                ⚡ PRIORITAR
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-[#9A9490] whitespace-nowrap">{o.phone}</p>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
@@ -901,6 +929,9 @@ export function OrdersAdminClient({ initialOrders, filterUserId, filterUserName,
         </div>
       )}
     </div>
+
+    {/* User profile slide-over panel */}
+    <UserProfilePanel userId={panelUserId} onClose={() => setPanelUserId(null)} />
     </>
   );
 }

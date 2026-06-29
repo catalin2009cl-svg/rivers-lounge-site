@@ -28,6 +28,7 @@ const navigation = [
   { name: 'Cabana Rivers', href: '/cabana' },
   { name: 'Noutăți', href: '/noutati' },
   { name: 'Contact', href: '/contact' },
+  { name: 'Suport', href: '/suport' },
 ];
 
 interface HeaderProps {

@@ -9,6 +9,7 @@ import { getUsers, saveUsers, getUserByEmail, getOrders, saveOrders } from '@/li
 import type { Order } from '@/lib/server-data';
 import { checkUserRetention } from '@/lib/data-retention';
 import type { RetentionCheckResult } from '@/lib/data-retention';
+import { setupReferralOnRegistration } from '@/lib/loyalty/setupReferral';
 
 function hashPassword(password: string): string {
   const salt = randomBytes(16).toString('hex');
@@ -36,6 +37,7 @@ export async function createUser(data: {
   email: string;
   phone?: string;
   password: string;
+  referralCode?: string;
 }): Promise<{ success: boolean; userId?: string; error?: string }> {
   try {
     const existing = await getUserByEmail(data.email);
@@ -64,6 +66,16 @@ export async function createUser(data: {
       },
       ...users,
     ]);
+
+    // Process referral welcome bonus (non-critical — never blocks registration)
+    if (data.referralCode && data.referralCode.trim().length > 0) {
+      try {
+        await setupReferralOnRegistration(id, data.referralCode);
+      } catch {
+        // Silent — referral failure must never prevent account creation
+      }
+    }
+
     revalidatePath('/admin/utilizatori');
     return { success: true, userId: id };
   } catch (e) {

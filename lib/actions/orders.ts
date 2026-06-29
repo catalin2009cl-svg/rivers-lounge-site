@@ -8,6 +8,7 @@ import { getSession } from '@/lib/auth';
 import { logOperatorActivity } from '@/lib/actions/operators';
 import { processOrderForLoyalty } from '@/lib/loyalty/processLoyalty';
 import { applyRewardToOrder } from '@/lib/loyalty/applyReward';
+import { getLoyaltyConfig } from '@/lib/loyalty/config';
 import { prisma } from '@/lib/prisma';
 
 export interface OrderInput {
@@ -62,11 +63,17 @@ export async function saveOrder(
     let walletDeduction = 0;
     if (input.walletCreditAmount && input.walletCreditAmount > 0 && input.userId) {
       try {
-        const profile = await prisma.loyaltyProfile.findUnique({
-          where: { userId: input.userId },
-          select: { id: true, walletBalance: true },
-        });
-        if (profile && profile.walletBalance >= 0.01) {
+        const [profile, loyaltyConfig] = await Promise.all([
+          prisma.loyaltyProfile.findUnique({
+            where: { userId: input.userId },
+            select: { id: true, walletBalance: true, welcomeBonusActive: true },
+          }),
+          getLoyaltyConfig(),
+        ]);
+        const welcomeBonusBlocked =
+          profile?.welcomeBonusActive &&
+          input.subtotal < loyaltyConfig.level4.welcomeBonusMinOrderValue;
+        if (profile && profile.walletBalance >= 0.01 && !welcomeBonusBlocked) {
           const deductAmount = Math.min(
             input.walletCreditAmount,
             profile.walletBalance,
@@ -100,6 +107,24 @@ export async function saveOrder(
       }
     }
 
+    // Check priority delivery for Level 3 users
+    let isPriority = false;
+    let priorityLevel: number | undefined;
+    if (input.userId) {
+      try {
+        const loyaltyProfile = await prisma.loyaltyProfile.findUnique({
+          where: { userId: input.userId },
+          select: { priorityDelivery: true, currentLevel: true },
+        });
+        if (loyaltyProfile?.priorityDelivery) {
+          isPriority = true;
+          priorityLevel = loyaltyProfile.currentLevel;
+        }
+      } catch {
+        // Non-critical
+      }
+    }
+
     const newOrder: Order = {
       id,
       createdAt: now,
@@ -121,6 +146,8 @@ export async function saveOrder(
       status: 'noua',
       observation: '',
       notes: input.notes,
+      isPriority,
+      ...(priorityLevel !== undefined ? { priorityLevel } : {}),
       ...(input.userLat !== undefined ? { userLat: input.userLat } : {}),
       ...(input.userLng !== undefined ? { userLng: input.userLng } : {}),
       ...(input.userId !== undefined ? { userId: input.userId } : {}),

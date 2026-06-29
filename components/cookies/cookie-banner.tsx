@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { X, Cookie, Shield, BarChart2, Megaphone } from 'lucide-react';
 
 const STORAGE_KEY = 'rl_cookie_consent';
@@ -76,7 +77,11 @@ export function CookieBanner() {
                   🍪 Respectăm confidențialitatea ta
                 </p>
                 <p className="text-xs text-[#9A9490] leading-relaxed">
-                  Folosim cookie-uri esențiale pentru funcționarea site-ului și, cu acordul tău, cookie-uri de analiză și marketing.{' '}
+                  Folosim cookie-uri esențiale pentru funcționarea site-ului și, cu acordul tău, cookie-uri de analiză și marketing.
+                  Află mai multe în{' '}
+                  <Link href="/confidentialitate" className="text-[#C9A84C] hover:underline underline-offset-2">
+                    Politica de Confidențialitate
+                  </Link>.{' '}
                   <button
                     onClick={() => setShowModal(true)}
                     className="text-[#C9A84C] hover:underline underline-offset-2"

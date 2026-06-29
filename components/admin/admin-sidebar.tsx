@@ -26,6 +26,7 @@ import {
   Star,
   Wrench,
   Gift,
+  FileText,
 } from 'lucide-react';
 import { logoutAction } from '@/lib/actions/auth';
 import { hasPermission, type Permission } from '@/lib/permissions';
@@ -47,6 +48,7 @@ const NAV_ITEMS = [
   { href: '/admin/media',       label: 'Media',               icon: Images,          exact: false, permission: 'media.view'      as Permission },
   { href: '/admin/social',      label: 'Social Media',        icon: Globe2,          exact: false, permission: 'social.view'     as Permission },
   { href: '/admin/recenzii',    label: 'Recenzii',            icon: Star,            exact: false, permission: 'recenzii.view'   as Permission },
+  { href: '/admin/rapoarte',    label: 'Rapoarte',            icon: FileText,        exact: false, permission: 'rapoarte.view'   as Permission },
   { href: '/admin/popup',        label: 'Popup Promoțional',   icon: Megaphone,       exact: false, permission: 'popup.view'      as Permission },
   { href: '/admin/setari',      label: 'Setări Site',         icon: Settings2,       exact: false, permission: 'setari.view'     as Permission },
   { href: '/admin/gdpr',        label: 'GDPR & Date',         icon: ShieldCheck,     exact: false, permission: 'gdpr.view'       as Permission },

@@ -120,12 +120,18 @@ export function SuccessClient({ isLoggedIn, order }: Props) {
 
           {/* Time estimate */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '20px' }}>⏱️</span>
+            <span style={{ fontSize: '20px' }}>{order?.isPriority ? '⚡' : '⏱️'}</span>
             <div>
               <p style={{ color: '#9A9490', fontSize: '12px', margin: 0 }}>Timp estimat</p>
-              <p style={{ color: '#F0EDE6', fontSize: '14px', fontWeight: 600, margin: '2px 0 0' }}>
-                45–60 minute
-              </p>
+              {order?.isPriority ? (
+                <p style={{ color: '#FACC15', fontSize: '14px', fontWeight: 700, margin: '2px 0 0' }}>
+                  ⚡ Livrare prioritară: ~39 minute
+                </p>
+              ) : (
+                <p style={{ color: '#F0EDE6', fontSize: '14px', fontWeight: 600, margin: '2px 0 0' }}>
+                  45–60 minute
+                </p>
+              )}
             </div>
           </div>
 

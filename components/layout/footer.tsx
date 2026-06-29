@@ -25,6 +25,7 @@ const footerLinks = {
     { name: 'Termeni și Condiții', href: '/termeni' },
     { name: 'Politica de Confidențialitate', href: '/confidentialitate' },
     { name: 'Politica Cookies', href: '/cookies' },
+    { name: 'Suport Clienți', href: '/suport' },
     { name: 'ANPC', href: 'https://anpc.ro' },
   ],
 };

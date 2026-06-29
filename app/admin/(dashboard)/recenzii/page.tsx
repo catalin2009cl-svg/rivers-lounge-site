@@ -3,6 +3,8 @@ import { getSession } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
 import { redirect } from 'next/navigation';
 import { ReviewsAdminClient } from '@/components/admin/reviews-admin-client';
+import { prisma } from '@/lib/prisma';
+import { OrderReviewsSection } from '@/components/admin/OrderReviewsSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +16,23 @@ export default async function RecenziiPage() {
     redirect('/admin');
   }
 
-  const reviews = await getReviews();
+  const [reviews, orderReviewsRaw] = await Promise.all([
+    getReviews(),
+    prisma.orderReview.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        order: { select: { id: true, total: true } },
+      },
+    }),
+  ]);
   const canDelete = hasPermission(session.role, 'recenzii.delete');
+  const orderReviews = JSON.parse(JSON.stringify(orderReviewsRaw));
 
-  return <ReviewsAdminClient initialReviews={reviews} canDelete={canDelete} />;
+  return (
+    <div>
+      <OrderReviewsSection reviews={orderReviews} />
+      <ReviewsAdminClient initialReviews={reviews} canDelete={canDelete} />
+    </div>
+  );
 }

@@ -43,6 +43,12 @@ export default async function LoyalitatePage() {
       hasActiveReward: p.rewards.some((r) => !r.expiresAt || new Date(r.expiresAt) > now),
       walletBalance: walletExpired ? 0 : p.walletBalance,
       walletExpiresAt: walletExpired ? null : (p.walletExpiresAt?.toISOString() ?? null),
+      priorityDelivery: p.priorityDelivery ?? false,
+      level3BonusChoice: p.level3BonusChoice ?? null,
+      level3CashbackBoostLeft: p.level3CashbackBoostLeft ?? 0,
+      totalCashbackEarned: p.totalCashbackEarned ?? 0,
+      totalReferrals: p.totalReferrals ?? 0,
+      referralCashbackEarned: p.referralCashbackEarned ?? 0,
     };
   });
 

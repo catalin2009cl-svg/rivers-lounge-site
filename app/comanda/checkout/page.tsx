@@ -4,6 +4,7 @@ import { getSettings } from '@/lib/server-data';
 import { getCurrentUser } from '@/lib/actions/auth-user';
 import { getSavedAddressesForUser } from '@/lib/actions/orders';
 import { getLoyaltyProfileForUser } from '@/lib/loyalty/getLoyaltyProfile';
+import { getLoyaltyConfig } from '@/lib/loyalty/config';
 import { expireWalletIfNeeded } from '@/lib/loyalty/expireWallet';
 import type { DeliveryConfig } from '@/lib/server-data';
 
@@ -36,14 +37,17 @@ export default async function CheckoutPage() {
   // Expire stale wallet credits before showing checkout
   if (user) await expireWalletIfNeeded(user.id);
 
-  const [savedAddresses, loyaltyProfile] = await Promise.all([
+  const [savedAddresses, loyaltyProfile, loyaltyConfig] = await Promise.all([
     user ? getSavedAddressesForUser(user.email) : Promise.resolve([]),
     user ? getLoyaltyProfileForUser(user.id) : Promise.resolve(null),
+    getLoyaltyConfig(),
   ]);
 
   const activeReward = loyaltyProfile?.activeReward ?? null;
   const walletBalance = loyaltyProfile?.walletBalance ?? 0;
   const walletExpiresAt = loyaltyProfile?.walletExpiresAt ?? null;
+  const welcomeBonusActive = loyaltyProfile?.welcomeBonusActive ?? false;
+  const welcomeBonusMinOrderValue = loyaltyConfig.level4.welcomeBonusMinOrderValue;
 
   return (
     <SiteLayout>
@@ -55,6 +59,8 @@ export default async function CheckoutPage() {
           activeReward={activeReward}
           walletBalance={walletBalance}
           walletExpiresAt={walletExpiresAt}
+          welcomeBonusActive={welcomeBonusActive}
+          welcomeBonusMinOrderValue={welcomeBonusMinOrderValue}
         />
       </div>
     </SiteLayout>

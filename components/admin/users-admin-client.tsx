@@ -16,6 +16,7 @@ import {
   RefreshCw,
   AlertTriangle,
   BadgeCheck,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -850,6 +851,14 @@ export function UsersAdminClient({ initialUsers, allOrders, initialOperators, in
                                     }
                                   </Button>
                                 )}
+                                <Link
+                                  href={`/admin/utilizatori/${u.id}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  title="Profil complet"
+                                  className="inline-flex items-center justify-center h-7 w-7 rounded-md text-[#C9A84C] hover:bg-[#C9A84C11] transition-colors"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </Link>
                                 <Button
                                   size="sm"
                                   variant="ghost"
