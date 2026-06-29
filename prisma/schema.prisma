@@ -457,3 +457,19 @@ model EmailLog {
   trackingId  String         @unique @default(cuid())
   createdAt   DateTime       @default(now())
 }
+
+model CabinPackage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  priceFrom   Float
+  duration    String
+  includes    String[]
+  idealFor    String[]
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

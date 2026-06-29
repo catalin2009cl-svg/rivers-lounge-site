@@ -76,7 +76,7 @@ interface CheckoutClientProps {
 }
 
 export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, activeReward, walletBalance = 0, walletExpiresAt = null, welcomeBonusActive = false, welcomeBonusMinOrderValue = 60 }: CheckoutClientProps) {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, clearCart, updateQuantity } = useCart();
   const router = useRouter();
   const [rewardApplied, setRewardApplied] = useState(false);
   const [walletCreditApplied, setWalletCreditApplied] = useState(false);
@@ -982,10 +982,32 @@ export function CheckoutClient({ deliveryConfig, currentUser, savedAddresses, ac
                           {item.product.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {item.quantity} × {item.product.price} RON
+                          {item.product.price} RON / buc.
                         </p>
                       </div>
-                      <p className="text-sm font-semibold text-foreground shrink-0">
+                      {/* Inline qty controls */}
+                      <div className="flex items-center gap-0 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          className="h-7 w-7 rounded-l-md border border-border bg-muted/50 hover:bg-muted text-foreground text-base font-bold flex items-center justify-center transition-colors"
+                          aria-label="Scade cantitate"
+                        >
+                          −
+                        </button>
+                        <div className="h-7 w-8 border-t border-b border-border flex items-center justify-center text-sm font-semibold text-foreground bg-background">
+                          {item.quantity}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          className="h-7 w-7 rounded-r-md border border-border bg-muted/50 hover:bg-muted text-foreground text-base font-bold flex items-center justify-center transition-colors"
+                          aria-label="Crește cantitate"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p className="text-sm font-semibold text-foreground shrink-0 w-16 text-right">
                         {(item.product.price * item.quantity).toFixed(0)} RON
                       </p>
                     </div>

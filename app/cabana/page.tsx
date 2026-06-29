@@ -3,7 +3,7 @@ import { PageHero } from '@/components/layout/page-hero';
 import { CabinContent } from '@/components/cabin/cabin-content';
 import { CabinUpcomingEvents } from '@/components/cabin/cabin-upcoming-events';
 import { PhotoDeck } from '@/components/cabin/photo-deck';
-import { getSettings, getCabanaGallery } from '@/lib/server-data';
+import { getSettings, getCabanaGallery, getCabinPackages } from '@/lib/server-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +24,11 @@ const FALLBACK = 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w
 const FEATURE_FALLBACK = 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800&h=600&fit=crop';
 
 export default async function CabinPage() {
-  const [settings, galleryPhotos] = await Promise.all([getSettings(), getCabanaGallery()]);
+  const [settings, galleryPhotos, dbPackages] = await Promise.all([
+    getSettings(),
+    getCabanaGallery(),
+    getCabinPackages(),
+  ]);
 
   const deckPhotos = galleryPhotos.map((p) => ({
     id: p.id,
@@ -40,7 +44,10 @@ export default async function CabinPage() {
         subtitle="Cabana destinată evenimentelor private — petreceri, team building, aniversări și escapade în natură"
         backgroundImage={settings.heroImages?.cabana || FALLBACK}
       />
-      <CabinContent featureImage={settings.heroImages?.cabanaFeature || FEATURE_FALLBACK} />
+      <CabinContent
+        featureImage={settings.heroImages?.cabanaFeature || FEATURE_FALLBACK}
+        packages={dbPackages}
+      />
 
       {/* Photo gallery */}
       <section className="py-16 bg-secondary/30">

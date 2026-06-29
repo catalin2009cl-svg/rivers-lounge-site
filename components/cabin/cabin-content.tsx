@@ -1,21 +1,30 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Check, TreePine, PartyPopper, Flame, Wifi } from 'lucide-react';
+import { ArrowRight, Check, TreePine, PartyPopper, Flame, Wifi, Users, Bed, Droplets, UtensilsCrossed, Car, Wind } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cabinFeatures, cabinPackages, facilities } from '@/lib/mock-data';
+import type { DbCabinPackage } from '@/lib/server-data';
 
 const amenityIcons: Record<string, React.ReactNode> = {
-  WiFi: <Wifi className="h-5 w-5" />,
-  Grătar: <Flame className="h-5 w-5" />,
+  Capacitate:  <Users className="h-6 w-6" />,
+  Dormitoare:  <Bed className="h-6 w-6" />,
+  Băi:         <Droplets className="h-6 w-6" />,
+  Bucătărie:   <UtensilsCrossed className="h-6 w-6" />,
+  Grătar:      <Flame className="h-6 w-6" />,
+  Parcare:     <Car className="h-6 w-6" />,
+  WiFi:        <Wifi className="h-6 w-6" />,
+  Climatizare: <Wind className="h-6 w-6" />,
 };
 
 interface CabinContentProps {
   featureImage?: string;
+  packages?: DbCabinPackage[];
 }
 
-export function CabinContent({ featureImage }: CabinContentProps) {
+export function CabinContent({ featureImage, packages: dbPackages }: CabinContentProps) {
+  const displayPackages = dbPackages && dbPackages.length > 0 ? dbPackages : cabinPackages;
   const cabin = facilities.find((f) => f.id === 'cabin')!;
   const imageSrc = featureImage || cabin.image;
 
@@ -75,7 +84,7 @@ export function CabinContent({ featureImage }: CabinContentProps) {
             <p className="text-muted-foreground">Alege pachetul potrivit pentru ocazia ta specială</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {cabinPackages.map((pkg) => (
+            {displayPackages.map((pkg) => (
               <Card key={pkg.id} className="border-border hover:border-primary/50 transition-colors">
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -128,14 +137,14 @@ export function CabinContent({ featureImage }: CabinContentProps) {
               Facilități <span className="text-primary">Cabana</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
             {cabinFeatures.map((feature) => (
-              <Card key={feature.name} className="p-4 border-border text-center">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-3">
-                  {amenityIcons[feature.name] ?? <TreePine className="h-5 w-5" />}
+              <Card key={feature.name} className="p-6 border-border text-center">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
+                  {amenityIcons[feature.name] ?? <TreePine className="h-6 w-6" />}
                 </div>
-                <p className="text-sm font-medium text-foreground">{feature.name}</p>
-                <p className="text-xs text-muted-foreground mt-1">{feature.value}</p>
+                <p className="text-[18px] font-semibold text-foreground leading-snug">{feature.name}</p>
+                <p className="text-[14px] text-muted-foreground mt-2 leading-snug">{feature.value}</p>
               </Card>
             ))}
           </div>

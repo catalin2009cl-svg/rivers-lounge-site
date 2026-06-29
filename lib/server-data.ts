@@ -1061,3 +1061,34 @@ export async function saveOrders(orders: Order[]): Promise<void> {
     }
   });
 }
+
+// ── Cabin packages — DB-backed ───────────────────────────────────────────────
+
+export interface DbCabinPackage {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  priceFrom: number;
+  duration: string;
+  includes: string[];
+  idealFor: string[];
+  imageUrl: string | null;
+  isActive: boolean;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export async function getCabinPackages(): Promise<DbCabinPackage[]> {
+  return prisma.cabinPackage.findMany({
+    where: { isActive: true },
+    orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+  });
+}
+
+export async function getAllCabinPackages(): Promise<DbCabinPackage[]> {
+  return prisma.cabinPackage.findMany({
+    orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
+  });
+}
