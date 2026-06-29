@@ -13,10 +13,7 @@ export default function LoginPage() {
     <SiteLayout>
       <PageHero title="Autentificare" subtitle="Accesează contul tău" />
       <section className="py-12">
-        <LoginForm
-          hasGoogle={!!process.env.GOOGLE_CLIENT_ID}
-          hasFacebook={!!process.env.FACEBOOK_CLIENT_ID}
-        />
+        <LoginForm hasGoogle hasFacebook />
       </section>
     </SiteLayout>
   );
