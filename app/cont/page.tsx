@@ -56,6 +56,7 @@ export default async function AccountPage() {
         activeRewardValue: loyaltyProfile.activeReward?.rewardValue,
         walletBalance: loyaltyProfile.walletBalance,
         walletExpiresAt: loyaltyProfile.walletExpiresAt,
+        recentWalletTransactions: loyaltyProfile.recentWalletTransactions,
         priorityDelivery: loyaltyProfile.priorityDelivery,
         level3CashbackBoostLeft: loyaltyProfile.level3CashbackBoostLeft,
         totalReferrals: loyaltyProfile.totalReferrals,

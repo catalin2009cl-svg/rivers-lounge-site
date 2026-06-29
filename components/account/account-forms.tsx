@@ -16,7 +16,9 @@ import { createUser } from '@/lib/actions/users';
 import { loginUser, logoutUser } from '@/lib/actions/auth-user';
 import { OrderHistoryClient } from '@/components/account/order-history-client';
 import { PasskeyLoginSection } from '@/components/account/PasskeyLoginSection';
+import { WalletWidget } from '@/components/account/wallet-widget';
 import type { Order } from '@/lib/server-data';
+import type { WalletTransactionSummary } from '@/lib/loyalty/types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -314,6 +316,7 @@ interface LoyaltyWidgetData {
   activeRewardValue?: number;
   walletBalance?: number;
   walletExpiresAt?: string | null;
+  recentWalletTransactions?: WalletTransactionSummary[];
   priorityDelivery?: boolean;
   level3CashbackBoostLeft?: number;
   totalReferrals?: number;
@@ -420,6 +423,15 @@ export function AccountDashboard({
             </Button>
           </form>
         </div>
+
+        {/* Wallet widget */}
+        {loyaltyWidget && (
+          <WalletWidget
+            walletBalance={loyaltyWidget.walletBalance ?? 0}
+            walletExpiresAt={loyaltyWidget.walletExpiresAt ?? null}
+            recentWalletTransactions={loyaltyWidget.recentWalletTransactions ?? []}
+          />
+        )}
 
         {/* Quick links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
