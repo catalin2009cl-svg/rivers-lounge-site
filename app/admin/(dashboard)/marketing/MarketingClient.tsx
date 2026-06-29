@@ -242,8 +242,8 @@ export function MarketingClient({ campaigns: initial, totalSubscribers, totalUns
 
   async function openPreview(id: string) {
     const r = await fetch(`/api/admin/marketing/campaigns/${id}/preview`);
-    const d = await r.json() as { html: string };
-    setPreview({ html: d.html, id });
+    const html = await r.text();
+    setPreview({ html, id });
   }
 
   async function exportCSV() {
