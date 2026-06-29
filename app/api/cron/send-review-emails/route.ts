@@ -1,3 +1,6 @@
+// Runs daily at 20:00 on Vercel Hobby plan (once-per-day limit).
+// On Pro plan, change vercel.json schedule to "*/15 * * * *" for more
+// precise 2h-after-delivery timing.
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendReviewRequestEmail } from '@/lib/email/resend';
