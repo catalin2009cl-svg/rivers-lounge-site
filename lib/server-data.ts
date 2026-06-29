@@ -689,6 +689,9 @@ export interface User {
   facebookId?: string | null;
   avatarUrl?: string | null;
   authProvider?: string | null;
+  marketingConsent?: boolean;
+  marketingConsentAt?: string;
+  unsubscribedAt?: string | null;
 }
 
 // ── Users — DB-backed ───────────────────────────────────────────────────────
@@ -702,6 +705,8 @@ function mapDbToUser(row: {
   avatar: string | null; birthday: string | null;
   googleId?: string | null; facebookId?: string | null;
   avatarUrl?: string | null; authProvider?: string | null;
+  marketingConsent?: boolean; marketingConsentAt?: Date | null;
+  unsubscribedAt?: Date | null;
 }): User {
   return {
     id: row.id,
@@ -728,6 +733,9 @@ function mapDbToUser(row: {
     facebookId: row.facebookId ?? null,
     avatarUrl: row.avatarUrl ?? null,
     authProvider: row.authProvider ?? null,
+    marketingConsent: row.marketingConsent ?? false,
+    marketingConsentAt: row.marketingConsentAt?.toISOString(),
+    unsubscribedAt: row.unsubscribedAt?.toISOString() ?? null,
   };
 }
 
@@ -751,6 +759,9 @@ function mapUserUpdate(u: User) {
     adminNote: u.adminNote ?? null,
     retentionNotifiedAt: u.retentionNotifiedAt ? new Date(u.retentionNotifiedAt) : null,
     role: u.role ?? 'client',
+    marketingConsent: u.marketingConsent ?? false,
+    marketingConsentAt: u.marketingConsentAt ? new Date(u.marketingConsentAt) : null,
+    unsubscribedAt: u.unsubscribedAt ? new Date(u.unsubscribedAt) : null,
   };
 }
 

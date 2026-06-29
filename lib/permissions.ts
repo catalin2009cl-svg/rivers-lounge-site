@@ -93,6 +93,11 @@ export const PERMISSIONS = {
   // Program Loialitate
   'loialitate.view': ['admin', 'manager'],
   'loialitate.edit': ['admin'],
+
+  // Marketing Email
+  'marketing.view': ['admin', 'manager'],
+  'marketing.send': ['admin'],
+  'marketing.edit': ['admin', 'manager'],
 } as const;
 
 export type Permission = keyof typeof PERMISSIONS;

@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from 'react';
 import { toast } from 'sonner';
-import { updateMyProfile, changePassword, deleteAccount, uploadAvatar } from '@/lib/actions/users';
+import { updateMyProfile, changePassword, deleteAccount, uploadAvatar, updateMarketingConsent } from '@/lib/actions/users';
 import { saveBirthday, saveBirthDate } from '@/lib/actions/birthday';
 import type { SafeUser } from '@/components/account/account-forms';
 
@@ -550,7 +550,55 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
         </div>
       </SectionCard>
 
-      {/* 7. Zona periculoasă */}
+      {/* 7. Preferințe email */}
+      <SectionCard title="Preferințe email">
+        <p style={{ color: '#9A9490', fontSize: 13, marginBottom: 14 }}>
+          Controlează ce emailuri primești de la noi.
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: '#111', borderRadius: 8, border: '1px solid #2A2A2A' }}>
+          <div>
+            <p style={{ color: '#E8E4DF', fontSize: 13, fontWeight: 500, marginBottom: 2 }}>Oferte și promoții</p>
+            <p style={{ color: '#6B6660', fontSize: 12 }}>Noutăți, reduceri și campanii speciale</p>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              const newVal = !(user?.marketingConsent ?? false);
+              const res = await updateMarketingConsent(newVal);
+              if (res.success) {
+                toast.success(newVal ? 'Abonament activat' : 'Abonament dezactivat');
+              } else {
+                toast.error(res.error ?? 'Eroare');
+              }
+            }}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              border: 'none',
+              cursor: 'pointer',
+              background: user?.marketingConsent ? '#C9A84C' : '#2A2A2A',
+              position: 'relative',
+              transition: 'background 0.2s',
+              flexShrink: 0,
+            }}
+            title={user?.marketingConsent ? 'Dezabonează-te' : 'Abonează-te'}
+          >
+            <span style={{
+              position: 'absolute',
+              top: 3,
+              left: user?.marketingConsent ? 22 : 3,
+              width: 18,
+              height: 18,
+              borderRadius: '50%',
+              background: '#fff',
+              transition: 'left 0.2s',
+            }} />
+          </button>
+        </div>
+      </SectionCard>
+
+      {/* 8. Zona periculoasă */}
       <div style={{ background: '#1A1A1A', border: '1px solid #EF444433', borderRadius: 12, padding: '22px 24px' }}>
         <h3 style={{ color: '#F87171', fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Zona periculoasă</h3>
         {!showDeleteConfirm ? (

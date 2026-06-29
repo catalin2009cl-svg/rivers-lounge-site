@@ -43,6 +43,10 @@ model User {
   avatarUrl    String?
   authProvider String?
 
+  marketingConsent   Boolean   @default(false)
+  marketingConsentAt DateTime?
+  unsubscribedAt     DateTime?
+
   orders               Order[]
   reservations         Reservation[]
   loyaltyProfile       LoyaltyProfile?
@@ -51,6 +55,7 @@ model User {
   referralsMade        Referral[]          @relation("ReferralsMade")
   referredBy           Referral?           @relation("ReferredBy")
   orderReviews         OrderReview[]
+  emailLogs            EmailLog[]
 }
 
 model Order {
@@ -169,6 +174,22 @@ enum RewardStatus {
   USED
   EXPIRED
   CANCELLED
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  CANCELLED
+}
+
+enum EmailLogStatus {
+  SENT
+  OPENED
+  CLICKED
+  BOUNCED
+  UNSUBSCRIBED
 }
 
 model LoyaltyProfile {
@@ -403,4 +424,36 @@ model WeeklyReport {
   pdfUrl          String?
   emailSentAt     DateTime?
   createdAt       DateTime @default(now())
+}
+
+model EmailCampaign {
+  id             String         @id @default(cuid())
+  title          String
+  subject        String
+  template       String
+  content        Json
+  status         CampaignStatus @default(DRAFT)
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  recipientCount Int            @default(0)
+  openCount      Int            @default(0)
+  clickCount     Int            @default(0)
+  segments       String[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  emails         EmailLog[]
+}
+
+model EmailLog {
+  id          String         @id @default(cuid())
+  campaignId  String
+  campaign    EmailCampaign  @relation(fields: [campaignId], references: [id])
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+  email       String
+  status      EmailLogStatus @default(SENT)
+  openedAt    DateTime?
+  clickedAt   DateTime?
+  trackingId  String         @unique @default(cuid())
+  createdAt   DateTime       @default(now())
 }

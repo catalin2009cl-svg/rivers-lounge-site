@@ -42,6 +42,7 @@ export type SafeUser = {
   facebookId?: string | null;
   avatarUrl?: string | null;
   authProvider?: string | null;
+  marketingConsent?: boolean;
 };
 
 // ── OAuth buttons ─────────────────────────────────────────────────────────────
@@ -113,6 +114,7 @@ const registerSchema = loginSchema
     phone: z.string().min(10, 'Număr de telefon invalid'),
     confirmPassword: z.string(),
     referralCode: z.string().optional(),
+    marketingConsent: z.boolean().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Parolele nu coincid',
@@ -261,6 +263,7 @@ export function RegisterForm({
       phone: data.phone,
       password: data.password,
       referralCode: data.referralCode?.trim() || undefined,
+      marketingConsent: data.marketingConsent ?? false,
     });
     if (result.success) {
       toast.success('Cont creat cu succes!');
@@ -357,6 +360,20 @@ export function RegisterForm({
             {referralValidState === 'checking' && (
               <p className="text-xs text-muted-foreground mt-1">Se verifică codul...</p>
             )}
+          </div>
+
+          {/* Marketing consent */}
+          <div className="flex items-start gap-2 pt-1">
+            <input
+              type="checkbox"
+              id="marketingConsent"
+              {...register('marketingConsent')}
+              className="mt-0.5 h-4 w-4 rounded border-border accent-primary cursor-pointer"
+            />
+            <label htmlFor="marketingConsent" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+              Doresc să primesc oferte, promoții și noutăți de la River&apos;s Lounge prin email.
+              Poți anula oricând abonamentul.
+            </label>
           </div>
 
           <Button

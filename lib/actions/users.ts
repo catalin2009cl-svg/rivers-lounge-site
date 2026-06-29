@@ -10,6 +10,7 @@ import type { Order } from '@/lib/server-data';
 import { checkUserRetention } from '@/lib/data-retention';
 import type { RetentionCheckResult } from '@/lib/data-retention';
 import { setupReferralOnRegistration } from '@/lib/loyalty/setupReferral';
+import { prisma } from '@/lib/prisma';
 
 function hashPassword(password: string): string {
   const salt = randomBytes(16).toString('hex');
@@ -38,6 +39,7 @@ export async function createUser(data: {
   phone?: string;
   password: string;
   referralCode?: string;
+  marketingConsent?: boolean;
 }): Promise<{ success: boolean; userId?: string; error?: string }> {
   try {
     const existing = await getUserByEmail(data.email);
@@ -48,6 +50,7 @@ export async function createUser(data: {
     const suffix = Math.random().toString(36).slice(2, 5).toUpperCase();
     const id = `USR-${Date.now()}-${suffix}`;
 
+    const marketingConsent = data.marketingConsent ?? false;
     await saveUsers([
       {
         id,
@@ -63,6 +66,8 @@ export async function createUser(data: {
         totalOrders: 0,
         totalSpent: 0,
         adminNote: '',
+        marketingConsent,
+        marketingConsentAt: marketingConsent ? now : undefined,
       },
       ...users,
     ]);
@@ -378,4 +383,27 @@ export async function getSavedAddresses(): Promise<
     counts[key].count++;
   }
   return Object.values(counts).sort((a, b) => b.count - a.count);
+}
+
+export async function updateMarketingConsent(
+  consent: boolean
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const email = await getLoggedInEmail();
+    if (!email) return { success: false, error: 'Trebuie să fii autentificat.' };
+    await prisma.user.update({
+      where: { email },
+      data: {
+        marketingConsent: consent,
+        ...(consent
+          ? { marketingConsentAt: new Date(), unsubscribedAt: null }
+          : { unsubscribedAt: new Date() }
+        ),
+      },
+    });
+    revalidatePath('/cont/setari');
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: String(e) };
+  }
 }
