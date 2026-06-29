@@ -13,7 +13,7 @@ export interface PromoContent {
 
 export interface MenuContent {
   headline: string;
-  items: { name: string; description: string; price: string }[];
+  items: string;
   validPeriod: string;
   ctaText: string;
   ctaUrl: string;
@@ -103,23 +103,12 @@ function renderPromo(c: PromoContent, trackingId: string, name: string): string 
 }
 
 function renderMenu(c: MenuContent, trackingId: string, name: string): string {
-  const rows = c.items.map(item => `
-    <tr>
-      <td style="padding:14px 0;border-bottom:1px solid #2a2a2a;vertical-align:top;">
-        <p style="color:#ffffff;font-weight:600;margin:0 0 4px;font-size:15px;">${item.name}</p>
-        <p style="color:#888888;font-size:13px;margin:0;">${item.description}</p>
-      </td>
-      <td style="padding:14px 0 14px 16px;border-bottom:1px solid #2a2a2a;text-align:right;white-space:nowrap;vertical-align:top;">
-        <span style="color:#C9A84C;font-weight:700;font-size:15px;">${item.price}</span>
-      </td>
-    </tr>`).join('');
-
   return wrap(`
     <h1 style="color:#ffffff;margin:0 0 4px;font-size:26px;">${c.headline}</h1>
     <p style="color:#888888;font-size:13px;margin:0 0 24px;">Valabil: ${c.validPeriod}</p>
     ${name ? `<p style="color:#cccccc;margin:0 0 16px;line-height:1.6;">Bună, <strong style="color:#ffffff;">${name}</strong>!</p>` : ''}
-    <table width="100%" cellpadding="0" cellspacing="0">${rows}</table>
-    ${cta(c.ctaText, clickUrl(trackingId, c.ctaUrl))}
+    <div style="color:#cccccc;line-height:1.8;white-space:pre-line;">${c.items}</div>
+    ${c.ctaText && c.ctaUrl ? cta(c.ctaText, clickUrl(trackingId, c.ctaUrl)) : ''}
   `, trackingId);
 }
 

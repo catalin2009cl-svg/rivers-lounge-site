@@ -567,32 +567,42 @@ export function MarketingClient({ campaigns: initial, totalSubscribers, totalUns
 
                   {wizard.template === 'PROMO' && (
                     <>
-                      <Field label="Titlu promoție"><input value={wizard.content.title ?? ''} onChange={(e) => setW('content', { ...wizard.content, title: e.target.value })} style={inputStyle} /></Field>
+                      <Field label="Titlu promoție (headline)"><input value={wizard.content.headline ?? ''} onChange={(e) => setW('content', { ...wizard.content, headline: e.target.value })} placeholder="Ex: Reduceri de vară la River's Lounge" style={inputStyle} /></Field>
+                      <Field label="Reducere (discount)"><input value={wizard.content.discount ?? ''} onChange={(e) => setW('content', { ...wizard.content, discount: e.target.value })} placeholder="Ex: -20%" style={inputStyle} /></Field>
+                      <Field label="Valabil până la (validUntil)"><input value={wizard.content.validUntil ?? ''} onChange={(e) => setW('content', { ...wizard.content, validUntil: e.target.value })} placeholder="Ex: 31 iulie 2025" style={inputStyle} /></Field>
                       <Field label="Descriere"><textarea rows={3} value={wizard.content.description ?? ''} onChange={(e) => setW('content', { ...wizard.content, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} /></Field>
-                      <Field label="Ofertă (ex: -20% la toate)"><input value={wizard.content.offer ?? ''} onChange={(e) => setW('content', { ...wizard.content, offer: e.target.value })} style={inputStyle} /></Field>
                       <Field label="Text buton CTA"><input value={wizard.content.ctaText ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaText: e.target.value })} placeholder="Ex: Comandă acum" style={inputStyle} /></Field>
                       <Field label="URL buton CTA"><input value={wizard.content.ctaUrl ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaUrl: e.target.value })} placeholder="https://riverslounge.ro/..." style={inputStyle} /></Field>
                     </>
                   )}
                   {wizard.template === 'MENU' && (
                     <>
-                      <Field label="Titlu"><input value={wizard.content.title ?? ''} onChange={(e) => setW('content', { ...wizard.content, title: e.target.value })} style={inputStyle} /></Field>
-                      <Field label="Descriere"><textarea rows={3} value={wizard.content.description ?? ''} onChange={(e) => setW('content', { ...wizard.content, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} /></Field>
-                      <Field label="Meniuri evidențiate (JSON sau text)"><textarea rows={4} value={wizard.content.items ?? ''} onChange={(e) => setW('content', { ...wizard.content, items: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} /></Field>
+                      <Field label="Titlu (headline)"><input value={wizard.content.headline ?? ''} onChange={(e) => setW('content', { ...wizard.content, headline: e.target.value })} placeholder="Ex: Meniu special de weekend" style={inputStyle} /></Field>
+                      <Field label="Valabil în perioada (validPeriod)"><input value={wizard.content.validPeriod ?? ''} onChange={(e) => setW('content', { ...wizard.content, validPeriod: e.target.value })} placeholder="Ex: 1–7 iulie 2025" style={inputStyle} /></Field>
+                      <Field label="Preparate evidențiate (un preparat pe linie)"><textarea rows={5} value={wizard.content.items ?? ''} onChange={(e) => setW('content', { ...wizard.content, items: e.target.value })} placeholder={"🍖 Coaste de porc — 45 RON\n🥗 Salată César — 28 RON"} style={{ ...inputStyle, resize: 'vertical' }} /></Field>
+                      <Field label="Text buton CTA"><input value={wizard.content.ctaText ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaText: e.target.value })} placeholder="Ex: Vezi meniul complet" style={inputStyle} /></Field>
+                      <Field label="URL buton CTA"><input value={wizard.content.ctaUrl ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaUrl: e.target.value })} placeholder="https://riverslounge.ro/meniu" style={inputStyle} /></Field>
                     </>
                   )}
                   {wizard.template === 'EVENT' && (
                     <>
-                      <Field label="Titlu eveniment"><input value={wizard.content.eventName ?? ''} onChange={(e) => setW('content', { ...wizard.content, eventName: e.target.value })} style={inputStyle} /></Field>
-                      <Field label="Data și ora"><input value={wizard.content.eventDate ?? ''} onChange={(e) => setW('content', { ...wizard.content, eventDate: e.target.value })} style={inputStyle} /></Field>
+                      <Field label="Titlu eveniment (eventName)"><input value={wizard.content.eventName ?? ''} onChange={(e) => setW('content', { ...wizard.content, eventName: e.target.value })} placeholder="Ex: Seară de jazz live" style={inputStyle} /></Field>
+                      <Field label="Data (date)"><input value={wizard.content.date ?? ''} onChange={(e) => setW('content', { ...wizard.content, date: e.target.value })} placeholder="Ex: Sâmbătă, 5 iulie 2025" style={inputStyle} /></Field>
+                      <Field label="Ora (time)"><input value={wizard.content.time ?? ''} onChange={(e) => setW('content', { ...wizard.content, time: e.target.value })} placeholder="Ex: 20:00" style={inputStyle} /></Field>
                       <Field label="Descriere"><textarea rows={3} value={wizard.content.description ?? ''} onChange={(e) => setW('content', { ...wizard.content, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} /></Field>
-                      <Field label="URL bilete / rezervare"><input value={wizard.content.ctaUrl ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaUrl: e.target.value })} style={inputStyle} /></Field>
+                      <Field label="Text buton CTA"><input value={wizard.content.ctaText ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaText: e.target.value })} placeholder="Ex: Rezervă un loc" style={inputStyle} /></Field>
+                      <Field label="URL bilete / rezervare (ctaUrl)"><input value={wizard.content.ctaUrl ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaUrl: e.target.value })} placeholder="https://riverslounge.ro/rezervare" style={inputStyle} /></Field>
                     </>
                   )}
                   {wizard.template === 'CUSTOM' && (
-                    <Field label="Conținut HTML personalizat">
-                      <textarea rows={10} value={wizard.content.body ?? ''} onChange={(e) => setW('content', { ...wizard.content, body: e.target.value })} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }} />
-                    </Field>
+                    <>
+                      <Field label="Titlu email (headline)"><input value={wizard.content.headline ?? ''} onChange={(e) => setW('content', { ...wizard.content, headline: e.target.value })} placeholder="Ex: Un mesaj special pentru tine" style={inputStyle} /></Field>
+                      <Field label="Conținut HTML personalizat (body)">
+                        <textarea rows={10} value={wizard.content.body ?? ''} onChange={(e) => setW('content', { ...wizard.content, body: e.target.value })} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }} />
+                      </Field>
+                      <Field label="Text buton CTA (opțional)"><input value={wizard.content.ctaText ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaText: e.target.value })} placeholder="Ex: Descoperă" style={inputStyle} /></Field>
+                      <Field label="URL buton CTA (opțional)"><input value={wizard.content.ctaUrl ?? ''} onChange={(e) => setW('content', { ...wizard.content, ctaUrl: e.target.value })} placeholder="https://riverslounge.ro/..." style={inputStyle} /></Field>
+                    </>
                   )}
                 </div>
               )}
