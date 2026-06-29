@@ -4,7 +4,6 @@ import { useState, useTransition, useRef } from 'react';
 import { toast } from 'sonner';
 import { updateMyProfile, changePassword, deleteAccount, uploadAvatar } from '@/lib/actions/users';
 import { saveBirthday, saveBirthDate } from '@/lib/actions/birthday';
-import { PasskeySettingsSection } from '@/components/account/PasskeySettingsSection';
 import type { SafeUser } from '@/components/account/account-forms';
 
 function ForgotPasswordInline({ userEmail }: { userEmail: string }) {
@@ -501,10 +500,7 @@ export function MySettingsClient({ user, clientCode, savedAddresses }: Props) {
         </div>
       </SectionCard>
 
-      {/* 6. Securitate & Autentificare */}
-      <PasskeySettingsSection />
-
-      {/* 7. Zona periculoasă */}
+      {/* 6. Zona periculoasă */}
       <div style={{ background: '#1A1A1A', border: '1px solid #EF444433', borderRadius: 12, padding: '22px 24px' }}>
         <h3 style={{ color: '#F87171', fontSize: 16, fontWeight: 600, marginBottom: 10 }}>Zona periculoasă</h3>
         {!showDeleteConfirm ? (

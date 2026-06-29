@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 import { createUser } from '@/lib/actions/users';
 import { loginUser, logoutUser } from '@/lib/actions/auth-user';
 import { OrderHistoryClient } from '@/components/account/order-history-client';
-import { PasskeyLoginSection } from '@/components/account/PasskeyLoginSection';
 import { WalletWidget } from '@/components/account/wallet-widget';
 import type { Order } from '@/lib/server-data';
 import type { WalletTransactionSummary } from '@/lib/loyalty/types';
@@ -92,7 +91,6 @@ export function LoginForm() {
         <p className="text-sm text-muted-foreground">Accesează contul tău River&apos;s Lounge</p>
       </CardHeader>
       <CardContent>
-        <PasskeyLoginSection />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>

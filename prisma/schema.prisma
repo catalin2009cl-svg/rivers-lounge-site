@@ -37,7 +37,6 @@ model User {
   referredByCode     String?
   birthDate          DateTime?
   lastBirthdayReward DateTime?
-  webAuthnChallenge  String?
 
   orders               Order[]
   reservations         Reservation[]
@@ -47,7 +46,6 @@ model User {
   referralsMade        Referral[]          @relation("ReferralsMade")
   referredBy           Referral?           @relation("ReferredBy")
   orderReviews         OrderReview[]
-  webAuthnCredentials  WebAuthnCredential[]
 }
 
 model Order {
@@ -400,19 +398,4 @@ model WeeklyReport {
   pdfUrl          String?
   emailSentAt     DateTime?
   createdAt       DateTime @default(now())
-}
-
-model WebAuthnCredential {
-  id           String    @id @default(cuid())
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  credentialId String    @unique
-  publicKey    Bytes
-  counter      BigInt    @default(0)
-  deviceType   String?
-  deviceName   String?
-  backedUp     Boolean   @default(false)
-  transports   String[]
-  createdAt    DateTime  @default(now())
-  lastUsedAt   DateTime?
 }
