@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -77,6 +77,9 @@ interface AdminSidebarProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const ORDERS_LAST_SEEN_KEY = 'admin_orders_last_seen';
+const POLL_INTERVAL_MS = 5000;
+
 export function AdminSidebar({
   newReservationsCount = 0,
   newOrdersCount = 0,
@@ -85,6 +88,46 @@ export function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Live order count — starts from SSR prop, updated by polling
+  const [liveOrdersCount, setLiveOrdersCount] = useState(newOrdersCount);
+  const [hasNewOrders, setHasNewOrders]       = useState(false);
+  const latestAtRef = useRef<string | null>(null);
+
+  // Poll /api/admin/orders/new-count every 5s
+  useEffect(() => {
+    function computeHasNew(count: number, latestAt: string | null): boolean {
+      if (count === 0 || !latestAt) return false;
+      const lastSeen = localStorage.getItem(ORDERS_LAST_SEEN_KEY);
+      if (!lastSeen) return true;
+      return new Date(latestAt) > new Date(lastSeen);
+    }
+
+    async function poll() {
+      try {
+        const r = await fetch('/api/admin/orders/new-count');
+        if (!r.ok) return;
+        const d = await r.json() as { count: number; latestAt: string | null };
+        latestAtRef.current = d.latestAt;
+        setLiveOrdersCount(d.count);
+        setHasNewOrders(computeHasNew(d.count, d.latestAt));
+      } catch {
+        // Network errors are non-fatal
+      }
+    }
+
+    poll();
+    const id = setInterval(poll, POLL_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  // When admin navigates to /admin/comenzi, mark all current orders as seen
+  useEffect(() => {
+    if (!pathname.startsWith('/admin/comenzi')) return;
+    const seenAt = latestAtRef.current ?? new Date().toISOString();
+    localStorage.setItem(ORDERS_LAST_SEEN_KEY, seenAt);
+    setHasNewOrders(false);
+  }, [pathname]);
 
   function isActive(href: string, exact: boolean) {
     if (exact) return pathname === href;
@@ -124,10 +167,12 @@ export function AdminSidebar({
             isActive(item.href, item.exact) ||
             (item.href === '/admin/comenzi' && pathname.startsWith('/admin/arhiva'));
           const badgeCount =
-            'badge' in item && item.badge === 'orders'       ? newOrdersCount :
+            'badge' in item && item.badge === 'orders'       ? liveOrdersCount :
             'badge' in item && item.badge === 'reservations' ? newReservationsCount : 0;
           const badgeBg =
             'badge' in item && item.badge === 'reservations' ? 'bg-red-500' : 'bg-primary';
+
+          const isOrdersItem = 'badge' in item && item.badge === 'orders';
 
           return (
             <Link
@@ -143,9 +188,17 @@ export function AdminSidebar({
               <item.icon className="h-4 w-4 shrink-0" />
               {item.label}
               {badgeCount > 0 && (
-                <span className={`ml-auto ${badgeBg} text-white text-[10px] font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1 leading-none`}>
+                <span className={`ml-auto text-white text-[10px] font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1 leading-none ${
+                  isOrdersItem
+                    ? `bg-red-500 ${hasNewOrders ? 'animate-pulse' : ''}`
+                    : badgeBg
+                }`}>
                   {badgeCount > 9 ? '9+' : badgeCount}
                 </span>
+              )}
+              {/* Blinking dot for new orders when count is 0 but badge was just cleared */}
+              {isOrdersItem && badgeCount === 0 && hasNewOrders && (
+                <span className="ml-auto h-2 w-2 rounded-full bg-red-500 animate-pulse" />
               )}
             </Link>
           );
