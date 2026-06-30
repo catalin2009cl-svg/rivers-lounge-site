@@ -64,13 +64,11 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: 'https://riverslounge.ro',
     },
     icons: {
-      icon: b?.favicon && b.favicon !== '/favicon.ico'
-        ? b.favicon
-        : [
-            { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
-            { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
-            { url: '/icon.svg', type: 'image/svg+xml' },
-          ],
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: b?.favicon && b.favicon !== '/favicon.ico' ? b.favicon : '/icon-192.png', type: 'image/png', sizes: '192x192' },
+        { url: '/icon-512.png', type: 'image/png', sizes: '512x512' },
+      ],
       apple: '/apple-icon.png',
     },
   };
